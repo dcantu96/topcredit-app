@@ -3,10 +3,8 @@ import Card from "components/organisms/card";
 import {
   BeakerIcon,
   BookmarkIcon,
-  CakeIcon,
   ChevronDownIcon,
   CubeTransparentIcon,
-  FilmIcon,
   PhoneXMarkIcon,
   Bars3Icon,
   PencilIcon,
@@ -62,22 +60,9 @@ const features = [
     docs: "https://prettier.io/",
   },
   {
-    name: "Husky",
-    description:
-      "Lint your commit messages, run tests, lint code, etc... when you commit or push.",
-    logo: CakeIcon,
-    docs: "https://github.com/typicode/husky",
-  },
-  {
-    name: "Commit-lint",
-    description: "Helps your team adhering to a commit convention.",
-    logo: FilmIcon,
-    docs: "https://github.com/conventional-changelog/commitlint",
-  },
-  {
     name: "Atomic design",
     description:
-      "We’re not designing pages, we’re designing systems of components.",
+      "We're not designing pages, we’re designing systems of components.",
     logo: PhoneXMarkIcon,
     docs: "https://bradfrost.com/blog/post/atomic-web-design/",
   },
@@ -95,7 +80,7 @@ function App() {
     <main>
       <header className="pt-16 z-10 relative max-w-screen-lg xl:max-w-screen-xl mx-auto">
         <h3 className="text-2xl sm:text-4xl leading-none font-bold tracking-tight text-purple-200">
-          <span className="text-[gold] opacity-75">Vital</span> @ Vite Template
+          <span className="text-[gold] opacity-75">Topcredit</span>
         </h3>
         <h1 className="text-6xl lg:text-7xl leading-none font-extrabold tracking-tight mb-8 sm:mb-10 text-purple-400">
           React + TypeScript + Tailwind
@@ -140,7 +125,7 @@ function App() {
       </section>
       <footer className="pb-16 max-w-screen-lg xl:max-w-screen-xl mx-auto text-center sm:text-right text-gray-400 font-bold">
         <a href="https://github.com/jvidalv">
-          Josep Vidal @ {new Date().getFullYear()}
+          David Cantu @ {new Date().getFullYear()}
         </a>
       </footer>
     </main>
