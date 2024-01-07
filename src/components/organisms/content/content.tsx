@@ -1,3 +1,4 @@
+import { Input } from "components/atoms/input";
 import Table from "../table";
 
 interface IContent {
@@ -98,6 +99,20 @@ export const Content = ({ children }: IContent) => {
             </tr>
           </tbody>
         </Table>
+        <Input
+          id="price"
+          label="Price"
+          onChange={({ target }) => console.log("change", target.value)}
+          type="text"
+          prefix="$"
+          placeholder="0.00"
+          trailingDropdownId="currency"
+          trailingDropdownLabel="Currency"
+          trailingDropdownOptions={["MXN", "USD"]}
+          trailingDropdownOnChange={({ target }) =>
+            console.log("change currency", target.value)
+          }
+        />
       </div>
     </div>
   );
