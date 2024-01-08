@@ -1,3 +1,5 @@
+import ButtonLink from "components/atoms/button-link";
+
 interface ITable {
   children?: React.ReactNode;
 }
@@ -7,9 +9,7 @@ const Table = ({ children }: ITable) => {
     <>
       <div className="flex justify-between mb-2">
         <h2 className="text-lg font-bold">Gestión de Clientes</h2>
-        <button className="pointer-events-auto ml-8 rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500">
-          Nuevo Cliente
-        </button>
+        <ButtonLink to="new">Nuevo Cliente</ButtonLink>
       </div>
       <div className="relative rounded-xl overflow-auto bg-slate-100 shadow-sm">
         <div className="shadow-sm overflow-hidden my-8">

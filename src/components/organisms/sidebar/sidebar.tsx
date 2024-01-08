@@ -8,7 +8,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
-              to="/docs/installation"
+              to="/companies"
             >
               <div className="mr-4 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
                 <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
@@ -32,7 +32,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
-              to="/docs/installation"
+              to="/installations"
             >
               <div className="mr-4 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
                 <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
@@ -56,7 +56,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
-              to="/docs/installation"
+              to="/credits"
             >
               <div className="mr-4 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
                 <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">

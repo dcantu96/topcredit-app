@@ -1,10 +1,20 @@
+import { useState } from "react";
+
 interface InputBaseProps {
   id: string;
   label: string;
   type?: string;
   placeholder?: string;
+  required?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: string;
   prefix?: string;
+  /**
+   * When set to `true`, the input will be marked as errored.
+   *
+   * When set to `string`, the input will be marked as errored and the string will be displayed as error message.
+   */
+  error?: boolean | string;
 }
 
 interface InputWithTrailingDropdownProps extends InputBaseProps {
@@ -25,20 +35,29 @@ type InputProps =
   | InputWithTrailingDropdownProps
   | InputWithoutTrailingDropdownProps;
 
-export const Input = ({
+const Input = ({
   id,
   label,
   onChange,
+  value,
+  required,
+  error,
   placeholder,
   type = "text",
   prefix,
   ...trailingProps
 }: InputProps) => {
+  const passwordPaddingRight = type === "password" ? "pr-14" : undefined;
   const trailingDropdownPaddingRight = trailingProps.trailingDropdownId
     ? "pr-20"
     : "pr-3";
 
   const prefixPaddingLeft = prefix ? "pl-7" : "pl-3";
+
+  const [passwordHidden, setPasswordHidden] = useState(true);
+
+  const inputType =
+    type === "password" ? (passwordHidden ? "password" : "text") : type;
 
   return (
     <div>
@@ -55,13 +74,32 @@ export const Input = ({
           </div>
         )}
         <input
-          type={type}
+          type={inputType}
           name={id}
           id={id}
+          required={required}
+          value={value || ""}
           onChange={onChange}
-          className={`block w-full rounded-md border-0 py-1.5 ${prefixPaddingLeft} ${trailingDropdownPaddingRight} text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          className={`block w-full rounded-md border-0 py-1.5 ${
+            error
+              ? "ring-rose-400 focus:ring-rose-600"
+              : "ring-gray-300 focus:ring-indigo-600"
+          } ${prefixPaddingLeft} ${
+            passwordPaddingRight || trailingDropdownPaddingRight
+          } text-gray-900 ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
           placeholder={placeholder}
         />
+        {type === "password" && (
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+            <button
+              type="button"
+              className="text-gray-500 sm:text-sm"
+              onClick={() => setPasswordHidden((prev) => !prev)}
+            >
+              {passwordHidden ? "Mostrar" : "Esconder"}
+            </button>
+          </div>
+        )}
         {trailingProps.trailingDropdownId && (
           <div className="absolute inset-y-0 right-0 flex items-center">
             <label
@@ -83,6 +121,11 @@ export const Input = ({
           </div>
         )}
       </div>
+      {typeof error === "string" && (
+        <p className="mt-2 text-sm text-rose-600">{error}</p>
+      )}
     </div>
   );
 };
+
+export default Input;
