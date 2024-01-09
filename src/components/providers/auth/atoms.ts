@@ -18,7 +18,6 @@ export const authState = atom<AuthState | undefined>({
       // 0. check if auth is in local storage
       const localAuth = localStorage.getItem("auth");
       const authInitialValue = getLoadable(node).getValue();
-      console.log("Initial Value", authInitialValue);
       if (localAuth && !authInitialValue) {
         // 1. check ig localAuth is a valid auth state object
         const authJson = JSON.parse(localAuth);

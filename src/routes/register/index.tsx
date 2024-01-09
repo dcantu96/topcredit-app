@@ -29,7 +29,6 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("register", { email, password });
       await api.create("user", {
         email,
         password,

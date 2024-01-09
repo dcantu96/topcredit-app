@@ -20,7 +20,6 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("login", { email, password });
     try {
       setIsLoading(true);
       setErrorMsg(undefined);

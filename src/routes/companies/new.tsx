@@ -21,10 +21,8 @@ const NewCompany = () => {
 
     try {
       setIsLoading(true);
-      console.log("login", { name, domain, rate, terms });
       await create({ name, domain, rate: rate / 100, terms });
       setIsLoading(false);
-      console.log("success");
       refresh();
       to("/companies");
     } catch (error) {
