@@ -16,7 +16,7 @@
     @apply bg-slate-900 text-white hover:bg-slate-700;
   }
   .btn-medium {
-    @apply px-3 py-2 text-sm;
+    @apply px-3.5 py-2.5 text-sm;
   }
   .btn-small {
     @apply px-2 py-1 text-xs;
