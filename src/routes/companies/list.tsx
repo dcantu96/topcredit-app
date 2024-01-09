@@ -7,7 +7,7 @@ import { useRecoilValue } from "recoil";
 import { companies } from "./loader";
 import ButtonLink from "components/atoms/button-link";
 
-const CompaniesIndex = () => {
+const CompaniesList = () => {
   const to = useNavigate();
   const { email } = useAuth();
   const { logout } = useRecoilValue(authActions);
@@ -72,4 +72,4 @@ const CompaniesIndex = () => {
   );
 };
 
-export default CompaniesIndex;
+export default CompaniesList;

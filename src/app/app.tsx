@@ -9,10 +9,10 @@ import { DashboardLayout } from "components/organisms/dashboard-layout";
 import { Landing } from "../routes/landing";
 import Login from "../routes/login";
 import Register from "../routes/register";
-import CompaniesIndex from "../routes/companies/index.tsx";
-import NewCompany from "../routes/companies/new.tsx";
-import EditCompany from "../routes/companies/edit.tsx";
-import ShowCompany from "../routes/companies/show.tsx";
+import CompaniesList from "../routes/companies/list";
+import NewCompany from "../routes/companies/new";
+import EditCompany from "../routes/companies/edit";
+import ShowCompany from "../routes/companies/show";
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
         </Route>
         <Route element={<DashboardLayout />}>
           <Route path="companies">
-            <Route index element={<CompaniesIndex />} />
+            <Route index element={<CompaniesList />} />
             <Route path="new" element={<NewCompany />} />
             <Route path=":id">
               <Route index element={<ShowCompany />} />
