@@ -4,8 +4,9 @@ import logoSmall from "../../images/logo_small.png";
 import { useState } from "react";
 import ButtonLink from "components/atoms/button-link";
 
-export const Landing = () => {
+const Landing = () => {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+
   return (
     <div className="bg-white">
       <header className="absolute inset-x-0 top-0 z-50">
@@ -193,3 +194,5 @@ export const Landing = () => {
     </div>
   );
 };
+
+export default Landing;

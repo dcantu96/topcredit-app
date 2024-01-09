@@ -124,6 +124,14 @@ export const authActions = selector({
   },
 });
 
+export const isLoggedInState = selector({
+  key: "isLoggedInState",
+  get: ({ get }) => {
+    const auth = get(authState);
+    return !!auth;
+  },
+});
+
 interface AuthResponse {
   token_type: string;
   access_token: string;

@@ -6,7 +6,7 @@ import { BasicLayout } from "components/organisms/basic-layout";
 import { DashboardLayout } from "components/organisms/dashboard-layout";
 
 /* Routes */
-import { Landing } from "../routes/landing";
+import Home from "../routes/home";
 import Login from "../routes/login";
 import Register from "../routes/register";
 import CompaniesList from "../routes/companies/list";
@@ -19,7 +19,7 @@ function App() {
     <Suspense fallback={<>loading</>}>
       <Routes>
         <Route element={<BasicLayout />}>
-          <Route index element={<Landing />} />
+          <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Route>
