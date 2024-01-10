@@ -10,34 +10,41 @@ interface AuthState {
   expiresIn: number;
 }
 
+const authInitializer = selector<AuthState | undefined>({
+  key: "authInitializer",
+  get: async () => {
+    console.log("authState effect");
+    // 0. check if auth is in local storage
+    const localAuth = localStorage.getItem("auth");
+
+    if (!localAuth) {
+      return undefined;
+    }
+
+    // 1. check ig localAuth is a valid auth state object
+    const authJson = JSON.parse(localAuth);
+
+    if (!isValidAuthObject(authJson)) {
+      return undefined;
+    }
+
+    // 2. if valid, check if token is expired
+    if (
+      new Date(authJson.createdAt * 1000).getTime() +
+        authJson.expiresIn * 1000 <
+      new Date().getTime()
+    ) {
+      return undefined;
+    } else {
+      return authJson;
+    }
+  },
+});
+
 export const authState = atom<AuthState | undefined>({
   key: "authState",
-  default: undefined,
+  default: authInitializer,
   effects: [
-    ({ setSelf, node, getLoadable }) => {
-      // 0. check if auth is in local storage
-      const localAuth = localStorage.getItem("auth");
-      const authInitialValue = getLoadable(node).getValue();
-      if (localAuth && !authInitialValue) {
-        // 1. check ig localAuth is a valid auth state object
-        const authJson = JSON.parse(localAuth);
-        if (isValidAuthObject(authJson)) {
-          // 2. if valid, check if token is expired
-          if (
-            new Date(authJson.createdAt * 1000).getTime() +
-              authJson.expiresIn * 1000 <
-            new Date().getTime()
-          ) {
-            localStorage.removeItem("auth");
-          } else {
-            setSelf(authJson);
-          }
-        } else {
-          // 5. if not valid, remove auth from local storage
-          localStorage.removeItem("auth");
-        }
-      }
-    },
     ({ onSet }) => {
       onSet((newAuthState) => {
         if (newAuthState) {
@@ -112,8 +119,8 @@ export const authActions = selector({
           }
         }
     );
-    const logout = getCallback(({ reset }) => () => {
-      reset(authState);
+    const logout = getCallback(({ set }) => () => {
+      set(authState, undefined);
     });
 
     return {
@@ -125,9 +132,57 @@ export const authActions = selector({
 
 export const isLoggedInState = selector({
   key: "isLoggedInState",
-  get: ({ get }) => {
+  get: async ({ get }) => {
     const auth = get(authState);
-    return !!auth;
+    if (!auth) return false;
+    console.log("auth state in isLoggedInState", auth);
+    const profile = get(myProfileState);
+    console.log("profile state in isLoggedInState", profile);
+    return !!profile;
+  },
+});
+
+interface UserInfo {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role?: string;
+}
+
+export const myProfileState = selector<UserInfo>({
+  key: "myProfileState",
+  get: async ({ get }) => {
+    const auth = get(authState);
+    console.log("auth state in myProfileState", auth);
+    const { logout } = get(authActions);
+    if (auth) {
+      try {
+        console.log("fetch me request");
+        const response = await fetch(
+          `${import.meta.env.VITE_APP_API_URL}/api/me`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/vnd.api+json",
+              "Content-Type": "application/vnd.api+json",
+              Authorization: `Bearer ${auth.token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Hubo un problema. Favor de Notificar al Administrador"
+          );
+        }
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.log(error);
+        logout();
+      }
+    }
   },
 });
 
