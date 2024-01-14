@@ -6,6 +6,7 @@ import { companiesActions } from "./atoms";
 import { useNavigate, useParams } from "react-router-dom";
 import { companySelectorQuery } from "./loader";
 import ButtonLink from "components/atoms/button-link";
+import { useFormErrors } from "hooks/useFormErrors";
 
 const EditCompany = () => {
   const { id } = useParams();
@@ -17,6 +18,7 @@ const EditCompany = () => {
     companyData?.rate ? companyData.rate * 100 : 0
   );
   const [terms, setTerms] = useState<string>(companyData.terms || "");
+  const { errors, handleErrors, clearErrors } = useFormErrors();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { update } = useRecoilValue(companiesActions);
   const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id));
@@ -26,13 +28,14 @@ const EditCompany = () => {
     e.preventDefault();
 
     try {
+      clearErrors();
       setIsLoading(true);
       await update({ id: Number(id), name, domain, rate: rate / 100, terms });
       setIsLoading(false);
       to("/companies");
       refresh();
     } catch (error) {
-      console.log("error", error);
+      handleErrors(error, ["name", "domain", "rate", "terms"]);
       setIsLoading(false);
     }
   };
@@ -88,6 +91,7 @@ const EditCompany = () => {
             label="Nombre"
             required
             value={name}
+            error={errors.name}
             placeholder="Mi empresa"
             onChange={({ target }) => setName(target.value)}
           />
@@ -98,6 +102,7 @@ const EditCompany = () => {
             label="Dominio"
             required
             value={domain}
+            error={errors.domain}
             placeholder="miempresa.com"
             onChange={({ target }) => setDomain(target.value)}
           />
@@ -108,6 +113,7 @@ const EditCompany = () => {
             label="Taza"
             type="number"
             required
+            error={errors.rate}
             value={rate.toString()}
             placeholder="10"
             prefix="%"
@@ -120,6 +126,7 @@ const EditCompany = () => {
             label="Plazos"
             required
             value={terms}
+            error={errors.terms}
             placeholder="2 años, 1 mes"
             onChange={({ target }) => setTerms(target.value)}
           />

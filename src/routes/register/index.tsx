@@ -10,6 +10,7 @@ import { useApi } from "components/providers/api/useApi";
 import { useRecoilValue } from "recoil";
 import { authActions } from "components/providers/auth/atoms";
 import { Switch } from "@headlessui/react";
+import { useFormErrors } from "hooks/useFormErrors";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -23,7 +24,7 @@ const Register = () => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [agreed, setAgreed] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, handleErrors, clearErrors } = useFormErrors();
   const { login } = useRecoilValue(authActions);
 
   const api = useApi();
@@ -31,7 +32,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setErrors({});
+      clearErrors();
       await api.create("user", {
         email,
         "first-name": firstName,
@@ -41,34 +42,13 @@ const Register = () => {
       });
       await login(email, password);
     } catch (error) {
-      if (typeof error === "object" && error !== null && "errors" in error) {
-        for (const e of error.errors as { detail: string }[]) {
-          if (e.detail.includes("email")) {
-            setErrors((prev) => ({ ...prev, email: e.detail.split(" - ")[1] }));
-          }
-          if (e.detail.includes("password")) {
-            setErrors((prev) => ({
-              ...prev,
-              password: e.detail.split(" - ")[1],
-            }));
-          }
-          if (e.detail.includes("phone")) {
-            setErrors((prev) => ({ ...prev, phone: e.detail.split(" - ")[1] }));
-          }
-          if (e.detail.includes("first-name")) {
-            setErrors((prev) => ({
-              ...prev,
-              firstName: e.detail.split(" - ")[1],
-            }));
-          }
-          if (e.detail.includes("last-name")) {
-            setErrors((prev) => ({
-              ...prev,
-              lastName: e.detail.split(" - ")[1],
-            }));
-          }
-        }
-      }
+      handleErrors(error, [
+        "email",
+        "first-name",
+        "last-name",
+        "phone",
+        "password",
+      ]);
     }
   };
 
