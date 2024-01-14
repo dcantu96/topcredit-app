@@ -22,27 +22,60 @@ const Register = () => {
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const api = useApi();
-  const { login } = useRecoilValue(authActions);
   const [agreed, setAgreed] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { login } = useRecoilValue(authActions);
+
+  const api = useApi();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setErrors({});
       await api.create("user", {
         email,
+        "first-name": firstName,
+        "last-name": lastName,
+        phone,
         password,
       });
       await login(email, password);
     } catch (error) {
-      console.log("error", error);
+      if (typeof error === "object" && error !== null && "errors" in error) {
+        for (const e of error.errors as { detail: string }[]) {
+          if (e.detail.includes("email")) {
+            setErrors((prev) => ({ ...prev, email: e.detail.split(" - ")[1] }));
+          }
+          if (e.detail.includes("password")) {
+            setErrors((prev) => ({
+              ...prev,
+              password: e.detail.split(" - ")[1],
+            }));
+          }
+          if (e.detail.includes("phone")) {
+            setErrors((prev) => ({ ...prev, phone: e.detail.split(" - ")[1] }));
+          }
+          if (e.detail.includes("first-name")) {
+            setErrors((prev) => ({
+              ...prev,
+              firstName: e.detail.split(" - ")[1],
+            }));
+          }
+          if (e.detail.includes("last-name")) {
+            setErrors((prev) => ({
+              ...prev,
+              lastName: e.detail.split(" - ")[1],
+            }));
+          }
+        }
+      }
     }
   };
 
   return (
     <>
       <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
-        <h1 className="sr-only">Registrate en Topcredit</h1>
+        <h1 className="sr-only">Regístrate en Topcredit</h1>
         <img
           className="mx-auto mb-12 h-14 w-auto text-slate-900"
           src={logo}
@@ -80,6 +113,7 @@ const Register = () => {
                 id="first-name"
                 value={firstName}
                 label="Nombres"
+                error={errors.firstName}
                 required
                 onChange={({ target }) => setFirstName(target.value)}
               />
@@ -89,6 +123,7 @@ const Register = () => {
                 id="last-name"
                 value={lastName}
                 label="Apellidos"
+                error={errors.lastName}
                 required
                 onChange={({ target }) => setLastName(target.value)}
               />
@@ -98,6 +133,7 @@ const Register = () => {
                 id="email"
                 value={email}
                 label="Email"
+                error={errors.email}
                 required
                 onChange={({ target }) => setEmail(target.value)}
               />
@@ -129,6 +165,7 @@ const Register = () => {
                 type="tel"
                 prefix="MX"
                 label="Teléfono"
+                error={errors.phone}
                 required
                 onChange={({ target }) => setPhone(target.value)}
               />
