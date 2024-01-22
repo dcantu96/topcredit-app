@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import Content from "../content";
 import Sidebar from "../sidebar";
 import Header from "../header";
-import { withAuth } from "components/providers/auth/withAuth";
 
 const DashboardLayout = () => {
   return (
@@ -20,4 +19,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default withAuth(DashboardLayout);
+export default DashboardLayout;

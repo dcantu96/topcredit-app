@@ -12,7 +12,7 @@ interface AuthState {
 
 const authInitializer = selector<AuthState | undefined>({
   key: "authInitializer",
-  get: async () => {
+  get: () => {
     console.log("authState effect");
     // 0. check if auth is in local storage
     const localAuth = localStorage.getItem("auth");
