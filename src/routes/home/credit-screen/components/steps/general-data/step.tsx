@@ -76,6 +76,47 @@ const Step = () => {
             }}
           />
         </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="address-line-one"
+            label="Calle y numero"
+            value={payroll}
+            onChange={(e) => setPayroll(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="address-line-two"
+            label="Numero interior"
+            placeholder="1206 Torre 4"
+            value={payroll}
+            onChange={(e) => setPayroll(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="city"
+            label="Ciudad"
+            value={payroll}
+            onChange={(e) => setPayroll(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="state"
+            label="Estado"
+            value={payroll}
+            onChange={(e) => setPayroll(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="postal-code"
+            label="Código Postal"
+            value={payroll}
+            onChange={(e) => setPayroll(e.target.value)}
+          />
+        </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <Button status="secondary" type="button">
