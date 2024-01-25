@@ -67,8 +67,9 @@ const Step = () => {
           <Input
             id="bank-account-number"
             label="CLABE Interbancaria"
-            placeholder="16 dígitos"
+            placeholder="18 dígitos"
             required
+            maxLength={18}
             error={bankAccountNumberError}
             value={bankAccountNumber}
             onChange={(e) => setBankAccountNumber(e.target.value)}
