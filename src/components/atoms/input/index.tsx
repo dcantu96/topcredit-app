@@ -6,6 +6,7 @@ interface InputBaseProps {
   type?: string;
   placeholder?: string;
   required?: boolean;
+  maxLength?: number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
   prefix?: string;
@@ -42,6 +43,7 @@ const Input = ({
   value,
   required,
   error,
+  maxLength,
   placeholder,
   type = "text",
   prefix,
@@ -78,6 +80,7 @@ const Input = ({
           name={id}
           id={id}
           required={required}
+          maxLength={maxLength}
           value={value || ""}
           onChange={onChange}
           className={`block w-full rounded-md border-0 py-1.5 ${

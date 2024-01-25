@@ -1,13 +1,77 @@
 import Input from "components/atoms/input";
 import FileField from "components/atoms/file-field";
-import { useState } from "react";
 import Button from "components/atoms/button";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  editableAddressLineOneFieldState,
+  editableAddressLineTwoFieldState,
+  editableBankAccountNumberFieldState,
+  editableCityFieldState,
+  editableEmployeeNumberFieldState,
+  editablePostalCodeFieldState,
+  editableStateFieldState,
+  postalCodeFieldTouchedState,
+  postalCodeFieldErrorsSelector,
+} from "./atoms";
+import Select from "components/atoms/select";
+import { STATES_OF_MEXICO } from "./constants";
+
+const useCreditScreenSubmitActions = () => {
+  const employeeNumber = useRecoilValue(editableEmployeeNumberFieldState);
+  const bankAccountNumber = useRecoilValue(editableBankAccountNumberFieldState);
+  const addressLineOne = useRecoilValue(editableAddressLineOneFieldState);
+  const addressLineTwo = useRecoilValue(editableAddressLineTwoFieldState);
+  const city = useRecoilValue(editableCityFieldState);
+  const state = useRecoilValue(editableStateFieldState);
+  const postalCode = useRecoilValue(editablePostalCodeFieldState);
+  const setPostalCodeTouched = useSetRecoilState(postalCodeFieldTouchedState);
+
+  const submit = () => {
+    setPostalCodeTouched(true);
+    console.log("submit", {
+      employeeNumber,
+      bankAccountNumber,
+      addressLineOne,
+      addressLineTwo,
+      city,
+      state,
+      postalCode,
+    });
+  };
+
+  return {
+    submit,
+  };
+};
 
 const Step = () => {
-  const [payroll, setPayroll] = useState("");
+  const { submit } = useCreditScreenSubmitActions();
+  const postalCodeError = useRecoilValue(postalCodeFieldErrorsSelector);
+  const [employeeNumber, setEmployeeNumber] = useRecoilState(
+    editableEmployeeNumberFieldState
+  );
+  const [bankAccountNumber, setBankAccountNumber] = useRecoilState(
+    editableBankAccountNumberFieldState
+  );
+  const [addressLineOne, setAddressLineOne] = useRecoilState(
+    editableAddressLineOneFieldState
+  );
+  const [addressLineTwo, setAddressLineTwo] = useRecoilState(
+    editableAddressLineTwoFieldState
+  );
+  const [city, setCity] = useRecoilState(editableCityFieldState);
+  const [state, setState] = useRecoilState(editableStateFieldState);
+  const [postalCode, setPostalCode] = useRecoilState(
+    editablePostalCodeFieldState
+  );
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit();
+  };
 
   return (
-    <form className="p-4">
+    <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Datos Generales</h1>
       <p className="mt-1 text-sm leading-6 text-gray-600">
         This information will be displayed publicly so be careful what you
@@ -18,8 +82,9 @@ const Step = () => {
           <Input
             id="payroll"
             label="Numero de Nómina"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
+            required
+            value={employeeNumber}
+            onChange={(e) => setEmployeeNumber(e.target.value)}
           />
         </div>
         <div className="col-span-full">
@@ -27,9 +92,61 @@ const Step = () => {
             id="bank-account-number"
             label="CLABE Interbancaria"
             placeholder="16 digitos"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
+            required
+            value={bankAccountNumber}
+            onChange={(e) => setBankAccountNumber(e.target.value)}
           />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="address-line-one"
+            label="Calle y numero"
+            required
+            value={addressLineOne}
+            onChange={(e) => setAddressLineOne(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="address-line-two"
+            label="Numero interior"
+            placeholder="1206 Torre 4"
+            value={addressLineTwo}
+            onChange={(e) => setAddressLineTwo(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="city"
+            label="Ciudad"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            required
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Select
+            id="state"
+            label="Estado"
+            value={state}
+            required
+            onChange={(e) => setState(e.target.value)}
+            options={STATES_OF_MEXICO}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <Input
+            id="postal-code"
+            label="Código Postal"
+            maxLength={5}
+            required
+            error={postalCodeError}
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+          />
+        </div>
+        <div className="col-span-full">
+          <h1 className="text-gray-900 font-bold text-3xl">Documentación</h1>
         </div>
         <div className="col-span-full">
           <FileField
@@ -74,47 +191,6 @@ const Step = () => {
                 console.log(e.target.files);
               }
             }}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Input
-            id="address-line-one"
-            label="Calle y numero"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Input
-            id="address-line-two"
-            label="Numero interior"
-            placeholder="1206 Torre 4"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Input
-            id="city"
-            label="Ciudad"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Input
-            id="state"
-            label="Estado"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Input
-            id="postal-code"
-            label="Código Postal"
-            value={payroll}
-            onChange={(e) => setPayroll(e.target.value)}
           />
         </div>
       </div>

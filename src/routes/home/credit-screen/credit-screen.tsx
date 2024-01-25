@@ -21,7 +21,7 @@ const steps = [
 const Screen = () => {
   const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState);
   return (
-    <div className="grid grid-cols-[400px_1fr] h-screen grid-rows-[40px_1fr]">
+    <div className="grid grid-cols-[400px_1fr] h-screen grid-rows-[40px_1fr] overflow-hidden">
       <div className="w-full col-span-2 bg-black"></div>
       <div className="flex items-center justify-center self-center">
         <Steps
