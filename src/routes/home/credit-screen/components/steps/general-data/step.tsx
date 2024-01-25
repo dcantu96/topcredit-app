@@ -1,7 +1,7 @@
 import Input from "components/atoms/input";
 import FileField from "components/atoms/file-field";
 import Button from "components/atoms/button";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   editableAddressLineOneFieldState,
   editableAddressLineTwoFieldState,
@@ -10,43 +10,19 @@ import {
   editableEmployeeNumberFieldState,
   editablePostalCodeFieldState,
   editableStateFieldState,
-  postalCodeFieldTouchedState,
   postalCodeFieldErrorsSelector,
+  bankAccountNumberFieldErrorsSelector,
 } from "./atoms";
 import Select from "components/atoms/select";
 import { STATES_OF_MEXICO } from "./constants";
-
-const useCreditScreenSubmitActions = () => {
-  const employeeNumber = useRecoilValue(editableEmployeeNumberFieldState);
-  const bankAccountNumber = useRecoilValue(editableBankAccountNumberFieldState);
-  const addressLineOne = useRecoilValue(editableAddressLineOneFieldState);
-  const addressLineTwo = useRecoilValue(editableAddressLineTwoFieldState);
-  const city = useRecoilValue(editableCityFieldState);
-  const state = useRecoilValue(editableStateFieldState);
-  const postalCode = useRecoilValue(editablePostalCodeFieldState);
-  const setPostalCodeTouched = useSetRecoilState(postalCodeFieldTouchedState);
-
-  const submit = () => {
-    setPostalCodeTouched(true);
-    console.log("submit", {
-      employeeNumber,
-      bankAccountNumber,
-      addressLineOne,
-      addressLineTwo,
-      city,
-      state,
-      postalCode,
-    });
-  };
-
-  return {
-    submit,
-  };
-};
+import { useCreditScreenSubmitActions } from "./actions";
 
 const Step = () => {
   const { submit } = useCreditScreenSubmitActions();
   const postalCodeError = useRecoilValue(postalCodeFieldErrorsSelector);
+  const bankAccountNumberError = useRecoilValue(
+    bankAccountNumberFieldErrorsSelector
+  );
   const [employeeNumber, setEmployeeNumber] = useRecoilState(
     editableEmployeeNumberFieldState
   );
@@ -91,8 +67,9 @@ const Step = () => {
           <Input
             id="bank-account-number"
             label="CLABE Interbancaria"
-            placeholder="16 digitos"
+            placeholder="16 dígitos"
             required
+            error={bankAccountNumberError}
             value={bankAccountNumber}
             onChange={(e) => setBankAccountNumber(e.target.value)}
           />
