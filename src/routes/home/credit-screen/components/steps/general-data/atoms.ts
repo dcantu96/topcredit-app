@@ -198,14 +198,18 @@ export const bankAccountNumberFieldErrorsSelector = selector<string | false>({
     const readOnlyBankAccountNumber = get(
       readonlyBankAccountNumberFieldSelector
     );
+    const editableBankAccountNumber = get(editableBankAccountNumberFieldState);
     const touched = get(bankAccountNumberFieldTouchedState);
     if (readOnlyBankAccountNumber && !touched) {
-      const error = bankAccountNumberFieldValidation(readOnlyBankAccountNumber);
-      if (error) return error;
+      if (readOnlyBankAccountNumber == editableBankAccountNumber) {
+        const error = bankAccountNumberFieldValidation(
+          readOnlyBankAccountNumber
+        );
+        if (error) return error;
+      }
     }
-    if (!touched) return false;
+    if (!touched && !readOnlyBankAccountNumber) return false;
 
-    const editableBankAccountNumber = get(editableBankAccountNumberFieldState);
     const error = bankAccountNumberFieldValidation(editableBankAccountNumber);
     if (error) return error;
     return false;
