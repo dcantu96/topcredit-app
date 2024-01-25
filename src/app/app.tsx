@@ -13,6 +13,7 @@ import CompaniesList from "../routes/companies/list";
 import NewCompany from "../routes/companies/new";
 import EditCompany from "../routes/companies/edit";
 import ShowCompany from "../routes/companies/show";
+import RequestsList from "../routes/requests/list";
 import ProtectedRoute from "components/providers/auth/ProtectedRoute";
 
 function App() {
@@ -31,7 +32,10 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="companies">
+          <Route
+            path="companies"
+            element={<ProtectedRoute allowedRoles={["companies"]} />}
+          >
             <Route index element={<CompaniesList />} />
             <Route path="new" element={<NewCompany />} />
             <Route path=":id">
@@ -39,7 +43,15 @@ function App() {
               <Route path="edit" element={<EditCompany />} />
             </Route>
           </Route>
+          <Route
+            path="requests"
+            element={<ProtectedRoute allowedRoles={["requests"]} />}
+          >
+            <Route index element={<RequestsList />} />
+          </Route>
         </Route>
+        <Route path="not-allowed" element={<div>Not Allowed</div>} />
+        <Route path="*" element={<div>Not Found</div>} />
       </Routes>
     </Suspense>
   );
