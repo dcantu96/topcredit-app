@@ -51,8 +51,7 @@ const Step = () => {
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Datos Generales</h1>
       <p className="mt-1 text-sm leading-6 text-gray-600">
-        This information will be displayed publicly so be careful what you
-        share.
+        Necesitamos algunos datos para poder procesar tu solicitud.
       </p>
       <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div className="sm:col-span-4">
