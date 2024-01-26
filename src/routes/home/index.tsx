@@ -36,6 +36,7 @@ const Home = () => {
 
   switch (role) {
     case "admin":
+    case "requests":
       return <AdminDashboard />;
     default:
       return <CreditScreen />;

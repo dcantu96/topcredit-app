@@ -1,24 +1,16 @@
-import ButtonLink from "components/atoms/button-link";
-
 interface ITable {
   children?: React.ReactNode;
 }
 
 const Table = ({ children }: ITable) => {
   return (
-    <>
-      <div className="flex justify-between mb-2">
-        <h2 className="text-lg font-bold">Gestión de Clientes</h2>
-        <ButtonLink to="new">Nuevo Cliente</ButtonLink>
+    <div className="relative rounded-xl overflow-auto bg-slate-100 shadow-sm">
+      <div className="shadow-sm overflow-hidden my-8">
+        <table className="border-collapse table-auto w-full text-sm">
+          {children}
+        </table>
       </div>
-      <div className="relative rounded-xl overflow-auto bg-slate-100 shadow-sm">
-        <div className="shadow-sm overflow-hidden my-8">
-          <table className="border-collapse table-auto w-full text-sm">
-            {children}
-          </table>
-        </div>
-      </div>
-    </>
+    </div>
   );
 };
 

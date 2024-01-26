@@ -14,8 +14,9 @@ import {
   bankAccountNumberFieldErrorsSelector,
 } from "./atoms";
 import Select from "components/atoms/select";
-import { STATES_OF_MEXICO } from "./constants";
+
 import { useCreditScreenSubmitActions } from "./actions";
+import { STATES_OF_MEXICO } from "../../../../../../constants";
 
 const Step = () => {
   const { submit } = useCreditScreenSubmitActions();

@@ -5,6 +5,9 @@ import { Route, Routes } from "react-router-dom";
 import LoginLayout from "components/organisms/login-layout";
 import DashboardLayout from "components/organisms/dashboard-layout";
 
+/* Utility */
+import ProtectedRoute from "components/providers/auth/ProtectedRoute";
+
 /* Routes */
 import Home from "../routes/home";
 import Login from "../routes/login";
@@ -14,7 +17,7 @@ import NewCompany from "../routes/companies/new";
 import EditCompany from "../routes/companies/edit";
 import ShowCompany from "../routes/companies/show";
 import RequestsList from "../routes/requests/list";
-import ProtectedRoute from "components/providers/auth/ProtectedRoute";
+import ShowRequest from "../routes/requests/show";
 
 function App() {
   return (
@@ -48,9 +51,19 @@ function App() {
             element={<ProtectedRoute allowedRoles={["requests"]} />}
           >
             <Route index element={<RequestsList />} />
+            <Route path=":id">
+              <Route index element={<ShowRequest />} />
+            </Route>
           </Route>
         </Route>
-        <Route path="not-allowed" element={<div>Not Allowed</div>} />
+        <Route
+          path="not-allowed"
+          element={
+            <ProtectedRoute>
+              <div>Not Allowed</div>
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<div>Not Found</div>} />
       </Routes>
     </Suspense>
