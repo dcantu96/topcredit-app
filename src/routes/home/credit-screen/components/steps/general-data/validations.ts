@@ -1,3 +1,6 @@
+import { clabe } from "clabe-validator";
+import validateRfc from "validate-rfc";
+
 export const postalCodeFieldValidation = (text: string) => {
   if (text.length === 0) return "El código postal no puede estar vacío";
   if (text.match(/\D/)) return "El código postal solo puede contener números";
@@ -6,8 +9,17 @@ export const postalCodeFieldValidation = (text: string) => {
 };
 
 export const bankAccountNumberFieldValidation = (text: string) => {
-  if (text.length === 0) return "CLABE no puede estar vacía";
-  if (text.match(/\D/)) return "La CLABE solo puede contener números";
-  if (text.length !== 18) return "CLABE debe tener 18 dígitos";
-  return undefined;
+  const validation = clabe.validate(text);
+  if (validation.ok) return undefined;
+  if (validation.error === "invalid-length")
+    return "La cuenta debe tener 18 dígitos";
+
+  return "La cuenta no es válida";
+};
+
+export const rfcFieldValidation = (text: string) => {
+  const validation = validateRfc(text);
+  if (validation.isValid) return undefined;
+
+  return "El RFC no es válido";
 };
