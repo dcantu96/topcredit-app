@@ -31,3 +31,5 @@ export const STATES_OF_MEXICO = [
   { value: "YUC", label: "Yucatán" },
   { value: "ZAC", label: "Zacatecas" },
 ];
+
+export const COUNTRIES = [{ value: "MX", label: "México" }];

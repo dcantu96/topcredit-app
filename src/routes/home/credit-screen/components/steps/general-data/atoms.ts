@@ -1,15 +1,16 @@
 import { atom, selector } from "recoil";
-import { userFirstCreditQuerySelector } from "../../../atoms";
+import { userGeneralDataQuerySelector } from "../../../atoms";
 import {
   bankAccountNumberFieldValidation,
   postalCodeFieldValidation,
+  rfcFieldValidation,
 } from "./validations";
 
 export const readonlyEmployeeNumberFieldSelector = selector<string | null>({
   key: "readonlyEmployeeNumberField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.employeeNumber ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.employeeNumber ?? null;
   },
 });
 
@@ -32,8 +33,8 @@ export const employeeNumberFieldTouchedState = atom<boolean>({
 export const readonlyAddressLineOneFieldSelector = selector<string | null>({
   key: "readonlyAddressLineOneField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.addressLineOne ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.addressLineOne ?? null;
   },
 });
 
@@ -51,8 +52,8 @@ export const editableAddressLineOneFieldState = atom<string>({
 export const readonlyAddressLineTwoFieldSelector = selector<string | null>({
   key: "readonlyAddressLineTwoField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.addressLineTwo ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.addressLineTwo ?? null;
   },
 });
 
@@ -70,8 +71,8 @@ export const editableAddressLineTwoFieldState = atom<string>({
 export const readonlyCityFieldSelector = selector<string | null>({
   key: "readonlyCityField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.city ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.city ?? null;
   },
 });
 
@@ -89,8 +90,8 @@ export const editableCityFieldState = atom<string>({
 export const readonlyStateFieldSelector = selector<string | null>({
   key: "readonlyStateField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.state ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.state ?? null;
   },
 });
 
@@ -108,8 +109,8 @@ export const editableStateFieldState = atom<string>({
 export const readonlyCountryFieldSelector = selector<string | null>({
   key: "readonlyCountryField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.country ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.country ?? null;
   },
 });
 
@@ -119,7 +120,7 @@ export const editableCountryFieldState = atom<string>({
     key: "editableCountryFieldDefault",
     get: ({ get }) => {
       const readOnlyCountry = get(readonlyCountryFieldSelector);
-      return readOnlyCountry ?? "";
+      return readOnlyCountry ?? "MX";
     },
   }),
 });
@@ -127,8 +128,8 @@ export const editableCountryFieldState = atom<string>({
 export const readonlyPostalCodeFieldSelector = selector<string | null>({
   key: "readonlyPostalCodeField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.postalCode ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.postalCode?.toString() ?? null;
   },
 });
 
@@ -169,8 +170,8 @@ export const postalCodeFieldErrorsSelector = selector<string | false>({
 export const readonlyBankAccountNumberFieldSelector = selector<string | null>({
   key: "readonlyBankAccountNumberField",
   get: async ({ get }) => {
-    const employee = get(userFirstCreditQuerySelector);
-    return employee?.bankAccountNumber ?? null;
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.bankAccountNumber ?? null;
   },
 });
 
@@ -201,7 +202,7 @@ export const bankAccountNumberFieldErrorsSelector = selector<string | false>({
     const editableBankAccountNumber = get(editableBankAccountNumberFieldState);
     const touched = get(bankAccountNumberFieldTouchedState);
     if (readOnlyBankAccountNumber && !touched) {
-      if (readOnlyBankAccountNumber == editableBankAccountNumber) {
+      if (readOnlyBankAccountNumber === editableBankAccountNumber) {
         const error = bankAccountNumberFieldValidation(
           readOnlyBankAccountNumber
         );
@@ -211,6 +212,50 @@ export const bankAccountNumberFieldErrorsSelector = selector<string | false>({
     if (!touched && !readOnlyBankAccountNumber) return false;
 
     const error = bankAccountNumberFieldValidation(editableBankAccountNumber);
+    if (error) return error;
+    return false;
+  },
+});
+
+export const readonlyRFCFieldSelector = selector<string | null>({
+  key: "readonlyRFCField",
+  get: async ({ get }) => {
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.rfc ?? null;
+  },
+});
+
+export const editableRFCFieldState = atom<string>({
+  key: "editableRFCField",
+  default: selector<string>({
+    key: "editableRFCFieldDefault",
+    get: ({ get }) => {
+      const readOnlyRFC = get(readonlyRFCFieldSelector);
+      return readOnlyRFC ?? "";
+    },
+  }),
+});
+
+export const RFCFieldTouchedState = atom<boolean>({
+  key: "RFCFieldTouched",
+  default: false,
+});
+
+export const RFCFieldErrorsSelector = selector<string | false>({
+  key: "RFCFieldErrors",
+  get: ({ get }) => {
+    const readOnlyRFC = get(readonlyRFCFieldSelector);
+    const editableRFC = get(editableRFCFieldState);
+    const touched = get(RFCFieldTouchedState);
+    if (readOnlyRFC && !touched) {
+      if (readOnlyRFC === editableRFC) {
+        const error = rfcFieldValidation(readOnlyRFC);
+        if (error) return error;
+      }
+    }
+    if (!touched && !readOnlyRFC) return false;
+
+    const error = rfcFieldValidation(editableRFC);
     if (error) return error;
     return false;
   },

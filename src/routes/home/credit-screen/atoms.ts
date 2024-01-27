@@ -1,15 +1,16 @@
+import { atom, selector } from "recoil";
 import { apiSelector } from "components/providers/api/atoms";
 import { myProfileState } from "components/providers/auth/atoms";
-import { atom, selector } from "recoil";
 
-interface CreditResponse {
+interface GeneralDataResponse {
   addressLineOne: string | null;
   addressLineTwo: string | null;
   bankAccountNumber: string | null;
   city: string | null;
   country: string | null;
   employeeNumber: string | null;
-  postalCode: string | null;
+  rfc: string | null;
+  postalCode: number | null;
   state: string | null;
   createdAt: string;
   updatedAt: string;
@@ -21,27 +22,29 @@ interface CreditResponse {
  * If a credit is found, it should return the credit with the values
  *
  */
-export const userFirstCreditQuerySelector = selector<
-  CreditResponse | undefined
+export const userGeneralDataQuerySelector = selector<
+  GeneralDataResponse | undefined
 >({
-  key: "userFirstCreditQuerySelector",
+  key: "userGeneralDataQuerySelector",
   get: async ({ get }) => {
     const api = get(apiSelector);
     const { id } = get(myProfileState);
-    const { data } = await api.get(`users/${id}/credits`);
-    console.log("userFirstCreditQuerySelector", data);
-    if (data && data.length > 0)
+    console.log("id => profile", id);
+    const { data } = await api.get(`users/${id}`);
+    console.log(data);
+    if (data)
       return {
-        addressLineOne: data[0]["address-line-one"],
-        addressLineTwo: data[0]["address-line-two"],
-        bankAccountNumber: data[0]["bank-account-number"],
-        city: data[0]["city"],
-        country: data[0]["country"],
-        employeeNumber: data[0]["employee-number"],
-        postalCode: data[0]["postal-code"],
-        state: data[0]["state"],
-        createdAt: data[0]["created-at"],
-        updatedAt: data[0]["updated-at"],
+        addressLineOne: data["address-line-one"],
+        addressLineTwo: data["address-line-two"],
+        bankAccountNumber: data["bank-account-number"],
+        city: data["city"],
+        country: data["country"],
+        employeeNumber: data["employee-number"],
+        rfc: data["rfc"],
+        postalCode: data["postal-code"],
+        state: data["state"],
+        createdAt: data["created-at"],
+        updatedAt: data["updated-at"],
       };
     return undefined;
   },
@@ -50,16 +53,17 @@ export const userFirstCreditQuerySelector = selector<
 export const isGeneralDataCompleteSelector = selector({
   key: "isGeneralDataCompleteSelector",
   get: ({ get }) => {
-    const firstCredit = get(userFirstCreditQuerySelector);
-    if (!firstCredit) return false;
+    const generalData = get(userGeneralDataQuerySelector);
+    if (!generalData) return false;
     if (
-      !firstCredit.addressLineOne ||
-      !firstCredit.bankAccountNumber ||
-      !firstCredit.city ||
-      !firstCredit.country ||
-      !firstCredit.employeeNumber ||
-      !firstCredit.postalCode ||
-      !firstCredit.state
+      !generalData.addressLineOne ||
+      !generalData.bankAccountNumber ||
+      !generalData.city ||
+      !generalData.rfc ||
+      !generalData.country ||
+      !generalData.employeeNumber ||
+      !generalData.postalCode ||
+      !generalData.state
     )
       return false;
     return true;

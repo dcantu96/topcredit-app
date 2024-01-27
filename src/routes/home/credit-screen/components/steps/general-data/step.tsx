@@ -1,7 +1,7 @@
 import Input from "components/atoms/input";
 import FileField from "components/atoms/file-field";
 import Button from "components/atoms/button";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   editableAddressLineOneFieldState,
   editableAddressLineTwoFieldState,
@@ -12,13 +12,24 @@ import {
   editableStateFieldState,
   postalCodeFieldErrorsSelector,
   bankAccountNumberFieldErrorsSelector,
+  editableRFCFieldState,
+  bankAccountNumberFieldTouchedState,
+  RFCFieldTouchedState,
+  RFCFieldErrorsSelector,
+  postalCodeFieldTouchedState,
 } from "./atoms";
 import Select from "components/atoms/select";
 
 import { useCreditScreenSubmitActions } from "./actions";
-import { STATES_OF_MEXICO } from "../../../../../../constants";
+import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../../constants";
 
 const Step = () => {
+  const setBankAccountNumberTouched = useSetRecoilState(
+    bankAccountNumberFieldTouchedState
+  );
+  const setPostalCodeTouched = useSetRecoilState(postalCodeFieldTouchedState);
+  const setRFCTouched = useSetRecoilState(RFCFieldTouchedState);
+  const rfcError = useRecoilValue(RFCFieldErrorsSelector);
   const { submit } = useCreditScreenSubmitActions();
   const postalCodeError = useRecoilValue(postalCodeFieldErrorsSelector);
   const bankAccountNumberError = useRecoilValue(
@@ -41,6 +52,8 @@ const Step = () => {
   const [postalCode, setPostalCode] = useRecoilState(
     editablePostalCodeFieldState
   );
+  const [rfc, setRfc] = useRecoilState(editableRFCFieldState);
+  const [country, setCountry] = useRecoilState(editableCityFieldState);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,11 +76,24 @@ const Step = () => {
             onChange={(e) => setEmployeeNumber(e.target.value)}
           />
         </div>
+        <div className="sm:col-span-4">
+          <Input
+            id="rfc"
+            label="RFC"
+            required
+            maxLength={13}
+            error={rfcError}
+            value={rfc}
+            onBlur={() => setRFCTouched(true)}
+            onChange={(e) => setRfc(e.target.value)}
+          />
+        </div>
         <div className="col-span-full">
           <Input
             id="bank-account-number"
             label="CLABE Interbancaria"
             placeholder="18 dígitos"
+            onBlur={() => setBankAccountNumberTouched(true)}
             required
             maxLength={18}
             error={bankAccountNumberError}
@@ -113,6 +139,16 @@ const Step = () => {
           />
         </div>
         <div className="sm:col-span-3">
+          <Select
+            id="country"
+            label="País"
+            value={country}
+            required
+            onChange={(e) => setCountry(e.target.value)}
+            options={COUNTRIES}
+          />
+        </div>
+        <div className="sm:col-span-3">
           <Input
             id="postal-code"
             label="Código Postal"
@@ -120,6 +156,7 @@ const Step = () => {
             required
             error={postalCodeError}
             value={postalCode}
+            onBlur={() => setPostalCodeTouched(true)}
             onChange={(e) => setPostalCode(e.target.value)}
           />
         </div>
@@ -130,6 +167,7 @@ const Step = () => {
           <FileField
             id="official-identification"
             label="Identificación oficial"
+            description="Unicamente INE o Pasaporte"
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
@@ -144,7 +182,8 @@ const Step = () => {
         <div className="col-span-full">
           <FileField
             id="cover"
-            label="Caratula"
+            label="Estado de Cuenta Bancario"
+            description="Antigüedad no mayor a 3 meses."
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
@@ -160,6 +199,7 @@ const Step = () => {
           <FileField
             id="payroll-receipt"
             label="Recibo de Nomina"
+            description="Antigüedad no mayor a 1 mes."
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
