@@ -16,6 +16,7 @@ interface InputBaseProps {
    * When set to `string`, the input will be marked as errored and the string will be displayed as error message.
    */
   error?: boolean | string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 interface InputWithTrailingDropdownProps extends InputBaseProps {
@@ -47,6 +48,7 @@ const Input = ({
   placeholder,
   type = "text",
   prefix,
+  onBlur,
   ...trailingProps
 }: InputProps) => {
   const passwordPaddingRight = type === "password" ? "pr-14" : undefined;
@@ -81,6 +83,7 @@ const Input = ({
           id={id}
           required={required}
           maxLength={maxLength}
+          onBlur={onBlur}
           value={value || ""}
           onChange={onChange}
           className={`block w-full rounded-md border-0 py-1.5 ${
