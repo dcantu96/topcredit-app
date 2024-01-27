@@ -9,11 +9,17 @@ import {
   editablePostalCodeFieldState,
   editableCountryFieldState,
   editableRFCFieldState,
+  editableSalaryFrequencyFieldState,
+  editableSalaryFieldState,
 } from "./atoms";
 import { apiSelector } from "components/providers/api/atoms";
 import { myProfileState } from "components/providers/auth/atoms";
 
 export const useCreditScreenSubmitActions = () => {
+  const api = useRecoilValue(apiSelector);
+  const profile = useRecoilValue(myProfileState);
+
+  // general data fields
   const employeeNumber = useRecoilValue(editableEmployeeNumberFieldState);
   const bankAccountNumber = useRecoilValue(editableBankAccountNumberFieldState);
   const addressLineOne = useRecoilValue(editableAddressLineOneFieldState);
@@ -23,8 +29,8 @@ export const useCreditScreenSubmitActions = () => {
   const country = useRecoilValue(editableCountryFieldState);
   const rfc = useRecoilValue(editableRFCFieldState);
   const postalCode = useRecoilValue(editablePostalCodeFieldState);
-  const api = useRecoilValue(apiSelector);
-  const profile = useRecoilValue(myProfileState);
+  const salaryFrequency = useRecoilValue(editableSalaryFrequencyFieldState);
+  const salary = useRecoilValue(editableSalaryFieldState);
 
   const submit = async () => {
     try {
@@ -39,6 +45,8 @@ export const useCreditScreenSubmitActions = () => {
         country,
         rfc,
         "postal-code": postalCode,
+        "salary-frequency": salaryFrequency,
+        salary,
       });
     } catch (error) {
       console.error(error);

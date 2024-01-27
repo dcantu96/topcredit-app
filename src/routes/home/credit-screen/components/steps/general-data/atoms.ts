@@ -4,7 +4,93 @@ import {
   bankAccountNumberFieldValidation,
   postalCodeFieldValidation,
   rfcFieldValidation,
+  salaryFieldValidation,
+  salaryFrequencyFieldValidation,
 } from "./validations";
+
+export const readonlySalaryFrequencyFieldSelector = selector<string | null>({
+  key: "readonlySalaryFrequencyField",
+  get: async ({ get }) => {
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.salaryFrequency?.toString() ?? null;
+  },
+});
+
+export const editableSalaryFrequencyFieldState = atom<string>({
+  key: "editableSalaryFrequencyField",
+  default: selector<string>({
+    key: "editableSalaryFrequencyFieldDefault",
+    get: ({ get }) => {
+      const readOnlySalaryFrequency = get(readonlySalaryFrequencyFieldSelector);
+      return readOnlySalaryFrequency ?? "";
+    },
+  }),
+});
+
+export const salaryFrequencyFieldTouchedState = atom<boolean>({
+  key: "salaryFrequencyFieldTouched",
+  default: false,
+});
+
+export const salaryFrequencyFieldErrorsSelector = selector<string | false>({
+  key: "salaryFrequencyFieldErrors",
+  get: ({ get }) => {
+    const readOnlySalaryFrequency = get(readonlySalaryFrequencyFieldSelector);
+    const touched = get(salaryFrequencyFieldTouchedState);
+    if (readOnlySalaryFrequency && !touched) {
+      const error = salaryFrequencyFieldValidation(readOnlySalaryFrequency);
+      if (error) return error;
+    }
+    if (!touched && !readOnlySalaryFrequency) return false;
+
+    const editableSalaryFrequency = get(editableSalaryFrequencyFieldState);
+    const error = salaryFrequencyFieldValidation(editableSalaryFrequency);
+    if (error) return error;
+    return false;
+  },
+});
+
+export const readonlySalaryFieldSelector = selector<string | null>({
+  key: "readonlySalaryField",
+  get: async ({ get }) => {
+    const generalData = get(userGeneralDataQuerySelector);
+    return generalData?.salary?.toString() ?? null;
+  },
+});
+
+export const editableSalaryFieldState = atom<string>({
+  key: "editableSalaryField",
+  default: selector<string>({
+    key: "editableSalaryFieldDefault",
+    get: ({ get }) => {
+      const readOnlySalary = get(readonlySalaryFieldSelector);
+      return readOnlySalary ?? "";
+    },
+  }),
+});
+
+export const salaryFieldTouchedState = atom<boolean>({
+  key: "salaryFieldTouched",
+  default: false,
+});
+
+export const salaryFieldErrorsSelector = selector<string | false>({
+  key: "salaryFieldErrors",
+  get: ({ get }) => {
+    const readOnlySalary = get(readonlySalaryFieldSelector);
+    const touched = get(salaryFieldTouchedState);
+    if (readOnlySalary && !touched) {
+      const error = salaryFieldValidation(readOnlySalary);
+      if (error) return error;
+    }
+    if (!touched && !readOnlySalary) return false;
+
+    const editableSalary = get(editableSalaryFieldState);
+    const error = salaryFieldValidation(editableSalary);
+    if (error) return error;
+    return false;
+  },
+});
 
 export const readonlyEmployeeNumberFieldSelector = selector<string | null>({
   key: "readonlyEmployeeNumberField",

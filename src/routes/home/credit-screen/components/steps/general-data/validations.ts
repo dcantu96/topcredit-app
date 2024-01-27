@@ -23,3 +23,16 @@ export const rfcFieldValidation = (text: string) => {
 
   return "El RFC no es válido";
 };
+
+export const salaryFrequencyFieldValidation = (text: string) => {
+  if (text.length === 0) return "La frecuencia de pago no puede estar vacía";
+  if (!text.match(/\D/) || text.length > 2)
+    return "Frecuencia de pago no válida";
+  return undefined;
+};
+
+export const salaryFieldValidation = (text: string) => {
+  if (text.length === 0) return "El salario no puede estar vacío";
+  if (!text.match(/^\d+(?:\.\d+)?$/)) return "El salario no es válido";
+  return undefined;
+};

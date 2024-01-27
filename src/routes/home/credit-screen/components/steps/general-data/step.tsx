@@ -17,6 +17,12 @@ import {
   RFCFieldTouchedState,
   RFCFieldErrorsSelector,
   postalCodeFieldTouchedState,
+  editableSalaryFrequencyFieldState,
+  salaryFrequencyFieldTouchedState,
+  editableSalaryFieldState,
+  salaryFieldTouchedState,
+  salaryFieldErrorsSelector,
+  salaryFrequencyFieldErrorsSelector,
 } from "./atoms";
 import Select from "components/atoms/select";
 
@@ -54,11 +60,31 @@ const Step = () => {
   );
   const [rfc, setRfc] = useRecoilState(editableRFCFieldState);
   const [country, setCountry] = useRecoilState(editableCityFieldState);
+  const [salaryFrequency, setSalaryFrequency] = useRecoilState(
+    editableSalaryFrequencyFieldState
+  );
+  const setSalaryFrequencyTouched = useSetRecoilState(
+    salaryFrequencyFieldTouchedState
+  );
+  const salaryFieldError = useRecoilValue(salaryFieldErrorsSelector);
+  const salaryFrequencyFieldError = useRecoilValue(
+    salaryFrequencyFieldErrorsSelector
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     submit();
   };
+
+  const [salary, setSalary] = useRecoilState(editableSalaryFieldState);
+  const setSalaryTouched = useSetRecoilState(salaryFieldTouchedState);
+
+  const salaryFrequencyOptions = [
+    { value: "Q", label: "Quincenal" },
+    { value: "M", label: "Mensual" },
+  ];
+
+  console.log(salaryFrequency);
 
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
@@ -67,6 +93,40 @@ const Step = () => {
         Necesitamos algunos datos para poder procesar tu solicitud.
       </p>
       <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="col-span-full">
+          <div className="flex items-end gap-2">
+            <Input
+              id="salary"
+              label="¿Como percibes tu sueldo?"
+              required
+              value={salary}
+              prefix="$"
+              type="money"
+              error={salaryFieldError || salaryFrequencyFieldError}
+              trailingDropdownLabel="MXN"
+              trailingDropdownOptions={["MXN"]}
+              trailingDropdownId="salary-currency"
+              onBlur={() => setSalaryTouched(true)}
+              onChange={(e) => setSalary(e.target.value)}
+            />
+            {salaryFrequencyOptions.map((option) => (
+              <Button
+                key={option.value}
+                type="button"
+                size="sm"
+                status={
+                  salaryFrequency === option.value ? "primary" : "secondary"
+                }
+                onClick={() => {
+                  setSalaryFrequency(option.value);
+                  setSalaryFrequencyTouched(true);
+                }}
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+        </div>
         <div className="sm:col-span-4">
           <Input
             id="payroll"
@@ -168,6 +228,22 @@ const Step = () => {
             id="official-identification"
             label="Identificación oficial"
             description="Unicamente INE o Pasaporte"
+            handleFile={(e) => {
+              if ("dataTransfer" in e && e.dataTransfer.files) {
+                // Handle drag and drop files
+                console.log(e.dataTransfer.files);
+              } else if ("target" in e && "files" in e.target) {
+                // Handle files selected through file input
+                console.log(e.target.files);
+              }
+            }}
+          />
+        </div>
+        <div className="col-span-full">
+          <FileField
+            id="proof-of-address"
+            label="Comprobante de Domicilio"
+            description="Antigüedad no mayor a 3 meses."
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
