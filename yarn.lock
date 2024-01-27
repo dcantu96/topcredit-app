@@ -1271,6 +1271,11 @@ chokidar@^3.5.3:
   optionalDependencies:
     fsevents "~2.3.2"
 
+clabe-validator@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/clabe-validator/-/clabe-validator-3.0.0.tgz#b621e0fbe3ae513ad06e5e9655e863d6422669f1"
+  integrity sha512-ReqpYpkHMsnXGFEL678HpEaBSOWH9GzfYYh7v2ePKGBGKqMiJYodWDiBwWtWMZCHV9GghSwTeRjYlMQQJ1DLDA==
+
 client-only@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/client-only/-/client-only-0.0.1.tgz#38bba5d403c41ab150bff64a95c85013cf73bca1"
@@ -3792,6 +3797,11 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+validate-rfc@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/validate-rfc/-/validate-rfc-2.0.3.tgz#fc91a02ab0d7f513a25ed4f53d9d6a69a38ad04f"
+  integrity sha512-WS7CyAz/sfzx6DryOPZvprqz7uxHcQh1yhzDunNX1vidSmprfN7Og66VRpCyU21U82Vzkof5/bOIOKan3dEXLA==
 
 vite-node@1.1.0:
   version "1.1.0"
