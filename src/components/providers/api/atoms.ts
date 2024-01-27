@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import Kitsu from "kitsu";
 import { selector } from "recoil";
 import { authState } from "../auth/atoms";
