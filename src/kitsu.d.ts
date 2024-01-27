@@ -1,3 +1,48 @@
+type HeadersType = Record<string, string>;
+
+interface KitsuPageParams {
+  limit?: number;
+  offset?: number;
+  number?: number;
+  size?: number;
+  before?: string;
+  after?: string;
+}
+
+interface KitsuFilterParams {
+  // Define a more specific structure if possible
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | string[]
+    | number[]
+    | boolean[]
+    | KitsuFilterParams;
+}
+
+interface KitsuFieldsParams {
+  [resource: string]: string;
+}
+
+interface KitsuParams {
+  fields?: KitsuFieldsParams;
+  filter?: KitsuFilterParams;
+  include?: string;
+  sort?: string;
+  page?: KitsuPageParams;
+}
+
+interface KitsuConfig {
+  headers?: HeadersType;
+  params?: KitsuParams;
+  axiosOptions?: Record<string, unknown>;
+}
+
+type KitsuApiResponse<T> = T extends { fields: infer F }
+  ? { data: Pick<T, F & keyof T> }
+  : { data: T };
+
 declare module "kitsu" {
   /**
    * Creates a new `kitsu` instance
@@ -227,27 +272,10 @@ declare module "kitsu" {
      *     err.response
      *   })
      */
-    get(
+    get<T = unknown>(
       model: string,
-      config?: {
-        headers?: any;
-        params?: {
-          fields?: any;
-          filter?: any;
-          include?: string;
-          sort?: string;
-          page?: {
-            limit?: number;
-            offset?: number;
-            number?: number;
-            size?: number;
-            before?: string;
-            after?: string;
-          };
-        };
-        axiosOptions?: any;
-      }
-    ): any;
+      config?: KitsuConfig
+    ): Promise<KitsuApiResponse<T>>;
     /**
      * Update a resource (alias `update`)
      *
