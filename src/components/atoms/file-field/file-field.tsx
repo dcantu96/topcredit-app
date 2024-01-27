@@ -5,10 +5,18 @@ interface FileFieldProps {
     e: React.DragEvent<HTMLDivElement> | React.ChangeEvent<HTMLInputElement>
   ) => void;
   label: string;
+  description?: string;
   id: string;
+  error?: boolean | string;
 }
 
-const FileField = ({ handleFile, label, id }: FileFieldProps) => {
+const FileField = ({
+  handleFile,
+  label,
+  id,
+  description,
+  error,
+}: FileFieldProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
 
@@ -46,6 +54,9 @@ const FileField = ({ handleFile, label, id }: FileFieldProps) => {
       >
         {label}
       </label>
+      {description && (
+        <p className="text-xs leading-3 text-gray-600">{description}</p>
+      )}
       <div
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -54,7 +65,11 @@ const FileField = ({ handleFile, label, id }: FileFieldProps) => {
         onDrop={handleDrop}
         aria-pressed={"false"}
         className={`mt-2 flex justify-center rounded-lg border border-dashed cursor-pointer px-6 py-10 aria-pressed:border-indigo-600 ${
-          isDragActive ? "border-indigo-600" : "border-gray-900/25"
+          isDragActive
+            ? "border-indigo-600"
+            : error
+              ? "border-rose-600"
+              : "border-gray-900/25"
         }`}
       >
         <div className="text-center pointer-events-none">
@@ -71,7 +86,9 @@ const FileField = ({ handleFile, label, id }: FileFieldProps) => {
             />
           </svg>
 
-          <div className="mt-4 flex text-sm leading-6 text-gray-600">
+          <div
+            className={` mt-4 flex text-sm leading-6 text-gray-600 justify-center`}
+          >
             <span className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
               <span>Sube un archivo</span>
             </span>
@@ -90,6 +107,9 @@ const FileField = ({ handleFile, label, id }: FileFieldProps) => {
           </p>
         </div>
       </div>
+      {typeof error === "string" && (
+        <p className="leading-6 text-sm text-rose-600">{error}</p>
+      )}
     </>
   );
 };
