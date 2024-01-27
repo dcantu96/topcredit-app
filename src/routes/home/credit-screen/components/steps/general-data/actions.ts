@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import {
   editableEmployeeNumberFieldState,
   editableBankAccountNumberFieldState,
@@ -7,10 +7,11 @@ import {
   editableCityFieldState,
   editableStateFieldState,
   editablePostalCodeFieldState,
-  postalCodeFieldTouchedState,
-  bankAccountNumberFieldTouchedState,
-  employeeNumberFieldTouchedState,
+  editableCountryFieldState,
+  editableRFCFieldState,
 } from "./atoms";
+import { apiSelector } from "components/providers/api/atoms";
+import { myProfileState } from "components/providers/auth/atoms";
 
 export const useCreditScreenSubmitActions = () => {
   const employeeNumber = useRecoilValue(editableEmployeeNumberFieldState);
@@ -19,33 +20,29 @@ export const useCreditScreenSubmitActions = () => {
   const addressLineTwo = useRecoilValue(editableAddressLineTwoFieldState);
   const city = useRecoilValue(editableCityFieldState);
   const state = useRecoilValue(editableStateFieldState);
+  const country = useRecoilValue(editableCountryFieldState);
+  const rfc = useRecoilValue(editableRFCFieldState);
   const postalCode = useRecoilValue(editablePostalCodeFieldState);
-  const setPostalCodeTouched = useSetRecoilState(postalCodeFieldTouchedState);
-  const setBankAccountNumberTouched = useSetRecoilState(
-    bankAccountNumberFieldTouchedState
-  );
-  const setEmployeeNumberTouched = useSetRecoilState(
-    employeeNumberFieldTouchedState
-  );
+  const api = useRecoilValue(apiSelector);
+  const profile = useRecoilValue(myProfileState);
 
-  const touchFields = () => {
-    setPostalCodeTouched(true);
-    setBankAccountNumberTouched(true);
-    setEmployeeNumberTouched(true);
-  };
-
-  const submit = () => {
-    touchFields();
-
-    console.log("submit", {
-      employeeNumber,
-      bankAccountNumber,
-      addressLineOne,
-      addressLineTwo,
-      city,
-      state,
-      postalCode,
-    });
+  const submit = async () => {
+    try {
+      await api.patch("users", {
+        id: profile.id,
+        "employee-number": employeeNumber,
+        "bank-account-number": bankAccountNumber,
+        "address-line-one": addressLineOne,
+        "address-line-two": addressLineTwo,
+        city,
+        state,
+        country,
+        rfc,
+        "postal-code": postalCode,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return {
