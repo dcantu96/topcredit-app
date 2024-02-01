@@ -1,21 +1,30 @@
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { requestSelector } from "./atoms";
+import { basicDetailsSelector } from "./atoms";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import Button from "components/atoms/button";
 import FileViewer from "components/atoms/file-viewer/file-viewer";
+import { useRequestActions } from "./actions";
+
+const MXNFormat = new Intl.NumberFormat("es-MX", {
+  style: "currency",
+  currency: "MXN",
+});
 
 const ShowRequest = () => {
   const { id } = useParams();
-  if (!id) throw new Error("Missing id param");
-  const request = useRecoilValue(requestSelector(id));
+  if (!id || Number.isNaN(id)) throw new Error("Missing id param");
+  const user = useRecoilValue(basicDetailsSelector(Number(id)));
+  const { approveUser, denyUser } = useRequestActions();
+
+  if (!user) return null;
 
   return (
     <>
       <div className="lg:flex lg:items-center lg:justify-between mb-4">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-            {request.firstName} {request.lastName}
+            {user.firstName} {user.lastName}
           </h2>
           <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
             <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -57,17 +66,17 @@ const ShowRequest = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              {new Date(request.createdAt).toLocaleDateString()}
+              {new Date(user.createdAt).toLocaleDateString()}
             </div>
           </div>
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="hidden sm:flex gap-2">
-            <Button>
+            <Button onClick={approveUser}>
               <CheckIcon className="h-5 w-5 text-white mr-1.5" />
               Aprobar
             </Button>
-            <Button status="secondary">
+            <Button status="secondary" onClick={denyUser}>
               <XMarkIcon className="h-5 w-5 mr-1.5" />
               Rechazar
             </Button>
@@ -76,57 +85,60 @@ const ShowRequest = () => {
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">
+          <label className="text-gray-500 font-medium text-sm">
             Numero de Nomina
           </label>
-          <p className="text-gray-900 font-semibold">
-            {request.employeeNumber}
+          <p className="text-gray-900 font-medium">{user.employeeNumber}</p>
+        </div>
+        <div className="col-span-1">
+          <label className="text-gray-500 font-medium text-sm">RFC</label>
+          <p className="text-gray-900 font-medium">{user.rfc}</p>
+        </div>
+        <div className="col-span-1">
+          <label className="text-gray-500 font-medium text-sm">Ingresos</label>
+          <p className="text-gray-900 font-medium">
+            {user.salary ? MXNFormat.format(user.salary) : "--"} MXN{" "}
+            {user.salaryFrequency === "Q" ? "Quincenales" : "Mensuales"}
           </p>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">
+          <label className="text-gray-500 font-medium text-sm">
             CLABE Interbancaria
           </label>
-          <p className="text-gray-900 font-semibold">
-            {request.bankAccountNumber}
-          </p>
+          <p className="text-gray-900 font-medium">{user.bankAccountNumber}</p>
         </div>
         <div className="col-span-2">
           <h1 className="text-gray-900 font-bold text-xl">Domicilio</h1>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">
+          <label className="text-gray-500 font-medium text-sm">
             Calle y numero
           </label>
-          <p className="text-gray-900 font-semibold">
-            {request.addressLineOne}
-          </p>
+          <p className="text-gray-900 font-medium">{user.addressLineOne}</p>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">
+          <label className="text-gray-500 font-medium text-sm">
             Numero interior
           </label>
-          <p className="text-gray-900 font-semibold">
-            {request.addressLineTwo}
-          </p>
+          <p className="text-gray-900 font-medium">{user.addressLineTwo}</p>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">Ciudad</label>
-          <p className="text-gray-900 font-semibold">{request.city}</p>
+          <label className="text-gray-500 font-medium text-sm">Ciudad</label>
+          <p className="text-gray-900 font-medium">{user.city}</p>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">Estado</label>
-          <p className="text-gray-900 font-semibold">{request.state}</p>
+          <label className="text-gray-500 font-medium text-sm">Estado</label>
+          <p className="text-gray-900 font-medium">{user.state}</p>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">País</label>
-          <p className="text-gray-900 font-semibold">{request.country}</p>
+          <label className="text-gray-500 font-medium text-sm">País</label>
+          <p className="text-gray-900 font-medium">{user.country}</p>
         </div>
         <div className="col-span-1">
-          <label className="text-gray-500 font-semibold text-sm">
+          <label className="text-gray-500 font-medium text-sm">
             Código Postal
           </label>
-          <p className="text-gray-900 font-semibold">{request.postalCode}</p>
+          <p className="text-gray-900 font-medium">{user.postalCode}</p>
         </div>
         <div className="col-span-2">
           <h1 className="text-gray-900 font-bold text-xl">Documentos</h1>
@@ -142,7 +154,16 @@ const ShowRequest = () => {
 
         <div className="col-span-1">
           <FileViewer
-            label="Caratula"
+            label="Comprobante de Domicilio"
+            fileName="Document2.pdf"
+            fileDate="Sat Feb 25"
+            fileSize="1.9MB"
+          />
+        </div>
+
+        <div className="col-span-1">
+          <FileViewer
+            label="Estado de Cuenta"
             fileName="Document2.pdf"
             fileDate="Sat Feb 25"
             fileSize="1.9MB"
