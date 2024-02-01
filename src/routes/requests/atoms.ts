@@ -1,55 +1,68 @@
+import { apiSelector } from "components/providers/api/atoms";
 import { selector, selectorFamily } from "recoil";
+import { User } from "src/schema.types";
 
-export const requestsSelectorQuery = selector({
-  key: "requestsSelectorQuery",
-  get: async () => {
-    // const { data } = await getRequests();
-    return [
-      {
-        id: 1,
-        name: "Juan Perez",
-        employeeNumber: "123456",
-        state: "NAY",
-        createdAt: "2021-08-10T18:02:00.000Z",
+type BasicDetailsTableResponse = Pick<
+  User,
+  | "createdAt"
+  | "email"
+  | "employeeNumber"
+  | "firstName"
+  | "id"
+  | "lastName"
+  | "rfc"
+  | "salary"
+  | "salaryFrequency"
+  | "state"
+>;
+
+export const basicDetailsListSelectorQuery = selector<
+  ReadonlyMap<number, BasicDetailsTableResponse>
+>({
+  key: "basicDetailsListSelectorQuery",
+  get: async ({ get }) => {
+    const api = get(apiSelector);
+    const { data } = await api.get<BasicDetailsTableResponse[]>("users", {
+      params: {
+        fields: {
+          users:
+            "employeeNumber,rfc,salary,salaryFrequency,firstName,lastName,email,createdAt,state",
+        },
+        filter: {
+          byRole: "",
+        },
       },
-      {
-        id: 2,
-        name: "Jorge Lopez",
-        employeeNumber: "93434",
-        state: "NL",
-        createdAt: "2024-01-10T18:02:00.000Z",
-      },
-      {
-        id: 3,
-        name: "Maria Hernandez",
-        employeeNumber: "39433",
-        state: "AGU",
-        createdAt: "2024-01-16T18:02:00.000Z",
-      },
-    ].sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
+    });
+
+    const basicDetailsMap = new Map<number, BasicDetailsTableResponse>();
+    for (const details of data) {
+      basicDetailsMap.set(details.id, details);
+    }
+    return basicDetailsMap;
   },
 });
 
-export const requestSelector = selectorFamily({
+export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
+  {
+    key: "basicDetailsSortedSelector",
+    get: ({ get }) => {
+      const basicDetailsMap = get(basicDetailsListSelectorQuery);
+      const basicDetailsList = Array.from(basicDetailsMap.values());
+      return basicDetailsList.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    },
+  }
+);
+
+export const basicDetailsSelector = selectorFamily<User | undefined, number>({
   key: "requestSelector",
-  get: () => async () => {
-    // const { data } = await getRequest(id);
-    return {
-      id: 1,
-      firstName: "Juan",
-      lastName: "Perez",
-      employeeNumber: "123456",
-      state: "NAY",
-      city: "Tepic",
-      country: "Mexico",
-      createdAt: "2021-08-10T18:02:00.000Z",
-      addressLineOne: "Calle 1",
-      addressLineTwo: "Torre 4 1206",
-      postalCode: "12345",
-      bankAccountNumber: "123456789012345678",
-    };
-  },
+  get:
+    (id) =>
+    async ({ get }) => {
+      const api = get(apiSelector);
+      const { data } = await api.get<User>(`users/${id}`);
+      return data;
+    },
 });
