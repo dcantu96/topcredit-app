@@ -1,10 +1,8 @@
 import { atom, selector } from "recoil";
+import type { MeResponse, TokenResponse } from "src/schema.types";
 
 interface AuthState {
   email: string;
-  /**
-   * Bearer token
-   */
   token: string;
   createdAt: number;
   expiresIn: number;
@@ -142,15 +140,7 @@ export const isLoggedInState = selector({
   },
 });
 
-interface UserInfo {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role?: string;
-}
-
-export const myProfileState = selector<UserInfo>({
+export const myProfileState = selector<MeResponse>({
   key: "myProfileState",
   get: async ({ get }) => {
     const auth = get(authState);
@@ -186,16 +176,9 @@ export const myProfileState = selector<UserInfo>({
   },
 });
 
-interface AuthResponse {
-  token_type: string;
-  access_token: string;
-  created_at: number;
-  expires_in: number;
-}
-
 const isValidAuthResponseObject = (
   authJson: unknown
-): authJson is AuthResponse => {
+): authJson is TokenResponse => {
   return (
     typeof authJson === "object" &&
     authJson !== null &&
