@@ -1,46 +1,46 @@
-import { useState } from "react";
+import { useState } from "react"
 
-import Input from "components/atoms/input";
-import Button from "components/atoms/button";
-import ButtonLink from "components/atoms/button-link";
-import { withoutAuth } from "components/providers/auth/withoutAuth";
+import Input from "components/atoms/input"
+import Button from "components/atoms/button"
+import ButtonLink from "components/atoms/button-link"
+import { withoutAuth } from "components/providers/auth/withoutAuth"
 
-import logo from "../../images/logo.png";
-import { useApi } from "components/providers/api/useApi";
-import { useRecoilValue } from "recoil";
-import { authActions } from "components/providers/auth/atoms";
-import { Switch } from "@headlessui/react";
-import { useFormErrors } from "hooks/useFormErrors";
+import logo from "../../images/logo.png"
+import { useApi } from "components/providers/api/useApi"
+import { useRecoilValue } from "recoil"
+import { authActions } from "components/providers/auth/atoms"
+import { Switch } from "@headlessui/react"
+import { useFormErrors } from "hooks/useFormErrors"
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(" ")
 }
 
 const Register = () => {
-  const [email, setEmail] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [agreed, setAgreed] = useState(false);
-  const { errors, handleErrors, clearErrors } = useFormErrors();
-  const { login } = useRecoilValue(authActions);
+  const [email, setEmail] = useState<string>("")
+  const [firstName, setFirstName] = useState<string>("")
+  const [lastName, setLastName] = useState<string>("")
+  const [phone, setPhone] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [confirmPassword, setConfirmPassword] = useState<string>("")
+  const [agreed, setAgreed] = useState(false)
+  const { errors, handleErrors, clearErrors } = useFormErrors()
+  const { login } = useRecoilValue(authActions)
 
-  const api = useApi();
+  const api = useApi()
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      clearErrors();
+      clearErrors()
       await api.create("user", {
         email,
         "first-name": firstName,
         "last-name": lastName,
         phone,
         password,
-      });
-      await login(email, password);
+      })
+      await login(email, password)
     } catch (error) {
       handleErrors(error, [
         "email",
@@ -48,9 +48,9 @@ const Register = () => {
         "last-name",
         "phone",
         "password",
-      ]);
+      ])
     }
-  };
+  }
 
   return (
     <>
@@ -157,7 +157,7 @@ const Register = () => {
                   onChange={setAgreed}
                   className={classNames(
                     agreed ? "bg-indigo-600" : "bg-gray-200",
-                    "flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    "flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
                   )}
                 >
                   <span className="sr-only">
@@ -167,7 +167,7 @@ const Register = () => {
                     aria-hidden="true"
                     className={classNames(
                       agreed ? "translate-x-3.5" : "translate-x-0",
-                      "h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out"
+                      "h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out",
                     )}
                   />
                 </Switch>
@@ -199,7 +199,7 @@ const Register = () => {
         </div>
       </footer>
     </>
-  );
-};
+  )
+}
 
-export default withoutAuth(Register);
+export default withoutAuth(Register)

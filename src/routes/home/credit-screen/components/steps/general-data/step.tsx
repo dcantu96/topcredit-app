@@ -1,7 +1,7 @@
-import Input from "components/atoms/input";
-import FileField from "components/atoms/file-field";
-import Button from "components/atoms/button";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import Input from "components/atoms/input"
+import FileField from "components/atoms/file-field"
+import Button from "components/atoms/button"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   editableAddressLineOneFieldState,
   editableAddressLineTwoFieldState,
@@ -23,68 +23,68 @@ import {
   salaryFieldTouchedState,
   salaryFieldErrorsSelector,
   salaryFrequencyFieldErrorsSelector,
-} from "./atoms";
-import Select from "components/atoms/select";
+} from "./atoms"
+import Select from "components/atoms/select"
 
-import { useCreditScreenSubmitActions } from "./actions";
-import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../../constants";
+import { useCreditScreenSubmitActions } from "./actions"
+import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../../constants"
 
 const Step = () => {
   const setBankAccountNumberTouched = useSetRecoilState(
-    bankAccountNumberFieldTouchedState
-  );
-  const setPostalCodeTouched = useSetRecoilState(postalCodeFieldTouchedState);
-  const setRFCTouched = useSetRecoilState(RFCFieldTouchedState);
-  const rfcError = useRecoilValue(RFCFieldErrorsSelector);
-  const { submit } = useCreditScreenSubmitActions();
-  const postalCodeError = useRecoilValue(postalCodeFieldErrorsSelector);
+    bankAccountNumberFieldTouchedState,
+  )
+  const setPostalCodeTouched = useSetRecoilState(postalCodeFieldTouchedState)
+  const setRFCTouched = useSetRecoilState(RFCFieldTouchedState)
+  const rfcError = useRecoilValue(RFCFieldErrorsSelector)
+  const { submit } = useCreditScreenSubmitActions()
+  const postalCodeError = useRecoilValue(postalCodeFieldErrorsSelector)
   const bankAccountNumberError = useRecoilValue(
-    bankAccountNumberFieldErrorsSelector
-  );
+    bankAccountNumberFieldErrorsSelector,
+  )
   const [employeeNumber, setEmployeeNumber] = useRecoilState(
-    editableEmployeeNumberFieldState
-  );
+    editableEmployeeNumberFieldState,
+  )
   const [bankAccountNumber, setBankAccountNumber] = useRecoilState(
-    editableBankAccountNumberFieldState
-  );
+    editableBankAccountNumberFieldState,
+  )
   const [addressLineOne, setAddressLineOne] = useRecoilState(
-    editableAddressLineOneFieldState
-  );
+    editableAddressLineOneFieldState,
+  )
   const [addressLineTwo, setAddressLineTwo] = useRecoilState(
-    editableAddressLineTwoFieldState
-  );
-  const [city, setCity] = useRecoilState(editableCityFieldState);
-  const [state, setState] = useRecoilState(editableStateFieldState);
+    editableAddressLineTwoFieldState,
+  )
+  const [city, setCity] = useRecoilState(editableCityFieldState)
+  const [state, setState] = useRecoilState(editableStateFieldState)
   const [postalCode, setPostalCode] = useRecoilState(
-    editablePostalCodeFieldState
-  );
-  const [rfc, setRfc] = useRecoilState(editableRFCFieldState);
-  const [country, setCountry] = useRecoilState(editableCityFieldState);
+    editablePostalCodeFieldState,
+  )
+  const [rfc, setRfc] = useRecoilState(editableRFCFieldState)
+  const [country, setCountry] = useRecoilState(editableCityFieldState)
   const [salaryFrequency, setSalaryFrequency] = useRecoilState(
-    editableSalaryFrequencyFieldState
-  );
+    editableSalaryFrequencyFieldState,
+  )
   const setSalaryFrequencyTouched = useSetRecoilState(
-    salaryFrequencyFieldTouchedState
-  );
-  const salaryFieldError = useRecoilValue(salaryFieldErrorsSelector);
+    salaryFrequencyFieldTouchedState,
+  )
+  const salaryFieldError = useRecoilValue(salaryFieldErrorsSelector)
   const salaryFrequencyFieldError = useRecoilValue(
-    salaryFrequencyFieldErrorsSelector
-  );
+    salaryFrequencyFieldErrorsSelector,
+  )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    submit();
-  };
+    e.preventDefault()
+    submit()
+  }
 
-  const [salary, setSalary] = useRecoilState(editableSalaryFieldState);
-  const setSalaryTouched = useSetRecoilState(salaryFieldTouchedState);
+  const [salary, setSalary] = useRecoilState(editableSalaryFieldState)
+  const setSalaryTouched = useSetRecoilState(salaryFieldTouchedState)
 
   const salaryFrequencyOptions = [
     { value: "Q", label: "Quincenal" },
     { value: "M", label: "Mensual" },
-  ];
+  ]
 
-  console.log(salaryFrequency);
+  console.log(salaryFrequency)
 
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
@@ -118,8 +118,8 @@ const Step = () => {
                   salaryFrequency === option.value ? "primary" : "secondary"
                 }
                 onClick={() => {
-                  setSalaryFrequency(option.value);
-                  setSalaryFrequencyTouched(true);
+                  setSalaryFrequency(option.value)
+                  setSalaryFrequencyTouched(true)
                 }}
               >
                 {option.label}
@@ -231,10 +231,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -247,10 +247,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -263,10 +263,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -279,10 +279,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -297,7 +297,7 @@ const Step = () => {
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default Step;
+export default Step

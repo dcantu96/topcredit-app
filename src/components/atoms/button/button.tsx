@@ -1,11 +1,11 @@
-import { forwardRef, ComponentProps } from "react";
+import { forwardRef, ComponentProps } from "react"
 
 const Button = forwardRef<
   HTMLButtonElement,
   Omit<ComponentProps<"button">, "className"> & {
-    fullWidth?: boolean;
-    status?: "primary" | "secondary" | "dark";
-    size?: "sm" | "md" | "lg";
+    fullWidth?: boolean
+    status?: "primary" | "secondary" | "dark"
+    size?: "sm" | "md" | "lg"
   }
 >(({ children, fullWidth, status, size, ...rest }, ref) => {
   const statusClass =
@@ -13,10 +13,10 @@ const Button = forwardRef<
       ? "btn-dark"
       : status === "secondary"
         ? "btn-secondary"
-        : "btn-primary";
+        : "btn-primary"
 
   const sizeClass =
-    size === "sm" ? "btn-small" : size === "lg" ? "btn-large" : "btn-medium";
+    size === "sm" ? "btn-small" : size === "lg" ? "btn-large" : "btn-medium"
 
   return (
     <button
@@ -26,7 +26,7 @@ const Button = forwardRef<
     >
       {children}
     </button>
-  );
-});
+  )
+})
 
-export default Button;
+export default Button

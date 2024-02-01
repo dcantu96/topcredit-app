@@ -1,12 +1,12 @@
 export const itemPositionState = (
   position: number,
-  currentStep: number
+  currentStep: number,
 ): "current" | "completed" | "next" => {
   if (position === currentStep) {
-    return "current";
+    return "current"
   } else if (position < currentStep) {
-    return "completed";
+    return "completed"
   } else {
-    return "next";
+    return "next"
   }
-};
+}

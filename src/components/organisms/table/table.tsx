@@ -1,5 +1,5 @@
 interface ITable {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 const Table = ({ children }: ITable) => {
@@ -11,16 +11,16 @@ const Table = ({ children }: ITable) => {
         </table>
       </div>
     </div>
-  );
-};
+  )
+}
 
 interface ITableHeader {
-  columns?: string[];
+  columns?: string[]
 }
 
 const Header = ({ columns }: ITableHeader) => {
   const rowPadding = (index: number) =>
-    columns?.length === index + 1 ? "pr-8" : index === 0 ? "pl-8" : "";
+    columns?.length === index + 1 ? "pr-8" : index === 0 ? "pl-8" : ""
   return (
     <thead>
       <tr>
@@ -28,7 +28,7 @@ const Header = ({ columns }: ITableHeader) => {
           <th
             key={column}
             className={`border-b font-medium p-4 pt-0 pb-3 text-slate-400 text-left ${rowPadding(
-              index
+              index,
             )}`}
           >
             {column}
@@ -36,9 +36,9 @@ const Header = ({ columns }: ITableHeader) => {
         ))}
       </tr>
     </thead>
-  );
-};
+  )
+}
 
-Table.Header = Header;
+Table.Header = Header
 
-export { Table };
+export { Table }

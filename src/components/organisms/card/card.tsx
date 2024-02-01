@@ -4,19 +4,19 @@ import {
   RefAttributes,
   ForwardRefExoticComponent,
   SVGProps,
-} from "react";
+} from "react"
 
 export interface CardProps
   extends Omit<ComponentProps<"div">, "className" | "children"> {
-  title: string;
-  description: string;
+  title: string
+  description: string
   Icon: ForwardRefExoticComponent<
     Omit<SVGProps<SVGSVGElement>, "ref"> & {
-      title?: string | undefined;
-      titleId?: string | undefined;
+      title?: string | undefined
+      titleId?: string | undefined
     } & RefAttributes<SVGSVGElement>
-  >;
-  href: string;
+  >
+  href: string
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -47,8 +47,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
           </div>
         </div>
       </div>
-    );
-  }
-);
+    )
+  },
+)
 
-export default Card;
+export default Card

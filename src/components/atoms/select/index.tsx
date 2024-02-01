@@ -1,20 +1,20 @@
 interface SelectProps {
-  id: string;
-  label: string;
-  required?: boolean;
-  autoComplete?: string;
-  defaultValue?: string | number | readonly string[];
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  value: string | number | readonly string[];
+  id: string
+  label: string
+  required?: boolean
+  autoComplete?: string
+  defaultValue?: string | number | readonly string[]
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  value: string | number | readonly string[]
   options?:
     | (string | number)[]
-    | { value: string | number; label: string | number }[];
+    | { value: string | number; label: string | number }[]
   /**
    * When set to `true`, the input will be marked as errored.
    *
    * When set to `string`, the input will be marked as errored and the string will be displayed as error message.
    */
-  error?: boolean | string;
+  error?: boolean | string
 }
 
 const Select = ({
@@ -63,7 +63,7 @@ const Select = ({
               <option key={option} value={option}>
                 {option}
               </option>
-            )
+            ),
           )}
         </select>
       </div>
@@ -71,7 +71,7 @@ const Select = ({
         <p className="mt-2 text-sm text-rose-600">{error}</p>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Select;
+export default Select

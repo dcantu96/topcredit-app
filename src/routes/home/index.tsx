@@ -1,11 +1,11 @@
 import {
   isLoggedInState,
   myProfileState,
-} from "components/providers/auth/atoms";
-import { useRecoilValue } from "recoil";
-import Landing from "../landing";
-import CreditScreen from "./credit-screen";
-import AdminDashboard from "./admin-dashboard";
+} from "components/providers/auth/atoms"
+import { useRecoilValue } from "recoil"
+import Landing from "../landing"
+import CreditScreen from "./credit-screen"
+import AdminDashboard from "./admin-dashboard"
 
 /**
  * This component is in charge of rendering a screen depending on the user's authentication status.
@@ -19,28 +19,28 @@ import AdminDashboard from "./admin-dashboard";
  * Else, the user will be redirected to the landing component.
  */
 const HomePageRouter = () => {
-  const isLoggedIn = useRecoilValue(isLoggedInState);
-  console.log("home screen");
+  const isLoggedIn = useRecoilValue(isLoggedInState)
+  console.log("home screen")
   if (isLoggedIn) {
-    return <Home />;
+    return <Home />
   } else {
-    return <Landing />;
+    return <Landing />
   }
-};
+}
 
 /**
  * This component is in charge of rendering a screen depending on the user's role.
  */
 const Home = () => {
-  const { role } = useRecoilValue(myProfileState);
+  const { role } = useRecoilValue(myProfileState)
 
   switch (role) {
     case "admin":
     case "requests":
-      return <AdminDashboard />;
+      return <AdminDashboard />
     default:
-      return <CreditScreen />;
+      return <CreditScreen />
   }
-};
+}
 
-export default HomePageRouter;
+export default HomePageRouter

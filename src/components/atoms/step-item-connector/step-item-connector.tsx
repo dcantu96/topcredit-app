@@ -6,7 +6,7 @@ const StepItemConnector = ({ isCompleted }: { isCompleted: boolean }) => {
       }`}
       aria-hidden={isCompleted ? "false" : "true"}
     />
-  );
-};
+  )
+}
 
-export default StepItemConnector;
+export default StepItemConnector

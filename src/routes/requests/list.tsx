@@ -1,13 +1,13 @@
-import ButtonLink from "components/atoms/button-link";
-import Table from "components/organisms/table";
-import { STATES_OF_MEXICO } from "../../constants";
-import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid";
-import Button from "components/atoms/button";
-import { useRecoilValue } from "recoil";
-import { basicDetailsSortedSelector } from "./atoms";
+import ButtonLink from "components/atoms/button-link"
+import Table from "components/organisms/table"
+import { STATES_OF_MEXICO } from "../../constants"
+import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid"
+import Button from "components/atoms/button"
+import { useRecoilValue } from "recoil"
+import { basicDetailsSortedSelector } from "./atoms"
 
 const Screen = () => {
-  const basicDetails = useRecoilValue(basicDetailsSortedSelector);
+  const basicDetails = useRecoilValue(basicDetailsSortedSelector)
   return (
     <div>
       <div className="flex justify-between mb-2">
@@ -29,7 +29,7 @@ const Screen = () => {
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500">
                 {
                   STATES_OF_MEXICO.find(
-                    (state) => state.value === details.state
+                    (state) => state.value === details.state,
                   )?.label
                 }
               </td>
@@ -56,7 +56,7 @@ const Screen = () => {
         </tbody>
       </Table>
     </div>
-  );
-};
+  )
+}
 
-export default Screen;
+export default Screen

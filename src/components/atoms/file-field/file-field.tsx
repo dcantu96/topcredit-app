@@ -1,13 +1,13 @@
-import { useRef, useState } from "react";
+import { useRef, useState } from "react"
 
 interface FileFieldProps {
   handleFile: (
-    e: React.DragEvent<HTMLDivElement> | React.ChangeEvent<HTMLInputElement>
-  ) => void;
-  label: string;
-  description?: string;
-  id: string;
-  error?: boolean | string;
+    e: React.DragEvent<HTMLDivElement> | React.ChangeEvent<HTMLInputElement>,
+  ) => void
+  label: string
+  description?: string
+  id: string
+  error?: boolean | string
 }
 
 const FileField = ({
@@ -17,34 +17,34 @@ const FileField = ({
   description,
   error,
 }: FileFieldProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragActive, setIsDragActive] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDragActive, setIsDragActive] = useState<boolean>(false)
 
   const handleDragEnter = () => {
-    setIsDragActive(true);
-  };
+    setIsDragActive(true)
+  }
 
   const handleDragLeave = () => {
-    setIsDragActive(false);
-  };
+    setIsDragActive(false)
+  }
 
   const handleChooseFile = () => {
-    fileInputRef.current?.click();
-  };
+    fileInputRef.current?.click()
+  }
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    handleFile(e);
-    setIsDragActive(false);
-  };
+    handleFile(e)
+    setIsDragActive(false)
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      handleFile(e);
+      handleFile(e)
     }
-    setIsDragActive(false);
-  };
+    setIsDragActive(false)
+  }
 
   return (
     <>
@@ -111,7 +111,7 @@ const FileField = ({
         <p className="leading-6 text-sm text-rose-600">{error}</p>
       )}
     </>
-  );
-};
+  )
+}
 
-export default FileField;
+export default FileField

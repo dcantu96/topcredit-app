@@ -1,14 +1,12 @@
-import { useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { companySelectorQuery } from "./loader";
-import ButtonLink from "components/atoms/button-link";
+import { useParams } from "react-router-dom"
+import { useRecoilValue } from "recoil"
+import { companySelectorQuery } from "./loader"
+import ButtonLink from "components/atoms/button-link"
 
 const ShowCompany = () => {
-  const { id } = useParams();
-  if (!id) throw new Error("Missing id param");
-  const { name, domain, rate, terms } = useRecoilValue(
-    companySelectorQuery(id)
-  );
+  const { id } = useParams()
+  if (!id) throw new Error("Missing id param")
+  const { name, domain, rate, terms } = useRecoilValue(companySelectorQuery(id))
 
   return (
     <>
@@ -165,7 +163,7 @@ const ShowCompany = () => {
       <p>Plazos: {terms}</p>
       <p>Lista de empleados PENDIENTE</p>
     </>
-  );
-};
+  )
+}
 
-export default ShowCompany;
+export default ShowCompany

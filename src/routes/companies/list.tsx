@@ -1,22 +1,22 @@
-import Button from "components/atoms/button";
-import Table from "components/organisms/table";
-import { authActions } from "components/providers/auth/atoms";
-import { useAuth } from "components/providers/auth/useAuth";
-import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { companies } from "./loader";
-import ButtonLink from "components/atoms/button-link";
+import Button from "components/atoms/button"
+import Table from "components/organisms/table"
+import { authActions } from "components/providers/auth/atoms"
+import { useAuth } from "components/providers/auth/useAuth"
+import { useNavigate } from "react-router-dom"
+import { useRecoilValue } from "recoil"
+import { companies } from "./loader"
+import ButtonLink from "components/atoms/button-link"
 
 const CompaniesList = () => {
-  const to = useNavigate();
-  const { email } = useAuth();
-  const { logout } = useRecoilValue(authActions);
-  const companyData = useRecoilValue(companies);
+  const to = useNavigate()
+  const { email } = useAuth()
+  const { logout } = useRecoilValue(authActions)
+  const companyData = useRecoilValue(companies)
 
   const handleLogout = () => {
-    logout();
-    to("/");
-  };
+    logout()
+    to("/")
+  }
 
   return (
     <div>
@@ -69,7 +69,7 @@ const CompaniesList = () => {
         </tbody>
       </Table>
     </div>
-  );
-};
+  )
+}
 
-export default CompaniesList;
+export default CompaniesList

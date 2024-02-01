@@ -1,19 +1,19 @@
-import { StepItem } from "components/atoms/step-item";
+import { StepItem } from "components/atoms/step-item"
 
 export interface StepsProps {
   steps: {
-    label: string;
-    description: string;
-  }[];
+    label: string
+    description: string
+  }[]
   /**
    * The label of the active step
    */
-  activeStep: string;
-  setActiveStep: (label: string) => void;
+  activeStep: string
+  setActiveStep: (label: string) => void
 }
 
 const Steps = ({ steps, activeStep, setActiveStep }: StepsProps) => {
-  const currentStepIndex = steps.findIndex((step) => step.label === activeStep);
+  const currentStepIndex = steps.findIndex((step) => step.label === activeStep)
   return (
     <div className="flex justify-center px-4 py-12 md:px-6 lg:px-8">
       <div className="min-w-0">
@@ -34,7 +34,7 @@ const Steps = ({ steps, activeStep, setActiveStep }: StepsProps) => {
         </nav>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Steps;
+export default Steps

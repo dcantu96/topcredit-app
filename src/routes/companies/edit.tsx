@@ -1,44 +1,44 @@
-import { useState } from "react";
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
-import Input from "components/atoms/input";
-import Button from "components/atoms/button";
-import { companiesActions } from "./atoms";
-import { useNavigate, useParams } from "react-router-dom";
-import { companySelectorQuery } from "./loader";
-import ButtonLink from "components/atoms/button-link";
-import { useFormErrors } from "hooks/useFormErrors";
+import { useState } from "react"
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
+import Input from "components/atoms/input"
+import Button from "components/atoms/button"
+import { companiesActions } from "./atoms"
+import { useNavigate, useParams } from "react-router-dom"
+import { companySelectorQuery } from "./loader"
+import ButtonLink from "components/atoms/button-link"
+import { useFormErrors } from "hooks/useFormErrors"
 
 const EditCompany = () => {
-  const { id } = useParams();
-  if (!id) throw new Error("Missing id param");
-  const companyData = useRecoilValue(companySelectorQuery(id));
-  const [name, setName] = useState<string>(companyData.name);
-  const [domain, setDomain] = useState<string>(companyData.domain || "");
+  const { id } = useParams()
+  if (!id) throw new Error("Missing id param")
+  const companyData = useRecoilValue(companySelectorQuery(id))
+  const [name, setName] = useState<string>(companyData.name)
+  const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(
-    companyData?.rate ? companyData.rate * 100 : 0
-  );
-  const [terms, setTerms] = useState<string>(companyData.terms || "");
-  const { errors, handleErrors, clearErrors } = useFormErrors();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { update } = useRecoilValue(companiesActions);
-  const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id));
-  const to = useNavigate();
+    companyData?.rate ? companyData.rate * 100 : 0,
+  )
+  const [terms, setTerms] = useState<string>(companyData.terms || "")
+  const { errors, handleErrors, clearErrors } = useFormErrors()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { update } = useRecoilValue(companiesActions)
+  const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id))
+  const to = useNavigate()
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      clearErrors();
-      setIsLoading(true);
-      await update({ id: Number(id), name, domain, rate: rate / 100, terms });
-      setIsLoading(false);
-      to("/companies");
-      refresh();
+      clearErrors()
+      setIsLoading(true)
+      await update({ id: Number(id), name, domain, rate: rate / 100, terms })
+      setIsLoading(false)
+      to("/companies")
+      refresh()
     } catch (error) {
-      handleErrors(error, ["name", "domain", "rate", "terms"]);
-      setIsLoading(false);
+      handleErrors(error, ["name", "domain", "rate", "terms"])
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -138,7 +138,7 @@ const EditCompany = () => {
         </div>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default EditCompany;
+export default EditCompany

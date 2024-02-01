@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil"
 import {
   editableEmployeeNumberFieldState,
   editableBankAccountNumberFieldState,
@@ -11,26 +11,26 @@ import {
   editableRFCFieldState,
   editableSalaryFrequencyFieldState,
   editableSalaryFieldState,
-} from "./atoms";
-import { apiSelector } from "components/providers/api/atoms";
-import { myProfileState } from "components/providers/auth/atoms";
+} from "./atoms"
+import { apiSelector } from "components/providers/api/atoms"
+import { myProfileState } from "components/providers/auth/atoms"
 
 export const useCreditScreenSubmitActions = () => {
-  const api = useRecoilValue(apiSelector);
-  const profile = useRecoilValue(myProfileState);
+  const api = useRecoilValue(apiSelector)
+  const profile = useRecoilValue(myProfileState)
 
   // general data fields
-  const employeeNumber = useRecoilValue(editableEmployeeNumberFieldState);
-  const bankAccountNumber = useRecoilValue(editableBankAccountNumberFieldState);
-  const addressLineOne = useRecoilValue(editableAddressLineOneFieldState);
-  const addressLineTwo = useRecoilValue(editableAddressLineTwoFieldState);
-  const city = useRecoilValue(editableCityFieldState);
-  const state = useRecoilValue(editableStateFieldState);
-  const country = useRecoilValue(editableCountryFieldState);
-  const rfc = useRecoilValue(editableRFCFieldState);
-  const postalCode = useRecoilValue(editablePostalCodeFieldState);
-  const salaryFrequency = useRecoilValue(editableSalaryFrequencyFieldState);
-  const salary = useRecoilValue(editableSalaryFieldState);
+  const employeeNumber = useRecoilValue(editableEmployeeNumberFieldState)
+  const bankAccountNumber = useRecoilValue(editableBankAccountNumberFieldState)
+  const addressLineOne = useRecoilValue(editableAddressLineOneFieldState)
+  const addressLineTwo = useRecoilValue(editableAddressLineTwoFieldState)
+  const city = useRecoilValue(editableCityFieldState)
+  const state = useRecoilValue(editableStateFieldState)
+  const country = useRecoilValue(editableCountryFieldState)
+  const rfc = useRecoilValue(editableRFCFieldState)
+  const postalCode = useRecoilValue(editablePostalCodeFieldState)
+  const salaryFrequency = useRecoilValue(editableSalaryFrequencyFieldState)
+  const salary = useRecoilValue(editableSalaryFieldState)
 
   const submit = async () => {
     try {
@@ -47,13 +47,13 @@ export const useCreditScreenSubmitActions = () => {
         "postal-code": postalCode,
         "salary-frequency": salaryFrequency,
         salary,
-      });
+      })
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   return {
     submit,
-  };
-};
+  }
+}

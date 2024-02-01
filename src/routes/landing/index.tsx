@@ -1,11 +1,11 @@
-import NavLink from "components/atoms/nav-link";
-import { NavLink as RouterLink } from "react-router-dom";
-import logoSmall from "../../images/logo_small.png";
-import { useState } from "react";
-import ButtonLink from "components/atoms/button-link";
+import NavLink from "components/atoms/nav-link"
+import { NavLink as RouterLink } from "react-router-dom"
+import logoSmall from "../../images/logo_small.png"
+import { useState } from "react"
+import ButtonLink from "components/atoms/button-link"
 
 const Landing = () => {
-  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false)
 
   return (
     <div className="bg-white">
@@ -192,7 +192,7 @@ const Landing = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Landing;
+export default Landing

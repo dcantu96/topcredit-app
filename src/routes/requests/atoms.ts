@@ -1,6 +1,6 @@
-import { apiSelector } from "components/providers/api/atoms";
-import { selector, selectorFamily } from "recoil";
-import { User } from "src/schema.types";
+import { apiSelector } from "components/providers/api/atoms"
+import { selector, selectorFamily } from "recoil"
+import { User } from "src/schema.types"
 
 type BasicDetailsTableResponse = Pick<
   User,
@@ -14,14 +14,14 @@ type BasicDetailsTableResponse = Pick<
   | "salary"
   | "salaryFrequency"
   | "state"
->;
+>
 
 export const basicDetailsListSelectorQuery = selector<
   ReadonlyMap<number, BasicDetailsTableResponse>
 >({
   key: "basicDetailsListSelectorQuery",
   get: async ({ get }) => {
-    const api = get(apiSelector);
+    const api = get(apiSelector)
     const { data } = await api.get<BasicDetailsTableResponse[]>("users", {
       params: {
         fields: {
@@ -32,37 +32,37 @@ export const basicDetailsListSelectorQuery = selector<
           byRole: "",
         },
       },
-    });
+    })
 
-    const basicDetailsMap = new Map<number, BasicDetailsTableResponse>();
+    const basicDetailsMap = new Map<number, BasicDetailsTableResponse>()
     for (const details of data) {
-      basicDetailsMap.set(details.id, details);
+      basicDetailsMap.set(details.id, details)
     }
-    return basicDetailsMap;
+    return basicDetailsMap
   },
-});
+})
 
 export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
   {
     key: "basicDetailsSortedSelector",
     get: ({ get }) => {
-      const basicDetailsMap = get(basicDetailsListSelectorQuery);
-      const basicDetailsList = Array.from(basicDetailsMap.values());
+      const basicDetailsMap = get(basicDetailsListSelectorQuery)
+      const basicDetailsList = Array.from(basicDetailsMap.values())
       return basicDetailsList.sort(
         (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      )
     },
-  }
-);
+  },
+)
 
 export const basicDetailsSelector = selectorFamily<User | undefined, number>({
   key: "requestSelector",
   get:
     (id) =>
     async ({ get }) => {
-      const api = get(apiSelector);
-      const { data } = await api.get<User>(`users/${id}`);
-      return data;
+      const api = get(apiSelector)
+      const { data } = await api.get<User>(`users/${id}`)
+      return data
     },
-});
+})

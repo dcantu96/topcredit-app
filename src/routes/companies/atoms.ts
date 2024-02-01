@@ -1,11 +1,11 @@
-import { apiSelector } from "components/providers/api/atoms";
-import { selector } from "recoil";
+import { apiSelector } from "components/providers/api/atoms"
+import { selector } from "recoil"
 
 interface NewCompany {
-  name: string;
-  domain: string;
-  rate?: number;
-  terms?: string;
+  name: string
+  domain: string
+  rate?: number
+  terms?: string
 }
 
 export const companiesActions = selector({
@@ -14,15 +14,15 @@ export const companiesActions = selector({
     const create = getCallback(
       ({ snapshot }) =>
         async ({ domain, name, rate, terms }: NewCompany) => {
-          const api = snapshot.getLoadable(apiSelector).getValue();
+          const api = snapshot.getLoadable(apiSelector).getValue()
           await api.create("company", {
             domain,
             name,
             rate,
             terms,
-          });
-        }
-    );
+          })
+        },
+    )
 
     const update = getCallback(
       ({ snapshot }) =>
@@ -33,20 +33,20 @@ export const companiesActions = selector({
           rate,
           terms,
         }: NewCompany & { id: number }) => {
-          const api = snapshot.getLoadable(apiSelector).getValue();
+          const api = snapshot.getLoadable(apiSelector).getValue()
           await api.update("company", {
             id,
             domain,
             name,
             rate,
             terms,
-          });
-        }
-    );
+          })
+        },
+    )
 
     return {
       create,
       update,
-    };
+    }
   },
-});
+})

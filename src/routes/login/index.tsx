@@ -1,37 +1,37 @@
-import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useState } from "react"
+import { useRecoilValue } from "recoil"
 
-import Input from "components/atoms/input";
-import Link from "components/atoms/link";
-import Button from "components/atoms/button";
-import ButtonLink from "components/atoms/button-link";
+import Input from "components/atoms/input"
+import Link from "components/atoms/link"
+import Button from "components/atoms/button"
+import ButtonLink from "components/atoms/button-link"
 
-import { withoutAuth } from "components/providers/auth/withoutAuth";
-import { authActions } from "components/providers/auth/atoms";
+import { withoutAuth } from "components/providers/auth/withoutAuth"
+import { authActions } from "components/providers/auth/atoms"
 
-import logo from "../../images/logo.png";
+import logo from "../../images/logo.png"
 
 const Login = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const { login } = useRecoilValue(authActions);
-  const [errorMsg, setErrorMsg] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const { login } = useRecoilValue(authActions)
+  const [errorMsg, setErrorMsg] = useState<string>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      setIsLoading(true);
-      setErrorMsg(undefined);
-      await login(email, password);
-      setIsLoading(false);
+      setIsLoading(true)
+      setErrorMsg(undefined)
+      await login(email, password)
+      setIsLoading(false)
     } catch (error) {
       if (error instanceof Error) {
-        setErrorMsg(error.message);
+        setErrorMsg(error.message)
       }
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -103,7 +103,7 @@ const Login = () => {
         </div>
       </footer>
     </>
-  );
-};
+  )
+}
 
-export default withoutAuth(Login);
+export default withoutAuth(Login)

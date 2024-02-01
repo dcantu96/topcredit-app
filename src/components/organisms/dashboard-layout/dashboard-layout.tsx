@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
-import Content from "../content";
-import Sidebar from "../sidebar";
-import Header from "../header";
+import { Outlet } from "react-router-dom"
+import Content from "../content"
+import Sidebar from "../sidebar"
+import Header from "../header"
 
 const DashboardLayout = () => {
   return (
@@ -16,7 +16,7 @@ const DashboardLayout = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DashboardLayout;
+export default DashboardLayout

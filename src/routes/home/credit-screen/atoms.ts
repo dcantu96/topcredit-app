@@ -1,39 +1,39 @@
-import { atom, selector } from "recoil";
-import { apiSelector } from "components/providers/api/atoms";
-import { myProfileState } from "components/providers/auth/atoms";
+import { atom, selector } from "recoil"
+import { apiSelector } from "components/providers/api/atoms"
+import { myProfileState } from "components/providers/auth/atoms"
 
 interface GeneralDataResponse {
-  id: string;
-  salaryFrequency: string | null;
-  salary: number | null;
-  addressLineOne: string | null;
-  addressLineTwo: string | null;
-  bankAccountNumber: string | null;
-  city: string | null;
-  country: string | null;
-  employeeNumber: string | null;
-  rfc: string | null;
-  postalCode: number | null;
-  state: string | null;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  salaryFrequency: string | null
+  salary: number | null
+  addressLineOne: string | null
+  addressLineTwo: string | null
+  bankAccountNumber: string | null
+  city: string | null
+  country: string | null
+  employeeNumber: string | null
+  rfc: string | null
+  postalCode: number | null
+  state: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 interface UserGeneralDataQuery {
-  id: string;
-  "employee-number": string;
-  "bank-account-number": string;
-  "address-line-one": string;
-  "address-line-two": string;
-  city: string;
-  state: string;
-  country: string;
-  rfc: string;
-  salary: number;
-  "salary-frequency": string;
-  "postal-code": number;
-  "created-at": string;
-  "updated-at": string;
+  id: string
+  "employee-number": string
+  "bank-account-number": string
+  "address-line-one": string
+  "address-line-two": string
+  city: string
+  state: string
+  country: string
+  rfc: string
+  salary: number
+  "salary-frequency": string
+  "postal-code": number
+  "created-at": string
+  "updated-at": string
 }
 
 /**
@@ -47,11 +47,11 @@ export const userGeneralDataQuerySelector = selector<
 >({
   key: "userGeneralDataQuerySelector",
   get: async ({ get }) => {
-    const api = get(apiSelector);
-    const { id } = get(myProfileState);
-    console.log("id => profile", id);
-    const { data } = await api.get<UserGeneralDataQuery>(`users/${id}`);
-    console.log(data);
+    const api = get(apiSelector)
+    const { id } = get(myProfileState)
+    console.log("id => profile", id)
+    const { data } = await api.get<UserGeneralDataQuery>(`users/${id}`)
+    console.log(data)
     if (data)
       return {
         id: data.id,
@@ -68,16 +68,16 @@ export const userGeneralDataQuerySelector = selector<
         salaryFrequency: data["salary-frequency"],
         createdAt: data["created-at"],
         updatedAt: data["updated-at"],
-      };
-    return undefined;
+      }
+    return undefined
   },
-});
+})
 
 export const isGeneralDataCompleteSelector = selector({
   key: "isGeneralDataCompleteSelector",
   get: ({ get }) => {
-    const generalData = get(userGeneralDataQuerySelector);
-    if (!generalData) return false;
+    const generalData = get(userGeneralDataQuerySelector)
+    if (!generalData) return false
     if (
       !generalData.addressLineOne ||
       !generalData.bankAccountNumber ||
@@ -88,10 +88,10 @@ export const isGeneralDataCompleteSelector = selector({
       !generalData.postalCode ||
       !generalData.state
     )
-      return false;
-    return true;
+      return false
+    return true
   },
-});
+})
 
 /**
  * if a credit is found, it should derive the step judging by the values of the credit
@@ -101,13 +101,13 @@ export const isGeneralDataCompleteSelector = selector({
 export const initialActiveStep = selector<string>({
   key: "initialActiveStep",
   get: ({ get }) => {
-    const isGeneralDataComplete = get(isGeneralDataCompleteSelector);
-    if (!isGeneralDataComplete) return "Datos Generales";
-    return "Another State";
+    const isGeneralDataComplete = get(isGeneralDataCompleteSelector)
+    if (!isGeneralDataComplete) return "Datos Generales"
+    return "Another State"
   },
-});
+})
 
 export const activeStepSelectorState = atom({
   key: "activeStepSelectorState",
   default: initialActiveStep,
-});
+})

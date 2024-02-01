@@ -6,7 +6,7 @@ const Step = () => {
         Estamos procesando tu solicitud, por favor espera.
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default Step;
+export default Step

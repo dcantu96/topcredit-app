@@ -1,35 +1,35 @@
-import { useState } from "react";
-import Input from "components/atoms/input";
-import Button from "components/atoms/button";
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
-import { companiesActions } from "./atoms";
-import { useNavigate } from "react-router-dom";
-import { companiesSelectorQuery } from "./loader";
+import { useState } from "react"
+import Input from "components/atoms/input"
+import Button from "components/atoms/button"
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
+import { companiesActions } from "./atoms"
+import { useNavigate } from "react-router-dom"
+import { companiesSelectorQuery } from "./loader"
 
 const NewCompany = () => {
-  const [name, setName] = useState<string>("");
-  const [domain, setDomain] = useState<string>("");
-  const [rate, setRate] = useState<number>(0);
-  const [terms, setTerms] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { create } = useRecoilValue(companiesActions);
-  const refresh = useRecoilRefresher_UNSTABLE(companiesSelectorQuery);
-  const to = useNavigate();
+  const [name, setName] = useState<string>("")
+  const [domain, setDomain] = useState<string>("")
+  const [rate, setRate] = useState<number>(0)
+  const [terms, setTerms] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { create } = useRecoilValue(companiesActions)
+  const refresh = useRecoilRefresher_UNSTABLE(companiesSelectorQuery)
+  const to = useNavigate()
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      setIsLoading(true);
-      await create({ name, domain, rate: rate / 100, terms });
-      setIsLoading(false);
-      refresh();
-      to("/companies");
+      setIsLoading(true)
+      await create({ name, domain, rate: rate / 100, terms })
+      setIsLoading(false)
+      refresh()
+      to("/companies")
     } catch (error) {
-      console.log("error", error);
-      setIsLoading(false);
+      console.log("error", error)
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form
@@ -84,7 +84,7 @@ const NewCompany = () => {
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default NewCompany;
+export default NewCompany

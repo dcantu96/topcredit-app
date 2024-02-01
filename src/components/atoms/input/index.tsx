@@ -1,41 +1,41 @@
-import { useState } from "react";
+import { useState } from "react"
 
 interface InputBaseProps {
-  id: string;
-  label: string;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-  maxLength?: number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string;
-  prefix?: string;
+  id: string
+  label: string
+  type?: string
+  placeholder?: string
+  required?: boolean
+  maxLength?: number
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  value: string
+  prefix?: string
   /**
    * When set to `true`, the input will be marked as errored.
    *
    * When set to `string`, the input will be marked as errored and the string will be displayed as error message.
    */
-  error?: boolean | string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  error?: boolean | string
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
 }
 
 interface InputWithTrailingDropdownProps extends InputBaseProps {
-  trailingDropdownId: string;
-  trailingDropdownLabel: string;
-  trailingDropdownOptions: string[];
-  trailingDropdownOnChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  trailingDropdownId: string
+  trailingDropdownLabel: string
+  trailingDropdownOptions: string[]
+  trailingDropdownOnChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 interface InputWithoutTrailingDropdownProps extends InputBaseProps {
-  trailingDropdownId?: never;
-  trailingDropdownLabel?: never;
-  trailingDropdownOptions?: never;
-  trailingDropdownOnChange?: never;
+  trailingDropdownId?: never
+  trailingDropdownLabel?: never
+  trailingDropdownOptions?: never
+  trailingDropdownOnChange?: never
 }
 
 type InputProps =
   | InputWithTrailingDropdownProps
-  | InputWithoutTrailingDropdownProps;
+  | InputWithoutTrailingDropdownProps
 
 const Input = ({
   id,
@@ -51,17 +51,17 @@ const Input = ({
   onBlur,
   ...trailingProps
 }: InputProps) => {
-  const passwordPaddingRight = type === "password" ? "pr-14" : undefined;
+  const passwordPaddingRight = type === "password" ? "pr-14" : undefined
   const trailingDropdownPaddingRight = trailingProps.trailingDropdownId
     ? "pr-20"
-    : "pr-3";
+    : "pr-3"
 
-  const prefixPaddingLeft = prefix ? "pl-7" : "pl-3";
+  const prefixPaddingLeft = prefix ? "pl-7" : "pl-3"
 
-  const [passwordHidden, setPasswordHidden] = useState(true);
+  const [passwordHidden, setPasswordHidden] = useState(true)
 
   const inputType =
-    type === "password" ? (passwordHidden ? "password" : "text") : type;
+    type === "password" ? (passwordHidden ? "password" : "text") : type
 
   return (
     <div>
@@ -131,7 +131,7 @@ const Input = ({
         <p className="mt-2 text-sm text-rose-600">{error}</p>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Input;
+export default Input

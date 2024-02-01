@@ -1,11 +1,11 @@
-import FileField from "components/atoms/file-field";
-import Button from "components/atoms/button";
-import FileViewer from "components/atoms/file-viewer";
+import FileField from "components/atoms/file-field"
+import Button from "components/atoms/button"
+import FileViewer from "components/atoms/file-viewer"
 
 const Step = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
@@ -21,10 +21,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -36,10 +36,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -59,10 +59,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -82,10 +82,10 @@ const Step = () => {
             handleFile={(e) => {
               if ("dataTransfer" in e && e.dataTransfer.files) {
                 // Handle drag and drop files
-                console.log(e.dataTransfer.files);
+                console.log(e.dataTransfer.files)
               } else if ("target" in e && "files" in e.target) {
                 // Handle files selected through file input
-                console.log(e.target.files);
+                console.log(e.target.files)
               }
             }}
           />
@@ -100,7 +100,7 @@ const Step = () => {
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default Step;
+export default Step

@@ -1,3 +1,3 @@
-import ButtonLink from "./button-link";
+import ButtonLink from "./button-link"
 
-export default ButtonLink;
+export default ButtonLink

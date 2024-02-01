@@ -1,23 +1,23 @@
-import { useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { basicDetailsSelector } from "./atoms";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import Button from "components/atoms/button";
-import FileViewer from "components/atoms/file-viewer/file-viewer";
-import { useRequestActions } from "./actions";
+import { useParams } from "react-router-dom"
+import { useRecoilValue } from "recoil"
+import { basicDetailsSelector } from "./atoms"
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import Button from "components/atoms/button"
+import FileViewer from "components/atoms/file-viewer/file-viewer"
+import { useRequestActions } from "./actions"
 
 const MXNFormat = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",
-});
+})
 
 const ShowRequest = () => {
-  const { id } = useParams();
-  if (!id || Number.isNaN(id)) throw new Error("Missing id param");
-  const user = useRecoilValue(basicDetailsSelector(Number(id)));
-  const { approveUser, denyUser } = useRequestActions();
+  const { id } = useParams()
+  if (!id || Number.isNaN(id)) throw new Error("Missing id param")
+  const user = useRecoilValue(basicDetailsSelector(Number(id)))
+  const { approveUser, denyUser } = useRequestActions()
 
-  if (!user) return null;
+  if (!user) return null
 
   return (
     <>
@@ -180,7 +180,7 @@ const ShowRequest = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ShowRequest;
+export default ShowRequest

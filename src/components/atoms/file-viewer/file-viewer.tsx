@@ -1,13 +1,10 @@
-import {
-  DocumentIcon,
-  EllipsisHorizontalIcon,
-} from "@heroicons/react/24/solid";
+import { DocumentIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/solid"
 
 interface FileViewerProps {
-  label: string;
-  fileName?: string;
-  fileDate?: string;
-  fileSize?: string;
+  label: string
+  fileName?: string
+  fileDate?: string
+  fileSize?: string
 }
 
 const FileViewer = ({
@@ -32,7 +29,7 @@ const FileViewer = ({
         </p>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default FileViewer;
+export default FileViewer

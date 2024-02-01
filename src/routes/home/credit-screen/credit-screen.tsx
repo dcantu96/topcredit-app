@@ -1,7 +1,7 @@
-import Steps from "components/molecules/steps/steps";
-import ActiveStep from "./components/active-step";
-import { useRecoilState } from "recoil";
-import { activeStepSelectorState } from "./atoms";
+import Steps from "components/molecules/steps/steps"
+import ActiveStep from "./components/active-step"
+import { useRecoilState } from "recoil"
+import { activeStepSelectorState } from "./atoms"
 
 const steps = [
   {
@@ -16,10 +16,10 @@ const steps = [
     label: "Autorizado",
     description: "¡Felicidades, te Autorizamos tu crédito!",
   },
-];
+]
 
 const Screen = () => {
-  const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState);
+  const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState)
   return (
     <div className="grid grid-cols-[400px_1fr] h-screen grid-rows-[40px_1fr] overflow-hidden">
       <div className="w-full col-span-2 bg-black"></div>
@@ -34,7 +34,7 @@ const Screen = () => {
         <ActiveStep activeStep={activeStep} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Screen;
+export default Screen

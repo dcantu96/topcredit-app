@@ -1,12 +1,12 @@
-type HeadersType = Record<string, string>;
+type HeadersType = Record<string, string>
 
 interface KitsuPageParams {
-  limit?: number;
-  offset?: number;
-  number?: number;
-  size?: number;
-  before?: string;
-  after?: string;
+  limit?: number
+  offset?: number
+  number?: number
+  size?: number
+  before?: string
+  after?: string
 }
 
 interface KitsuFilterParams {
@@ -18,30 +18,30 @@ interface KitsuFilterParams {
     | string[]
     | number[]
     | boolean[]
-    | KitsuFilterParams;
+    | KitsuFilterParams
 }
 
 interface KitsuFieldsParams {
-  [resource: string]: string;
+  [resource: string]: string
 }
 
 interface KitsuParams {
-  fields?: KitsuFieldsParams;
-  filter?: KitsuFilterParams;
-  include?: string;
-  sort?: string;
-  page?: KitsuPageParams;
+  fields?: KitsuFieldsParams
+  filter?: KitsuFilterParams
+  include?: string
+  sort?: string
+  page?: KitsuPageParams
 }
 
 interface KitsuConfig {
-  headers?: HeadersType;
-  params?: KitsuParams;
-  axiosOptions?: Record<string, unknown>;
+  headers?: HeadersType
+  params?: KitsuParams
+  axiosOptions?: Record<string, unknown>
 }
 
 type KitsuApiResponse<T> = T extends { fields: infer F }
   ? { data: Pick<T, F & keyof T> }
-  : { data: T };
+  : { data: T }
 
 declare module "kitsu" {
   /**
@@ -71,11 +71,11 @@ declare module "kitsu" {
    * })
    */
   export default class Kitsu {
-    constructor(options?: object);
-    query: unknown;
-    camel: (s: unknown) => unknown;
-    resCase: (s: unknown) => unknown;
-    plural: unknown;
+    constructor(options?: object)
+    query: unknown
+    camel: (s: unknown) => unknown
+    resCase: (s: unknown) => unknown
+    plural: unknown
     /**
      * Get the current headers or add additional headers
      *
@@ -88,56 +88,56 @@ declare module "kitsu" {
      * @example <caption>Add or update a header's value</caption>
      * api.headers['Authorization'] = 'Bearer 1234567890'
      */
-    headers: unknown;
-    axios: import("axios").AxiosInstance;
+    headers: unknown
+    axios: import("axios").AxiosInstance
     fetch: (
       model: string,
       config?: {
-        headers?: unknown;
+        headers?: unknown
         params?: {
-          fields?: unknown;
-          filter?: unknown;
-          include?: string;
-          sort?: string;
+          fields?: unknown
+          filter?: unknown
+          include?: string
+          sort?: string
           page?: {
-            limit?: number;
-            offset?: number;
-            number?: number;
-            size?: number;
-            before?: string;
-            after?: string;
-          };
-        };
-        axiosOptions?: unknown;
-      }
-    ) => unknown;
+            limit?: number
+            offset?: number
+            number?: number
+            size?: number
+            before?: string
+            after?: string
+          }
+        }
+        axiosOptions?: unknown
+      },
+    ) => unknown
     update: (
       model: string,
       body: any | any[],
       config?: {
-        params?: any;
-        headers?: any;
-        axiosOptions?: any;
-      }
-    ) => any | any[];
+        params?: any
+        headers?: any
+        axiosOptions?: any
+      },
+    ) => any | any[]
     create: (
       model: string,
       body: any | any[],
       config?: {
-        params?: any;
-        headers?: any;
-        axiosOptions?: any;
-      }
-    ) => any | any[];
+        params?: any
+        headers?: any
+        axiosOptions?: any
+      },
+    ) => any | any[]
     remove: (
       model: string,
       id: string | number | number[],
       config?: {
-        params?: any;
-        headers?: any;
-        axiosOptions?: any;
-      }
-    ) => any | any[];
+        params?: any
+        headers?: any
+        axiosOptions?: any
+      },
+    ) => any | any[]
     /**
      * Axios Interceptors (alias of `axios.interceptors`)
      *
@@ -172,11 +172,11 @@ declare module "kitsu" {
     interceptors: {
       request: import("axios").AxiosInterceptorManager<
         import("axios").AxiosRequestConfig<any>
-      >;
+      >
       response: import("axios").AxiosInterceptorManager<
         import("axios").AxiosResponse<any, any>
-      >;
-    };
+      >
+    }
     /**
      * Fetch resources (alias `fetch`)
      *
@@ -274,8 +274,8 @@ declare module "kitsu" {
      */
     get<T = unknown>(
       model: string,
-      config?: KitsuConfig
-    ): Promise<KitsuApiResponse<T>>;
+      config?: KitsuConfig,
+    ): Promise<KitsuApiResponse<T>>
     /**
      * Update a resource (alias `update`)
      *
@@ -314,11 +314,11 @@ declare module "kitsu" {
       model: string,
       body: any | any[],
       config?: {
-        params?: any;
-        headers?: any;
-        axiosOptions?: any;
-      }
-    ): any | any[];
+        params?: any
+        headers?: any
+        axiosOptions?: any
+      },
+    ): any | any[]
     /**
      * Create a new resource (alias `create`)
      *
@@ -356,11 +356,11 @@ declare module "kitsu" {
       model: string,
       body: any | any[],
       config?: {
-        params?: any;
-        headers?: any;
-        axiosOptions?: any;
-      }
-    ): any | any[];
+        params?: any
+        headers?: any
+        axiosOptions?: any
+      },
+    ): any | any[]
     /**
      * Remove a resource (alias `remove`)
      *
@@ -383,11 +383,11 @@ declare module "kitsu" {
       model: string,
       id: string | number | number[],
       config?: {
-        params?: any;
-        headers?: any;
-        axiosOptions?: any;
-      }
-    ): any | any[];
+        params?: any
+        headers?: any
+        axiosOptions?: any
+      },
+    ): any | any[]
     /**
      * Get the authenticated user's data
      *
@@ -410,7 +410,7 @@ declare module "kitsu" {
      *   }
      * })
      */
-    self(config?: { params?: any; headers?: any; axiosOptions?: any }): any;
+    self(config?: { params?: any; headers?: any; axiosOptions?: any }): any
     /**
      * Send arbitrary requests
      *
@@ -473,13 +473,13 @@ declare module "kitsu" {
       headers,
       axiosOptions,
     }?: {
-      url: string;
-      type: string;
-      body?: any | any[];
-      method?: string;
-      params?: any;
-      headers?: any;
-      axiosOptions?: any;
-    }): any;
+      url: string
+      type: string
+      body?: any | any[]
+      method?: string
+      params?: any
+      headers?: any
+      axiosOptions?: any
+    }): any
   }
 }

@@ -1,13 +1,13 @@
-import { StepItemConnector } from "../step-item-connector";
-import { itemPositionState } from "./utils";
+import { StepItemConnector } from "../step-item-connector"
+import { itemPositionState } from "./utils"
 
 interface StepItemProps {
-  label: string;
-  description: string;
-  currentStep: number;
-  stepsCount: number;
-  position: number;
-  handleStepClick?: () => void;
+  label: string
+  description: string
+  currentStep: number
+  stepsCount: number
+  position: number
+  handleStepClick?: () => void
 }
 
 const StepItem = ({
@@ -18,9 +18,9 @@ const StepItem = ({
   stepsCount,
   handleStepClick,
 }: StepItemProps) => {
-  const isLastStep = position === stepsCount - 1;
-  const state = itemPositionState(position, currentStep);
-  const canHover = state === "next" || state === "completed";
+  const isLastStep = position === stepsCount - 1
+  const state = itemPositionState(position, currentStep)
+  const canHover = state === "next" || state === "completed"
 
   return (
     <li className={`relative ${isLastStep ? "" : "pb-10"}`}>
@@ -71,8 +71,8 @@ const StepItem = ({
         </span>
       </a>
     </li>
-  );
-};
+  )
+}
 
 const CheckIcon = () => (
   <svg
@@ -88,6 +88,6 @@ const CheckIcon = () => (
       clipRule="evenodd"
     ></path>
   </svg>
-);
+)
 
-export default StepItem;
+export default StepItem

@@ -2,17 +2,17 @@ import {
   CurrencyDollarIcon,
   ExclamationTriangleIcon,
   ShieldCheckIcon,
-} from "@heroicons/react/24/solid";
+} from "@heroicons/react/24/solid"
 import {
   BuildingLibraryIcon,
   CheckBadgeIcon,
   ClipboardDocumentListIcon,
-} from "@heroicons/react/24/solid";
-import { NavLink, useMatch } from "react-router-dom";
+} from "@heroicons/react/24/solid"
+import { NavLink, useMatch } from "react-router-dom"
 
 export const Sidebar = () => {
-  const isRequestsActive = useMatch("/requests");
-  const isCompaniesActive = useMatch("/clientes");
+  const isRequestsActive = useMatch("/requests")
+  const isCompaniesActive = useMatch("/clientes")
   return (
     <aside className="hidden lg:block fixed z-20 inset-0 top-[5.3rem] left-[max(0px,calc(50%-40rem))] right-auto w-[19rem] pb-10 pl-8 pr-6 overflow-y-auto">
       <nav className="lg:text-sm lg:leading-6 relative py-4">
@@ -114,5 +114,5 @@ export const Sidebar = () => {
         </ul>
       </nav>
     </aside>
-  );
-};
+  )
+}

@@ -1,1 +1,1 @@
-export { default } from "./login-layout";
+export { default } from "./login-layout"

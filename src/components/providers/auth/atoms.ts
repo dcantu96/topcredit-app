@@ -1,29 +1,29 @@
-import { atom, selector } from "recoil";
-import type { MeResponse, TokenResponse } from "src/schema.types";
+import { atom, selector } from "recoil"
+import type { MeResponse, TokenResponse } from "src/schema.types"
 
 interface AuthState {
-  email: string;
-  token: string;
-  createdAt: number;
-  expiresIn: number;
+  email: string
+  token: string
+  createdAt: number
+  expiresIn: number
 }
 
 const authInitializer = selector<AuthState | undefined>({
   key: "authInitializer",
   get: () => {
-    console.log("authState effect");
+    console.log("authState effect")
     // 0. check if auth is in local storage
-    const localAuth = localStorage.getItem("auth");
+    const localAuth = localStorage.getItem("auth")
 
     if (!localAuth) {
-      return undefined;
+      return undefined
     }
 
     // 1. check ig localAuth is a valid auth state object
-    const authJson = JSON.parse(localAuth);
+    const authJson = JSON.parse(localAuth)
 
     if (!isValidAuthObject(authJson)) {
-      return undefined;
+      return undefined
     }
 
     // 2. if valid, check if token is expired
@@ -32,12 +32,12 @@ const authInitializer = selector<AuthState | undefined>({
         authJson.expiresIn * 1000 <
       new Date().getTime()
     ) {
-      return undefined;
+      return undefined
     } else {
-      return authJson;
+      return authJson
     }
   },
-});
+})
 
 export const authState = atom<AuthState | undefined>({
   key: "authState",
@@ -46,14 +46,14 @@ export const authState = atom<AuthState | undefined>({
     ({ onSet }) => {
       onSet((newAuthState) => {
         if (newAuthState) {
-          localStorage.setItem("auth", JSON.stringify(newAuthState));
+          localStorage.setItem("auth", JSON.stringify(newAuthState))
         } else {
-          localStorage.removeItem("auth");
+          localStorage.removeItem("auth")
         }
-      });
+      })
     },
   ],
-});
+})
 
 function isValidAuthObject(authJson: unknown): authJson is AuthState {
   return (
@@ -63,7 +63,7 @@ function isValidAuthObject(authJson: unknown): authJson is AuthState {
     "token" in authJson &&
     "createdAt" in authJson &&
     "expiresIn" in authJson
-  );
+  )
 }
 
 export const authActions = selector({
@@ -88,18 +88,18 @@ export const authActions = selector({
               headers: {
                 "Content-Type": "application/json",
               },
-            }
-          );
+            },
+          )
 
-          const data = await response.json();
+          const data = await response.json()
           if (data.error) {
             if (data.error === "invalid_client") {
               throw new Error(
-                "Hubo un problema. Favor de Notificar al Administrador"
-              );
+                "Hubo un problema. Favor de Notificar al Administrador",
+              )
             }
             if (data.error === "invalid_grant") {
-              throw new Error("Credenciales inválidas");
+              throw new Error("Credenciales inválidas")
             }
           }
 
@@ -109,46 +109,46 @@ export const authActions = selector({
               token: data.access_token,
               createdAt: data.created_at,
               expiresIn: data.expires_in,
-            });
+            })
           } else {
             throw new Error(
-              "Hubo un problema. Favor de Notificar al Administrador"
-            );
+              "Hubo un problema. Favor de Notificar al Administrador",
+            )
           }
-        }
-    );
+        },
+    )
     const logout = getCallback(({ set }) => () => {
-      set(authState, undefined);
-    });
+      set(authState, undefined)
+    })
 
     return {
       login,
       logout,
-    };
+    }
   },
-});
+})
 
 export const isLoggedInState = selector({
   key: "isLoggedInState",
   get: async ({ get }) => {
-    const auth = get(authState);
-    if (!auth) return false;
-    console.log("auth state in isLoggedInState", auth);
-    const profile = get(myProfileState);
-    console.log("profile state in isLoggedInState", profile);
-    return !!profile;
+    const auth = get(authState)
+    if (!auth) return false
+    console.log("auth state in isLoggedInState", auth)
+    const profile = get(myProfileState)
+    console.log("profile state in isLoggedInState", profile)
+    return !!profile
   },
-});
+})
 
 export const myProfileState = selector<MeResponse>({
   key: "myProfileState",
   get: async ({ get }) => {
-    const auth = get(authState);
-    console.log("auth state in myProfileState", auth);
-    const { logout } = get(authActions);
+    const auth = get(authState)
+    console.log("auth state in myProfileState", auth)
+    const { logout } = get(authActions)
     if (auth) {
       try {
-        console.log("fetch me request");
+        console.log("fetch me request")
         const response = await fetch(
           `${import.meta.env.VITE_APP_API_URL}/api/me`,
           {
@@ -158,26 +158,26 @@ export const myProfileState = selector<MeResponse>({
               "Content-Type": "application/vnd.api+json",
               Authorization: `Bearer ${auth.token}`,
             },
-          }
-        );
+          },
+        )
 
         if (!response.ok) {
           throw new Error(
-            "Hubo un problema. Favor de Notificar al Administrador"
-          );
+            "Hubo un problema. Favor de Notificar al Administrador",
+          )
         }
-        const data = await response.json();
-        return data;
+        const data = await response.json()
+        return data
       } catch (error) {
-        console.log(error);
-        logout();
+        console.log(error)
+        logout()
       }
     }
   },
-});
+})
 
 const isValidAuthResponseObject = (
-  authJson: unknown
+  authJson: unknown,
 ): authJson is TokenResponse => {
   return (
     typeof authJson === "object" &&
@@ -186,5 +186,5 @@ const isValidAuthResponseObject = (
     "access_token" in authJson &&
     "created_at" in authJson &&
     "expires_in" in authJson
-  );
-};
+  )
+}

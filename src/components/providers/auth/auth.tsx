@@ -1,5 +1,5 @@
 interface AuthProviderProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
-export const AuthProvider = ({}: AuthProviderProps) => {};
+export const AuthProvider = ({}: AuthProviderProps) => {}

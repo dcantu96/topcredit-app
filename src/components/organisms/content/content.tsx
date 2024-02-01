@@ -1,5 +1,5 @@
 interface IContent {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export const Content = ({ children }: IContent) => {
@@ -7,5 +7,5 @@ export const Content = ({ children }: IContent) => {
     <div className="lg:pl-[17rem]">
       <div className="p-4">{children}</div>
     </div>
-  );
-};
+  )
+}

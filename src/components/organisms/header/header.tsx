@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
-import Logo from "../../../images/logo.png";
+import { NavLink } from "react-router-dom"
+import Logo from "../../../images/logo.png"
 
 export const Header = () => {
   return (
@@ -37,5 +37,5 @@ export const Header = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
