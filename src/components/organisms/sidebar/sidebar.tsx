@@ -19,7 +19,7 @@ export const Sidebar = () => {
         <ul>
           <li>
             <NavLink
-              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
+              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
               to="/companies"
             >
               <div className="mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
@@ -34,7 +34,7 @@ export const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
+              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
               to="/requests"
             >
               <div className="mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
@@ -50,7 +50,7 @@ export const Sidebar = () => {
 
           <li>
             <NavLink
-              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
+              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
               to="/pre-authorizations"
             >
               <div className="mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
@@ -66,7 +66,7 @@ export const Sidebar = () => {
 
           <li>
             <NavLink
-              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
+              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
               to="/authorizations"
             >
               <div className="mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
@@ -82,7 +82,7 @@ export const Sidebar = () => {
 
           <li>
             <NavLink
-              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
+              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
               to="/dispersions"
             >
               <div className="mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
@@ -98,7 +98,7 @@ export const Sidebar = () => {
 
           <li>
             <NavLink
-              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-semibold text-sky-500"
+              className="group flex items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
               to="/installments"
             >
               <div className="mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">

@@ -4,10 +4,10 @@ import { STATES_OF_MEXICO } from "../../constants";
 import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid";
 import Button from "components/atoms/button";
 import { useRecoilValue } from "recoil";
-import { requestsSelectorQuery } from "./atoms";
+import { basicDetailsSortedSelector } from "./atoms";
 
 const Screen = () => {
-  const requestsData = useRecoilValue(requestsSelectorQuery);
+  const basicDetails = useRecoilValue(basicDetailsSortedSelector);
   return (
     <div>
       <div className="flex justify-between mb-2">
@@ -18,23 +18,23 @@ const Screen = () => {
           columns={["Nombre", "Nómina", "Estado", "Fecha", "Acciones"]}
         />
         <tbody className="bg-white">
-          {requestsData.map((request) => (
-            <tr key={request.id}>
+          {basicDetails.map((details) => (
+            <tr key={details.id}>
               <td className="border-b border-slate-100 p-4 pl-8 text-slate-500">
-                {request.name}
+                {details.firstName} {details.lastName}
               </td>
               <td className="border-b border-slate-100 p-4 text-slate-500">
-                {request.employeeNumber}
+                {details.employeeNumber}
               </td>
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500">
                 {
                   STATES_OF_MEXICO.find(
-                    (state) => state.value === request.state
+                    (state) => state.value === details.state
                   )?.label
                 }
               </td>
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500">
-                {new Date(request.createdAt).toLocaleDateString()}
+                {new Date(details.createdAt).toLocaleDateString()}
               </td>
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500 flex gap-2">
                 <Button size="sm">
@@ -46,7 +46,7 @@ const Screen = () => {
                 <ButtonLink
                   size="sm"
                   status="secondary"
-                  to={request.id.toString()}
+                  to={details.id.toString()}
                 >
                   <EyeIcon className="w-4 h-4 text-gray-600 p-0" />
                 </ButtonLink>

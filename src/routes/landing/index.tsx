@@ -100,25 +100,25 @@ const Landing = () => {
                   <div className="space-y-2 py-6">
                     <RouterLink
                       to="/requests"
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                     >
                       Solicitudes
                     </RouterLink>
                     <RouterLink
                       to="/benefits"
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                     >
                       Beneficios
                     </RouterLink>
                     <RouterLink
                       to="/blog"
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                     >
                       Noticias
                     </RouterLink>
                     <RouterLink
                       to="/legal"
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                     >
                       Legal
                     </RouterLink>
@@ -126,7 +126,7 @@ const Landing = () => {
                   <div className="py-6">
                     <RouterLink
                       to="/login"
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                     >
                       Iniciar sesión
                     </RouterLink>
@@ -154,7 +154,7 @@ const Landing = () => {
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
               Anunciando nuestro colaborador mas reciente <b>Soriana.</b>{" "}
-              <a href="#" className="font-semibold text-indigo-600">
+              <a href="#" className="font-medium text-indigo-600">
                 <span className="absolute inset-0" aria-hidden="true"></span>
                 Entérate <span aria-hidden="true">&rarr;</span>
               </a>

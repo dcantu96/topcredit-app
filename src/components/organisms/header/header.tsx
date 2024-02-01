@@ -15,7 +15,7 @@ export const Header = () => {
               />
             </NavLink>
             <div className="ml-auto">
-              <nav className="text-sm leading-6 font-semibold text-slate-700">
+              <nav className="text-sm leading-6 font-medium text-slate-700">
                 <ul className="flex space-x-8">
                   <li>
                     <NavLink to="/credito" className="hover:text-sky-500">

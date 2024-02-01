@@ -7,10 +7,7 @@ interface LinkProps {
 
 export const NavLink = ({ children, to }: LinkProps) => {
   return (
-    <RouterLink
-      to={to}
-      className="text-sm font-semibold leading-6 text-gray-900"
-    >
+    <RouterLink to={to} className="text-sm font-medium leading-6 text-gray-900">
       {children}
     </RouterLink>
   );

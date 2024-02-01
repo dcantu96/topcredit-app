@@ -26,7 +26,7 @@ const FileViewer = ({
           <DocumentIcon className="h-5 w-5 text-gray-500" />
           <EllipsisHorizontalIcon className="h-5 w-5 text-gray-500" />
         </div>
-        <p className="text-gray-900 font-semibold mb-2">{fileName}</p>
+        <p className="text-gray-900 font-medium mb-2">{fileName}</p>
         <p className="text-gray-500 text-sm">
           {fileDate} &#x2022; {fileSize}
         </p>

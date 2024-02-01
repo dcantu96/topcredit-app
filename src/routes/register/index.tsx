@@ -174,7 +174,7 @@ const Register = () => {
               </div>
               <Switch.Label className="text-sm leading-6 text-gray-600">
                 Seleccionando esto estas de acuerdo con{" "}
-                <a href="#" className="font-semibold text-indigo-600">
+                <a href="#" className="font-medium text-indigo-600">
                   políticas&nbsp;de&nbsp;privacidad
                 </a>
                 .
