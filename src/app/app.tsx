@@ -18,10 +18,12 @@ import EditCompany from "../routes/companies/edit"
 import ShowCompany from "../routes/companies/show"
 import RequestsList from "../routes/requests/list"
 import ShowRequest from "../routes/requests/show"
+import Toaster from "components/providers/toaster/toaster"
 
 function App() {
   return (
     <Suspense fallback={<>loading</>}>
+      <Toaster />
       <Routes>
         <Route index element={<Home />} />
         <Route element={<LoginLayout />}>
