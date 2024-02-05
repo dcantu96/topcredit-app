@@ -6,14 +6,17 @@ const Button = forwardRef<
     fullWidth?: boolean
     status?: "primary" | "secondary" | "dark"
     size?: "sm" | "md" | "lg"
+    variant?: "danger"
   }
->(({ children, fullWidth, status, size, ...rest }, ref) => {
+>(({ children, fullWidth, status, size, variant, ...rest }, ref) => {
   const statusClass =
     status === "dark"
       ? "btn-dark"
       : status === "secondary"
         ? "btn-secondary"
-        : "btn-primary"
+        : variant === "danger"
+          ? "btn-primary-danger"
+          : "btn-primary"
 
   const sizeClass =
     size === "sm" ? "btn-small" : size === "lg" ? "btn-large" : "btn-medium"
