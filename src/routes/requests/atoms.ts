@@ -1,5 +1,5 @@
 import { apiSelector } from "components/providers/api/atoms"
-import { selector, selectorFamily } from "recoil"
+import { atom, selector, selectorFamily } from "recoil"
 import { User } from "src/schema.types"
 
 type BasicDetailsTableResponse = Pick<
@@ -55,6 +55,11 @@ export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
     },
   },
 )
+
+export const basicDetailsSortedAtom = atom<BasicDetailsTableResponse[]>({
+  key: "basicDetailsSortedAtom",
+  default: basicDetailsSortedSelector,
+})
 
 export const basicDetailsSelector = selectorFamily<User | undefined, number>({
   key: "requestSelector",
