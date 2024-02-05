@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom"
 import { useApi } from "components/providers/api/useApi"
 import useToast from "components/providers/toaster/useToast"
+import { basicDetailsSortedAtom } from "./atoms"
+import { useSetRecoilState } from "recoil"
 
 export const useRequestActions = (id: number) => {
   const navigate = useNavigate()
+  const setUserRequests = useSetRecoilState(basicDetailsSortedAtom)
   const toast = useToast()
   const api = useApi()
 
@@ -14,6 +17,7 @@ export const useRequestActions = (id: number) => {
         title: "Usuario actualizado",
         message: "El usuario ha sido aprobado",
       })
+      setUserRequests((old) => old.filter((user) => user.id !== id))
       navigate("/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
@@ -32,6 +36,7 @@ export const useRequestActions = (id: number) => {
         title: "Usuario actualizado",
         message: "El usuario ha sido denegado",
       })
+      setUserRequests((old) => old.filter((user) => user.id !== id))
       navigate("/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
