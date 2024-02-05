@@ -1,3 +1,4 @@
+import { lazy } from "react"
 import {
   isLoggedInState,
   myProfileState,
@@ -5,7 +6,8 @@ import {
 import { useRecoilValue } from "recoil"
 import Landing from "../landing"
 import CreditScreen from "./credit-screen"
-import AdminDashboard from "./admin-dashboard"
+const Admin = lazy(() => import("./dashboards/admin"))
+const StaffRequests = lazy(() => import("./dashboards/staff-requests"))
 
 /**
  * This component is in charge of rendering a screen depending on the user's authentication status.
@@ -36,8 +38,9 @@ const Home = () => {
 
   switch (role) {
     case "admin":
+      return <Admin />
     case "requests":
-      return <AdminDashboard />
+      return <StaffRequests />
     default:
       return <CreditScreen />
   }
