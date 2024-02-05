@@ -1,13 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useApi } from "components/providers/api/useApi"
 import useToast from "components/providers/toaster/useToast"
 
-export const useRequestActions = () => {
-  const { id } = useParams()
+export const useRequestActions = (id: number) => {
   const navigate = useNavigate()
   const toast = useToast()
   const api = useApi()
-  if (!id || Number.isNaN(id)) throw new Error("Missing user id")
 
   const approveUser = async () => {
     try {
