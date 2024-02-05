@@ -5,6 +5,10 @@ import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
 import { useRecoilValue } from "recoil"
 import { basicDetailsSortedSelector } from "./atoms"
+import { useRequestActions } from "./actions"
+import { useState } from "react"
+import Dialog from "components/molecules/dialog"
+import { AnimatePresence } from "framer-motion"
 
 const Screen = () => {
   const basicDetails = useRecoilValue(basicDetailsSortedSelector)
@@ -37,12 +41,8 @@ const Screen = () => {
                 {new Date(details.createdAt).toLocaleDateString()}
               </td>
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500 flex gap-2">
-                <Button size="sm">
-                  <CheckIcon className="w-4 h-4 text-white p-0" />
-                </Button>
-                <Button size="sm">
-                  <XMarkIcon className="w-4 h-4 text-white p-0" />
-                </Button>
+                <ApproveRequestButton id={details.id} />
+                <DenyRequestButton id={details.id} />
                 <ButtonLink
                   size="sm"
                   status="secondary"
@@ -60,3 +60,45 @@ const Screen = () => {
 }
 
 export default Screen
+
+const DenyRequestButton = ({ id }: { id: number }) => {
+  const { denyUser } = useRequestActions(id)
+  const [isModalOpen, setModalOpen] = useState(false)
+  const showModal = () => setModalOpen(true)
+
+  const handleDeny = () => {
+    denyUser()
+    setModalOpen(false)
+  }
+
+  return (
+    <>
+      <Button size="sm" variant="danger" onClick={showModal}>
+        <XMarkIcon className="w-4 h-4 text-white p-0" />
+      </Button>
+      <AnimatePresence>
+        {isModalOpen && (
+          <Dialog
+            onClose={handleDeny}
+            onCancel={() => setModalOpen(false)}
+            type="danger"
+            title="Rechazar solicitud"
+            message="¿Estás seguro de que deseas rechazar esta solicitud? Esto va a cancelar el proceso de registro del usuario."
+            confirmText="Rechazar"
+            cancelText="Cancelar"
+          />
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+const ApproveRequestButton = ({ id }: { id: number }) => {
+  const { approveUser } = useRequestActions(id)
+
+  return (
+    <Button size="sm" onClick={approveUser}>
+      <CheckIcon className="w-4 h-4 text-white p-0" />
+    </Button>
+  )
+}
