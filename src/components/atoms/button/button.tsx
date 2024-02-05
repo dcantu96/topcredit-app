@@ -1,13 +1,33 @@
 import { forwardRef, ComponentProps } from "react"
 
+interface BaseButtonProps {
+  fullWidth?: boolean
+  size?: "sm" | "md" | "lg"
+}
+
+interface PrimaryButtonProps extends BaseButtonProps {
+  status?: "primary"
+  variant?: "danger"
+}
+
+interface SecondaryButtonProps extends BaseButtonProps {
+  status: "secondary"
+  variant?: never
+}
+
+interface DarkButtonProps extends BaseButtonProps {
+  status: "dark"
+  variant?: never
+}
+
+export type ButtonProps =
+  | PrimaryButtonProps
+  | SecondaryButtonProps
+  | DarkButtonProps
+
 const Button = forwardRef<
   HTMLButtonElement,
-  Omit<ComponentProps<"button">, "className"> & {
-    fullWidth?: boolean
-    status?: "primary" | "secondary" | "dark"
-    size?: "sm" | "md" | "lg"
-    variant?: "danger"
-  }
+  Omit<ComponentProps<"button">, "className"> & ButtonProps
 >(({ children, fullWidth, status, size, variant, ...rest }, ref) => {
   const statusClass =
     status === "dark"
