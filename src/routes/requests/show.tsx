@@ -15,7 +15,7 @@ const ShowRequest = () => {
   const { id } = useParams()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const user = useRecoilValue(basicDetailsSelector(Number(id)))
-  const { approveUser, denyUser } = useRequestActions()
+  const { approveUser, denyUser } = useRequestActions(Number(id))
 
   if (!user) return null
 
