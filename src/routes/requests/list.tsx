@@ -4,14 +4,14 @@ import { STATES_OF_MEXICO } from "../../constants"
 import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
 import { useRecoilValue } from "recoil"
-import { basicDetailsSortedSelector } from "./atoms"
+import { basicDetailsSortedAtom } from "./atoms"
 import { useRequestActions } from "./actions"
 import { useState } from "react"
 import Dialog from "components/molecules/dialog"
 import { AnimatePresence } from "framer-motion"
 
 const Screen = () => {
-  const basicDetails = useRecoilValue(basicDetailsSortedSelector)
+  const basicDetails = useRecoilValue(basicDetailsSortedAtom)
   return (
     <div>
       <div className="flex justify-between mb-2">
