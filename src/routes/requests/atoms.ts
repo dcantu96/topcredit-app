@@ -48,17 +48,25 @@ export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
     get: ({ get }) => {
       const basicDetailsMap = get(basicDetailsListSelectorQuery)
       const basicDetailsList = Array.from(basicDetailsMap.values())
-      return basicDetailsList.sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      )
+      const sortOrder = get(basicDetailsSortOrderAtom) ?? "asc"
+      return basicDetailsList.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          )
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
+    },
+    set: ({ set }, newValue) => {
+      set(basicDetailsSortedSelector, newValue)
     },
   },
 )
 
-export const basicDetailsSortedAtom = atom<BasicDetailsTableResponse[]>({
-  key: "basicDetailsSortedAtom",
-  default: basicDetailsSortedSelector,
+export const basicDetailsSortOrderAtom = atom<"asc" | "desc" | undefined>({
+  key: "basicDetailsSortOrderAtom",
+  default: undefined,
 })
 
 export const basicDetailsSelector = selectorFamily<User | undefined, number>({
