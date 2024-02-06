@@ -26,7 +26,7 @@ const DropdownList = ({ children, onClickOutside }: DropdownListProps) => {
 
   return (
     <motion.div
-      className="absolute right-0 pt-1"
+      className="absolute right-0 pt-1 z-40"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
