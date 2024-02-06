@@ -1,17 +1,19 @@
+import { useState } from "react"
+import { useRecoilValue } from "recoil"
+import { AnimatePresence } from "framer-motion"
+import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid"
+
+import { STATES_OF_MEXICO } from "../../constants"
+import { basicDetailsSortedSelector } from "./atoms"
+import { useRequestActions } from "./actions"
+
 import ButtonLink from "components/atoms/button-link"
 import Table from "components/organisms/table"
-import { STATES_OF_MEXICO } from "../../constants"
-import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
-import { useRecoilValue } from "recoil"
-import { basicDetailsSortedAtom } from "./atoms"
-import { useRequestActions } from "./actions"
-import { useState } from "react"
 import Dialog from "components/molecules/dialog"
-import { AnimatePresence } from "framer-motion"
 
 const Screen = () => {
-  const basicDetails = useRecoilValue(basicDetailsSortedAtom)
+  const basicDetails = useRecoilValue(basicDetailsSortedSelector)
   return (
     <div>
       <div className="flex justify-between mb-2">
