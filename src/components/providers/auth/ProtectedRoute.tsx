@@ -2,6 +2,7 @@ import { useRecoilValue } from "recoil"
 import { authState, myProfileState } from "./atoms"
 import { Outlet, useNavigate } from "react-router-dom"
 import { useEffect } from "react"
+import { Role } from "src/schema.types"
 
 interface ProtectedRouteProps {
   children?: React.ReactNode
@@ -12,7 +13,7 @@ interface ProtectedRouteProps {
    *
    * `admin` role is always allowed
    */
-  allowedRoles?: string[]
+  allowedRoles?: Role[]
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
@@ -30,12 +31,12 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     // Check if profile and allowedRoles are valid for further checks
     if (profile && allowedRoles) {
       // Check if user role is not admin and either not in allowedRoles or role is undefined
-      const isNotAdmin = profile.role !== "admin"
-      const isRoleNotAllowed = profile.role
-        ? !allowedRoles.includes(profile.role)
-        : true
+      const isNotAdmin = profile.roles.indexOf("admin") === -1
+      const isRoleAllowed = allowedRoles.some((allowedRole) =>
+        profile.roles.includes(allowedRole),
+      )
 
-      if (isNotAdmin && isRoleNotAllowed) {
+      if (isNotAdmin && !isRoleAllowed) {
         navigate("/not-allowed")
       }
     }

@@ -34,15 +34,17 @@ const HomePageRouter = () => {
  * This component is in charge of rendering a screen depending on the user's role.
  */
 const Home = () => {
-  const { role } = useRecoilValue(myProfileState)
+  const { roles } = useRecoilValue(myProfileState)
 
-  switch (role) {
-    case "admin":
-      return <Admin />
-    case "requests":
-      return <StaffRequests />
-    default:
-      return <CreditScreen />
+  if (!roles.length) {
+    return <CreditScreen />
+  }
+  if (roles.includes("admin")) {
+    return <Admin />
+  } else if (roles.includes("requests")) {
+    return <StaffRequests />
+  } else {
+    return <div>error</div>
   }
 }
 

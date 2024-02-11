@@ -1,4 +1,4 @@
-export type Role = "admin" | "requests"
+export type Role = "admin" | "requests" | "companies"
 
 export interface TokenResponse {
   access_token: string
@@ -12,7 +12,7 @@ export interface MeResponse {
   id: number
   firstName: string | null
   lastName: string | null
-  role: Role | null
+  roles: Role[]
 }
 
 export interface ObjectWithId {
