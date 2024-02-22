@@ -1,4 +1,5 @@
 import { atom, selector } from "recoil"
+import { ROLES } from "../../../constants"
 import type { MeResponse, TokenResponse } from "src/schema.types"
 
 interface AuthState {
@@ -132,6 +133,7 @@ export const isLoggedInState = selector({
   key: "isLoggedInState",
   get: async ({ get }) => {
     const auth = get(authState)
+    console.log("auth state in isLoggedInState", auth)
     if (!auth) return false
     console.log("auth state in isLoggedInState", auth)
     const profile = get(myProfileState)
@@ -140,7 +142,7 @@ export const isLoggedInState = selector({
   },
 })
 
-export const myProfileState = selector<MeResponse>({
+export const myProfileState = selector<MeResponse | undefined>({
   key: "myProfileState",
   get: async ({ get }) => {
     const auth = get(authState)
@@ -172,7 +174,35 @@ export const myProfileState = selector<MeResponse>({
         console.log(error)
         logout()
       }
+    } else {
+      console.log("no auth, logout")
+      logout()
+      return undefined
     }
+  },
+})
+
+export const hasManyRolesState = selector({
+  key: "hasManyRolesState",
+  get: ({ get }) => {
+    const profile = get(myProfileState)
+    return profile?.roles && profile.roles.length > 1
+  },
+})
+
+export const userRolesState = selector({
+  key: "userRolesState",
+  get: ({ get }) => {
+    const profile = get(myProfileState)
+    return ROLES.filter((role) => profile?.roles.includes(role.value))
+  },
+})
+
+export const hasNoRolesState = selector({
+  key: "hasNoRolesState",
+  get: ({ get }) => {
+    const profile = get(myProfileState)
+    return profile?.roles.length === 0
   },
 })
 

@@ -35,17 +35,18 @@ const Register = () => {
       clearErrors()
       await api.create("user", {
         email,
-        "first-name": firstName,
-        "last-name": lastName,
+        firstName,
+        lastName,
         phone,
         password,
+        status: "new",
       })
       await login(email, password)
     } catch (error) {
       handleErrors(error, [
         "email",
-        "first-name",
-        "last-name",
+        "firstName",
+        "lastName",
         "phone",
         "password",
       ])

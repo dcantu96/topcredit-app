@@ -1,4 +1,4 @@
-export type Role = "admin" | "requests" | "companies"
+export type Role = "admin" | "requests" | "companies" | "pre-authorization"
 
 export interface TokenResponse {
   access_token: string

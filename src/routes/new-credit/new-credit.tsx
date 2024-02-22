@@ -2,6 +2,8 @@ import Steps from "components/molecules/steps/steps"
 import ActiveStep from "./components/active-step"
 import { useRecoilState } from "recoil"
 import { activeStepSelectorState } from "./atoms"
+import withAuthorizationRedirect from "components/hocs/with-authorization-redirect"
+import withAuth from "components/hocs/with-auth/with-auth"
 
 const steps = [
   {
@@ -37,4 +39,4 @@ const Screen = () => {
   )
 }
 
-export default Screen
+export default withAuth(withAuthorizationRedirect(Screen))

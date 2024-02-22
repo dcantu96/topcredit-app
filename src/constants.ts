@@ -1,3 +1,5 @@
+import { Role } from "./schema.types"
+
 export const STATES_OF_MEXICO = [
   { value: "AGU", label: "Aguascalientes" },
   { value: "BCN", label: "Baja California" },
@@ -33,3 +35,8 @@ export const STATES_OF_MEXICO = [
 ]
 
 export const COUNTRIES = [{ value: "MX", label: "México" }]
+
+export const ROLES: { value: Role; label: string }[] = [
+  { value: "requests", label: "Solicitudes" },
+  { value: "pre-authorization", label: "Pre Autorizaciones" },
+]

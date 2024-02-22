@@ -27,7 +27,7 @@ import {
 import Select from "components/atoms/select"
 
 import { useCreditScreenSubmitActions } from "./actions"
-import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../../constants"
+import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../constants"
 
 const Step = () => {
   const setBankAccountNumberTouched = useSetRecoilState(

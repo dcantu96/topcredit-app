@@ -1,7 +1,6 @@
 import { useRecoilValue } from "recoil"
 import { authState, myProfileState } from "./atoms"
-import { Outlet, useNavigate } from "react-router-dom"
-import { useEffect } from "react"
+import { Navigate, Outlet } from "react-router-dom"
 import { Role } from "src/schema.types"
 
 interface ProtectedRouteProps {
@@ -17,30 +16,24 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const navigate = useNavigate()
   const maybeAuth = useRecoilValue(authState)
   const profile = useRecoilValue(myProfileState)
 
-  useEffect(() => {
-    // Redirect to login if not authenticated or profile is missing
-    if (!maybeAuth || !profile) {
-      navigate("/login")
-      return // Early return to prevent further checks
-    }
+  if (!maybeAuth || !profile) {
+    return <Navigate to="/login" replace />
+  }
 
-    // Check if profile and allowedRoles are valid for further checks
-    if (profile && allowedRoles) {
-      // Check if user role is not admin and either not in allowedRoles or role is undefined
-      const isNotAdmin = profile.roles.indexOf("admin") === -1
-      const isRoleAllowed = allowedRoles.some((allowedRole) =>
-        profile.roles.includes(allowedRole),
-      )
+  if (profile && allowedRoles) {
+    // Check if user role is not admin and either not in allowedRoles or role is undefined
+    const isNotAdmin = profile.roles.indexOf("admin") === -1
+    const isRoleAllowed = allowedRoles.some((allowedRole) =>
+      profile.roles.includes(allowedRole),
+    )
 
-      if (isNotAdmin && !isRoleAllowed) {
-        navigate("/not-allowed")
-      }
+    if (isNotAdmin && !isRoleAllowed) {
+      return <Navigate to="/not-allowed" />
     }
-  }, [maybeAuth, profile, navigate, allowedRoles])
+  }
 
   if (children) {
     return <>{children}</>

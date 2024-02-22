@@ -15,7 +15,7 @@ import Dialog from "components/molecules/dialog"
 const Screen = () => {
   const basicDetails = useRecoilValue(basicDetailsSortedSelector)
   return (
-    <div>
+    <div className="inline-block">
       <div className="flex justify-between mb-2">
         <h2 className="text-lg font-bold">Gestión de Solicitudes</h2>
       </div>

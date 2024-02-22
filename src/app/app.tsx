@@ -9,7 +9,7 @@ import DashboardLayout from "components/organisms/dashboard-layout"
 import ProtectedRoute from "components/providers/auth/ProtectedRoute"
 
 /* Routes */
-import Home from "../routes/home"
+import Dashboard from "../routes/dashboards"
 import Login from "../routes/login"
 import Register from "../routes/register"
 import CompaniesList from "../routes/companies/list"
@@ -19,24 +19,29 @@ import ShowCompany from "../routes/companies/show"
 import RequestsList from "../routes/requests/list"
 import ShowRequest from "../routes/requests/show"
 import Toaster from "components/providers/toaster/toaster"
+import CreditScreen from "../routes/new-credit"
+import Landing from "../routes/landing"
 
 function App() {
   return (
     <Suspense fallback={<>loading</>}>
       <Toaster />
       <Routes>
-        <Route index element={<Home />} />
+        <Route index element={<Landing />} />
         <Route element={<LoginLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Route>
+        <Route path="new-credit" element={<CreditScreen />} />
         <Route
+          path="dashboard"
           element={
             <ProtectedRoute>
               <DashboardLayout />
             </ProtectedRoute>
           }
         >
+          <Route index element={<Dashboard />} />
           <Route
             path="companies"
             element={<ProtectedRoute allowedRoles={["companies"]} />}
