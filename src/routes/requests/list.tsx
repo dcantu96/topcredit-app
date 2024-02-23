@@ -112,7 +112,7 @@ const Screen = () => {
                 </div>
               </div>
               <button
-                onClick={() => navigate("requests/" + details.id)}
+                onClick={() => navigate(details.id)}
                 className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
               >
                 <ChevronRightIcon className="w-6 h-6 text-gray-400" />
