@@ -20,7 +20,7 @@ const ShowRequest = () => {
   if (!user) return null
 
   return (
-    <>
+    <div className="flex flex-col container lg:w-2/3 mx-auto px-4 pt-4">
       <div className="lg:flex lg:items-center lg:justify-between mb-4">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -71,7 +71,7 @@ const ShowRequest = () => {
           </div>
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
-          <span className="hidden sm:flex gap-2">
+          <span className="flex gap-2">
             <Button onClick={approveUser}>
               <CheckIcon className="h-5 w-5 text-white mr-1.5" />
               Aprobar
@@ -179,7 +179,7 @@ const ShowRequest = () => {
           />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
