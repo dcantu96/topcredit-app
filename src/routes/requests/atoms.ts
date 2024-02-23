@@ -47,9 +47,8 @@ export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
     key: "basicDetailsSortedSelector",
     get: ({ get }) => {
       const basicDetailsMap = get(basicDetailsListSelectorQuery)
-      const basicDetailsList = Array.from(basicDetailsMap.values())
       const sortOrder = get(basicDetailsSortOrderAtom) ?? "asc"
-      return basicDetailsList.sort((a, b) => {
+      return Array.from(basicDetailsMap.values()).toSorted((a, b) => {
         if (sortOrder === "asc") {
           return (
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
