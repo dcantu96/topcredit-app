@@ -13,7 +13,7 @@ const DashboardLayout = () => {
     <div className="overflow-y-hidden w-screen h-screen">
       <DashboardHeader />
       <div className="flex">
-        {!hasManyRoles && <FixedSidebar />}
+        {hasManyRoles && <FixedSidebar />}
         <div className="flex flex-wrap h-[calc(100vh-4rem)] overflow-y-auto w-full">
           <Outlet />
         </div>
