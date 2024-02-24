@@ -1,32 +1,16 @@
-import { useRef, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
-import { AnimatePresence } from "framer-motion"
+import { useRecoilValue } from "recoil"
+import { useNavigate } from "react-router-dom"
+import { ChevronRightIcon } from "@heroicons/react/24/outline"
+
+import NavLink from "components/atoms/nav-link"
+import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 
 import { STATES_OF_MEXICO } from "../../constants"
-import { basicDetailsSortOrderAtom, basicDetailsSortedSelector } from "./atoms"
-import { useNavigate } from "react-router-dom"
-import { ChevronUpDownIcon } from "@heroicons/react/16/solid"
-import DropdownList from "components/atoms/dropdown-list"
-import { ChevronRightIcon } from "@heroicons/react/24/outline"
-import NavLink from "components/atoms/nav-link"
-
-const SORT_ORDER = [
-  { label: "Más recientes", value: "desc" },
-  { label: "Más antiguas", value: "asc" },
-] as const
+import { basicDetailsSortedSelector } from "./atoms"
 
 const Screen = () => {
   const navigate = useNavigate()
-  const sortButtonRef = useRef<HTMLButtonElement>(null)
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false)
-  const toggleSortDropdown = () => setIsSortDropdownOpen((prev) => !prev)
   const basicDetails = useRecoilValue(basicDetailsSortedSelector)
-  const [selectedSortOrder, setSelectedSortOrder] = useRecoilState(
-    basicDetailsSortOrderAtom,
-  )
-  const selectedOrderLabel = SORT_ORDER.find(
-    (order) => order.value === selectedSortOrder,
-  )?.label
 
   return (
     <>
@@ -36,39 +20,7 @@ const Screen = () => {
           <h2 className="text-gray-900 leading-7 font-semibold text-base">
             Solicitudes Pendientes
           </h2>
-          <div className="relative">
-            <button
-              ref={sortButtonRef}
-              onClick={toggleSortDropdown}
-              className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
-            >
-              {selectedOrderLabel ?? "Ordenar por"}
-              <ChevronUpDownIcon className="w-6 h-6 text-gray-400" />
-            </button>
-            <AnimatePresence>
-              {isSortDropdownOpen && (
-                <DropdownList
-                  onClickOutside={(e) =>
-                    e.target !== sortButtonRef.current &&
-                    setIsSortDropdownOpen(false)
-                  }
-                >
-                  {SORT_ORDER.map((order) => (
-                    <DropdownList.Item
-                      key={order.value}
-                      text={order.label}
-                      onClick={() => {
-                        setSelectedSortOrder((prev) =>
-                          prev === order.value ? undefined : order.value,
-                        )
-                        setIsSortDropdownOpen(false)
-                      }}
-                    />
-                  ))}
-                </DropdownList>
-              )}
-            </AnimatePresence>
-          </div>
+          <ListSortOrderHandler listName="requests" />
         </header>
         <ul className="list-none m-0 p-0" role="list">
           {basicDetails.map((details) => (
