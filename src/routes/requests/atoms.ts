@@ -1,5 +1,6 @@
+import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
-import { atom, selector, selectorFamily } from "recoil"
+import { selector, selectorFamily } from "recoil"
 import { User } from "src/schema.types"
 
 type BasicDetailsTableResponse = Pick<
@@ -47,7 +48,7 @@ export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
     key: "basicDetailsSortedSelector",
     get: ({ get }) => {
       const basicDetailsMap = get(basicDetailsListSelectorQuery)
-      const sortOrder = get(basicDetailsSortOrderAtom) ?? "asc"
+      const sortOrder = get(listSortOrderState("requests")) ?? "asc"
       return Array.from(basicDetailsMap.values()).toSorted((a, b) => {
         if (sortOrder === "asc") {
           return (
@@ -62,11 +63,6 @@ export const basicDetailsSortedSelector = selector<BasicDetailsTableResponse[]>(
     },
   },
 )
-
-export const basicDetailsSortOrderAtom = atom<"asc" | "desc" | undefined>({
-  key: "basicDetailsSortOrderAtom",
-  default: undefined,
-})
 
 export const basicDetailsSelector = selectorFamily<User | undefined, number>({
   key: "requestSelector",
