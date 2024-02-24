@@ -3,6 +3,7 @@ import { useApi } from "components/providers/api/useApi"
 import useToast from "components/providers/toaster/useToast"
 import { basicDetailsSortedSelector } from "./atoms"
 import { useRecoilRefresher_UNSTABLE } from "recoil"
+import { isJsonApiError } from "components/providers/api/utils"
 
 export const useRequestActions = (id: number) => {
   const navigate = useNavigate()
@@ -52,30 +53,4 @@ export const useRequestActions = (id: number) => {
     approveUser,
     denyUser,
   }
-}
-
-export const isJsonApiError = (error: unknown): error is JsonApiError => {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "errors" in error &&
-    Array.isArray(error.errors)
-  )
-}
-
-export interface JsonApiError {
-  errors: JsonApiErrorItem[]
-}
-
-export interface JsonApiErrorItem {
-  title: string
-  detail: string
-  source: JsonApiErrorSource
-  code: string
-  status: string
-}
-
-export interface JsonApiErrorSource {
-  pointer: string
-  parameter?: string
 }
