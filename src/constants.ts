@@ -38,5 +38,10 @@ export const COUNTRIES = [{ value: "MX", label: "México" }]
 
 export const ROLES: { value: Role; label: string }[] = [
   { value: "requests", label: "Solicitudes" },
-  { value: "pre-authorization", label: "Pre Autorizaciones" },
+  { value: "pre_authorizations", label: "Pre Autorizaciones" },
+]
+
+export const SORT_ORDER = [
+  { label: "Más recientes", value: "desc" as const },
+  { label: "Más antiguas", value: "asc" as const },
 ]
