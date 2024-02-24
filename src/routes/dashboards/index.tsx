@@ -3,6 +3,9 @@ import { myProfileState } from "components/providers/auth/atoms"
 import { useRecoilValue } from "recoil"
 const Admin = lazy(() => import("./admin"))
 const StaffRequests = lazy(() => import("../../routes/requests/list"))
+const PreAuthorizations = lazy(
+  () => import("../../routes/pre-authorizations/list"),
+)
 
 /**
  * This component is in charge of rendering a screen depending on the user's role.
@@ -14,8 +17,8 @@ const Dashboard = () => {
     return <Admin />
   } else if (profile?.roles.includes("requests")) {
     return <StaffRequests />
-  } else if (profile?.roles.includes("pre-authorization")) {
-    return <div>pre-authorization</div>
+  } else if (profile?.roles.includes("pre_authorizations")) {
+    return <PreAuthorizations />
   } else {
     return <div>error</div>
   }
