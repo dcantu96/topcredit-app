@@ -1,5 +1,5 @@
 import { apiSelector } from "components/providers/api/atoms"
-import { atom, selector, selectorFamily } from "recoil"
+import { atom, atomFamily, selector, selectorFamily } from "recoil"
 import { Company, Term } from "src/schema.types"
 
 export interface CompanyWithTermsResponse extends Omit<Company, "terms"> {
@@ -31,17 +31,30 @@ export const companies = atom({
   default: companiesSelectorQuery,
 })
 
-export const companySelectorQuery = selectorFamily({
+export const companySelectorQuery = selectorFamily<Company, string>({
   key: "companySelectorQuery",
   get:
     (id: string) =>
     async ({ get }) => {
       const api = get(apiSelector)
-      const { data } = await api.get<Company>(`company/${id}`, {
-        params: {
-          include: "terms",
+      const { data } = await api.get<CompanyWithTermsResponse>(
+        `company/${id}`,
+        {
+          params: {
+            include: "terms",
+          },
         },
-      })
-      return data
+      )
+      return {
+        ...data,
+        terms: data.terms.data.map((term) => ({
+          ...term,
+        })),
+      }
     },
+})
+
+export const companyState = atomFamily({
+  key: "companyState",
+  default: companySelectorQuery,
 })
