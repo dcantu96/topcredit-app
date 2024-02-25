@@ -34,7 +34,7 @@ export const companies = atom({
 export const companySelectorQuery = selectorFamily<Company, string>({
   key: "companySelectorQuery",
   get:
-    (id: string) =>
+    (id) =>
     async ({ get }) => {
       const api = get(apiSelector)
       const { data } = await api.get<CompanyWithTermsResponse>(
