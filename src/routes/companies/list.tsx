@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil"
 import { companies } from "./loader"
 import ButtonLink from "components/atoms/button-link"
 import SmallDot from "components/atoms/small-dot"
-import { ChevronRightIcon } from "@heroicons/react/24/outline"
+import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline"
 import { useNavigate } from "react-router-dom"
 import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import Chip from "components/atoms/chip"
@@ -17,9 +17,15 @@ const CompaniesList = () => {
   return (
     <div className="flex-1 flex-shrink-0">
       <header className="py-4 px-4 sm:px-6 lg:px-8 border-gray-900/10 border-b flex items-center justify-between">
-        <h2 className="text-gray-900 leading-7 font-semibold text-base">
-          Solicitudes Pendientes
-        </h2>
+        <div className="flex gap-2">
+          <h2 className="text-gray-900 leading-7 font-semibold text-base">
+            Clientes
+          </h2>
+          <ButtonLink to="new" status="secondary" size="sm">
+            Nuevo
+            <PlusIcon className="w-4 h-4 ml-1" />
+          </ButtonLink>
+        </div>
         <ListSortOrderHandler listName="companies" />
       </header>
       <ul className="list-none m-0 p-0" role="list">
@@ -44,7 +50,7 @@ const CompaniesList = () => {
                   <ButtonLink
                     size="sm"
                     status="secondary"
-                    to={`${company.id.toString()}/edit`}
+                    to={`${company.id}/edit`}
                   >
                     <svg
                       className="h-4 w-3 text-gray-400"
@@ -78,7 +84,7 @@ const CompaniesList = () => {
                     </a>
                   </h2>
                 </div>
-                <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
+                <div className="mt-3 flex items-center gap-[0.625rem] text-xs leading-5 text-gray-400 flex-wrap">
                   {company.terms.map((term) => (
                     <Chip key={term.id}>
                       {term.duration} {DURATION_TYPES.get(term.durationType)}
