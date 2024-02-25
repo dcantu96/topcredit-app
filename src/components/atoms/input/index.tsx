@@ -67,7 +67,7 @@ const Input = ({
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
-      <div className="relative mt-2 rounded-md shadow-sm">
+      <div className="relative mt-2 rounded-md shadow-sm mb-7">
         {prefix && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <span className="text-gray-500 sm:text-sm">{prefix}</span>
@@ -124,10 +124,12 @@ const Input = ({
             </select>
           </div>
         )}
+        {typeof error === "string" && (
+          <p className="absolute -bottom-6 left-0 text-sm text-rose-600">
+            {error}
+          </p>
+        )}
       </div>
-      {typeof error === "string" && (
-        <p className="mt-2 text-sm text-rose-600">{error}</p>
-      )}
     </div>
   )
 }
