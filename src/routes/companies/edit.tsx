@@ -1,20 +1,23 @@
 import { useState } from "react"
-import { useRecoilRefresher_UNSTABLE, useRecoilState } from "recoil"
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
 import { useNavigate, useParams } from "react-router-dom"
 import { companySelectorQuery, companyState } from "./loader"
 import ButtonLink from "components/atoms/button-link"
 import { useFormErrors } from "hooks/useFormErrors"
-import { useCompanyActions, useTermActions } from "./actions"
+import { useCompanyActions } from "./actions"
 import Chip from "components/atoms/chip"
 import { DURATION_TYPES } from "../../constants"
 import Label from "components/atoms/label"
+import { NewTermForm } from "./new-term-form"
+import AssignTermForm from "./assign-term-form"
 
 const EditCompany = () => {
   const { id } = useParams()
   if (!id) throw new Error("Missing id param")
-  const [companyData, setCompanyData] = useRecoilState(companyState(id))
+  const companyData = useRecoilValue(companyState(id))
+  const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id))
   const [name, setName] = useState<string>(companyData.name)
   const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(
@@ -23,12 +26,6 @@ const EditCompany = () => {
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { updateCompany } = useCompanyActions()
-  const { assignTermToCompany } = useTermActions()
-  const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id))
-  const [termDuration, setTermDuration] = useState<number>(0)
-  const [termDurationType, setTermDurationType] = useState<string | undefined>(
-    undefined,
-  )
   const to = useNavigate()
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,45 +34,18 @@ const EditCompany = () => {
     try {
       clearErrors()
       setIsLoading(true)
-      await updateCompany({ id: Number(id), name, domain, rate: rate / 100 })
+      await updateCompany({ id, name, domain, rate: rate / 100 })
       setIsLoading(false)
       to("/companies")
       refresh()
     } catch (error) {
-      handleErrors(error, ["name", "domain", "rate", "terms"])
+      handleErrors(error, ["name", "domain", "rate"])
       setIsLoading(false)
     }
   }
 
-  const handleTermSubmit = async () => {
-    if (termDuration && termDurationType) {
-      const data = await assignTermToCompany({
-        companyId: Number(id),
-        duration: termDuration,
-        durationType: termDurationType,
-      })
-      console.log(data)
-      setCompanyData((prev) => ({
-        ...prev,
-        terms: [
-          ...prev.terms,
-          {
-            id: data.id,
-            duration: data.duration,
-            durationType: data.durationType,
-            updatedAt: "",
-            createdAt: "",
-          },
-        ],
-      }))
-
-      setTermDuration(0)
-      setTermDurationType(undefined)
-    }
-  }
-
   return (
-    <div className="container mx-auto px-4 pt-4">
+    <div className="mx-auto px-4 pt-4 max-w-screen-lg">
       <div className="lg:flex lg:items-center lg:justify-between mb-4 w-full">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -116,7 +86,7 @@ const EditCompany = () => {
         </div>
       </div>
       <form
-        className="w-full grid grid-cols-2 gap-x-4 gap-y-6"
+        className="w-full grid grid-cols-2 gap-x-4 gap-y-0"
         onSubmit={handleUpdate}
       >
         <div>
@@ -154,9 +124,12 @@ const EditCompany = () => {
             onChange={({ target }) => setRate(Number(target.value))}
           />
         </div>
-        <div>
+        <div className="flex gap-4 items-center col-span-2">
+          <AssignTermForm companyId={id} />
+        </div>
+        <div className="col-span-2 md:col-span-1">
           <Label>Plazos</Label>
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2 mt-2 flex-wrap mb-8">
             {companyData.terms.map((term) => (
               <Chip key={term.id}>
                 {term.duration} {DURATION_TYPES.get(term.durationType)}
@@ -164,36 +137,10 @@ const EditCompany = () => {
             ))}
           </div>
         </div>
-        <div className="flex gap-4 items-end">
-          <Input
-            id="term-duration"
-            label="Agrega un plazo"
-            type="number"
-            error={errors.duration}
-            value={termDuration.toString()}
-            placeholder="10"
-            onChange={({ target }) => setTermDuration(Number(target.value))}
-            trailingDropdownId="term-duration-type"
-            trailingDropdownLabel="Duración"
-            trailingDropdownOptions={Array.from(DURATION_TYPES.entries()).map(
-              ([key, value]) => ({
-                label: value,
-                value: key,
-              }),
-            )}
-            trailingDropdownOnChange={({ target }) =>
-              setTermDurationType(target.value)
-            }
-          />
-          <Button
-            type="button"
-            onClick={handleTermSubmit}
-            disabled={!termDuration || !termDurationType}
-          >
-            Agregar
-          </Button>
+        <div className="flex gap-4 items-center col-span-2 md:col-span-1">
+          <NewTermForm companyId={id} />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 mt-2">
           <Button type="submit" fullWidth disabled={isLoading}>
             Actualizar
           </Button>
