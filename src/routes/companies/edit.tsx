@@ -1,17 +1,20 @@
 import { useState } from "react"
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
+import { useRecoilRefresher_UNSTABLE, useRecoilState } from "recoil"
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
 import { useNavigate, useParams } from "react-router-dom"
-import { companySelectorQuery } from "./loader"
+import { companySelectorQuery, companyState } from "./loader"
 import ButtonLink from "components/atoms/button-link"
 import { useFormErrors } from "hooks/useFormErrors"
-import { useCompanyActions } from "./actions"
+import { useCompanyActions, useTermActions } from "./actions"
+import Chip from "components/atoms/chip"
+import { DURATION_TYPES } from "../../constants"
+import Label from "components/atoms/label"
 
 const EditCompany = () => {
   const { id } = useParams()
   if (!id) throw new Error("Missing id param")
-  const companyData = useRecoilValue(companySelectorQuery(id))
+  const [companyData, setCompanyData] = useRecoilState(companyState(id))
   const [name, setName] = useState<string>(companyData.name)
   const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(
@@ -20,7 +23,12 @@ const EditCompany = () => {
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { updateCompany } = useCompanyActions()
+  const { assignTermToCompany } = useTermActions()
   const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id))
+  const [termDuration, setTermDuration] = useState<number>(0)
+  const [termDurationType, setTermDurationType] = useState<string | undefined>(
+    undefined,
+  )
   const to = useNavigate()
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,6 +44,33 @@ const EditCompany = () => {
     } catch (error) {
       handleErrors(error, ["name", "domain", "rate", "terms"])
       setIsLoading(false)
+    }
+  }
+
+  const handleTermSubmit = async () => {
+    if (termDuration && termDurationType) {
+      const data = await assignTermToCompany({
+        companyId: Number(id),
+        duration: termDuration,
+        durationType: termDurationType,
+      })
+      console.log(data)
+      setCompanyData((prev) => ({
+        ...prev,
+        terms: [
+          ...prev.terms,
+          {
+            id: data.id,
+            duration: data.duration,
+            durationType: data.durationType,
+            updatedAt: "",
+            createdAt: "",
+          },
+        ],
+      }))
+
+      setTermDuration(0)
+      setTermDurationType(undefined)
     }
   }
 
@@ -106,7 +141,7 @@ const EditCompany = () => {
             onChange={({ target }) => setDomain(target.value)}
           />
         </div>
-        <div>
+        <div className="col-span-2">
           <Input
             id="rate"
             label="Taza"
@@ -119,7 +154,45 @@ const EditCompany = () => {
             onChange={({ target }) => setRate(Number(target.value))}
           />
         </div>
-        <div></div>
+        <div>
+          <Label>Plazos</Label>
+          <div className="flex gap-2 mt-2">
+            {companyData.terms.map((term) => (
+              <Chip key={term.id}>
+                {term.duration} {DURATION_TYPES.get(term.durationType)}
+              </Chip>
+            ))}
+          </div>
+        </div>
+        <div className="flex gap-4 items-end">
+          <Input
+            id="term-duration"
+            label="Agrega un plazo"
+            type="number"
+            error={errors.duration}
+            value={termDuration.toString()}
+            placeholder="10"
+            onChange={({ target }) => setTermDuration(Number(target.value))}
+            trailingDropdownId="term-duration-type"
+            trailingDropdownLabel="Duración"
+            trailingDropdownOptions={Array.from(DURATION_TYPES.entries()).map(
+              ([key, value]) => ({
+                label: value,
+                value: key,
+              }),
+            )}
+            trailingDropdownOnChange={({ target }) =>
+              setTermDurationType(target.value)
+            }
+          />
+          <Button
+            type="button"
+            onClick={handleTermSubmit}
+            disabled={!termDuration || !termDurationType}
+          >
+            Agregar
+          </Button>
+        </div>
         <div className="col-span-2">
           <Button type="submit" fullWidth disabled={isLoading}>
             Actualizar
