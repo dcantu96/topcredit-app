@@ -2,9 +2,13 @@ import { apiSelector } from "components/providers/api/atoms"
 import { selector } from "recoil"
 
 export interface NewTerm {
-  name: string
-  type: string
+  name?: string
+  durationType: string
   duration: number
+}
+
+export interface NewTermForCompany extends NewTerm {
+  companyId: number
 }
 
 export interface EditTerm extends NewTerm {
