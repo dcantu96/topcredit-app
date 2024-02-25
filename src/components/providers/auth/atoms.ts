@@ -182,11 +182,15 @@ export const myProfileState = selector<MeResponse | undefined>({
   },
 })
 
-export const hasManyRolesState = selector({
-  key: "hasManyRolesState",
+export const showDashboardSidebarSelector = selector({
+  key: "showDashboardSidebarSelector",
   get: ({ get }) => {
     const profile = get(myProfileState)
-    return profile?.roles && profile.roles.length > 1
+
+    return (
+      profile?.roles &&
+      (profile?.roles.includes("admin") || profile.roles.length > 1)
+    )
   },
 })
 
@@ -194,6 +198,7 @@ export const userRolesState = selector({
   key: "userRolesState",
   get: ({ get }) => {
     const profile = get(myProfileState)
+    console.log(profile?.roles)
     return ROLES.filter((role) => profile?.roles.includes(role.value))
   },
 })
