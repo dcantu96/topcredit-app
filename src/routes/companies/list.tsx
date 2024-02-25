@@ -5,19 +5,8 @@ import SmallDot from "components/atoms/small-dot"
 import { ChevronRightIcon } from "@heroicons/react/24/outline"
 import { useNavigate } from "react-router-dom"
 import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
-
-const translateDurationType = (type: string) => {
-  switch (type) {
-    case "two-weeks":
-      return "quincenas"
-    case "months":
-      return "meses"
-    case "years":
-      return "años"
-    default:
-      return type
-  }
-}
+import Chip from "components/atoms/chip"
+import { DURATION_TYPES } from "../../constants"
 
 const CompaniesList = () => {
   const companyData = useRecoilValue(companies)
@@ -91,12 +80,9 @@ const CompaniesList = () => {
                 </div>
                 <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
                   {company.terms.map((term) => (
-                    <span
-                      key={term.id}
-                      className="whitespace-nowrap rounded-full py-1 px-2 text-xs bg-indigo-400/10 text-indigo-400 border-indigo-400 border"
-                    >
-                      {term.duration} {translateDurationType(term.durationType)}
-                    </span>
+                    <Chip key={term.id}>
+                      {term.duration} {DURATION_TYPES.get(term.durationType)}
+                    </Chip>
                   ))}
                 </div>
               </div>
