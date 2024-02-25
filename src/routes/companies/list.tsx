@@ -7,6 +7,19 @@ import { useRecoilValue } from "recoil"
 import { companies } from "./loader"
 import ButtonLink from "components/atoms/button-link"
 
+const translateDurationType = (type: string) => {
+  switch (type) {
+    case "two-weeks":
+      return "quincenas"
+    case "months":
+      return "meses"
+    case "years":
+      return "años"
+    default:
+      return type
+  }
+}
+
 const CompaniesList = () => {
   const to = useNavigate()
   const { email } = useAuth()
@@ -17,6 +30,7 @@ const CompaniesList = () => {
     logout()
     to("/")
   }
+  console.log(companyData)
 
   return (
     <div>
@@ -40,7 +54,14 @@ const CompaniesList = () => {
                 {company.rate ? `${company.rate * 100}%` : "N/A"}
               </td>
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500">
-                {company.terms}
+                {company.terms.map((term) => (
+                  <span
+                    key={term.id}
+                    className="rounded-full py-1 px-2 text-xs bg-indigo-400/10 text-indigo-400 border-indigo-400 border mr-2"
+                  >
+                    {term.duration} {translateDurationType(term.durationType)}
+                  </span>
+                ))}
               </td>
               <td className="border-b border-slate-100 p-4 pr-8 text-slate-500">
                 X
