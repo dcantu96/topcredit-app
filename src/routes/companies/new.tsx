@@ -1,10 +1,10 @@
 import { useState } from "react"
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
-import { companiesActions } from "./atoms"
+import { useRecoilRefresher_UNSTABLE } from "recoil"
 import { useNavigate } from "react-router-dom"
 import { companiesSelectorQuery } from "./loader"
+import { useCompanyActions } from "./actions"
 
 const NewCompany = () => {
   const [name, setName] = useState<string>("")
@@ -12,7 +12,7 @@ const NewCompany = () => {
   const [rate, setRate] = useState<number>(0)
   const [terms, setTerms] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { create } = useRecoilValue(companiesActions)
+  const { createCompany } = useCompanyActions()
   const refresh = useRecoilRefresher_UNSTABLE(companiesSelectorQuery)
   const to = useNavigate()
 
@@ -21,7 +21,7 @@ const NewCompany = () => {
 
     try {
       setIsLoading(true)
-      await create({ name, domain, rate: rate / 100, terms })
+      await createCompany({ name, domain, rate: rate / 100, terms })
       setIsLoading(false)
       refresh()
       to("/companies")
