@@ -1,52 +1,45 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { selector } from "recoil"
 
-interface NewCompany {
+export interface NewTerm {
+  name: string
+  type: string
+  duration: number
+}
+
+export interface EditTerm extends NewTerm {
+  id: number
+}
+export interface NewCompany {
   name: string
   domain: string
   rate?: number
-  terms?: string
+  terms?: NewTerm[]
 }
 
-export const companiesActions = selector({
-  key: "companiesActions",
-  get: ({ getCallback }) => {
-    const create = getCallback(
-      ({ snapshot }) =>
-        async ({ domain, name, rate, terms }: NewCompany) => {
-          const api = snapshot.getLoadable(apiSelector).getValue()
-          await api.create("company", {
-            domain,
-            name,
-            rate,
-            terms,
-          })
-        },
-    )
+export interface EditCompany extends NewCompany {
+  id: number
+  terms: EditTerm[]
+}
 
-    const update = getCallback(
-      ({ snapshot }) =>
-        async ({
-          id,
-          domain,
-          name,
-          rate,
-          terms,
-        }: NewCompany & { id: number }) => {
-          const api = snapshot.getLoadable(apiSelector).getValue()
-          await api.update("company", {
-            id,
-            domain,
-            name,
-            rate,
-            terms,
-          })
-        },
-    )
+interface TermsQueryResponse {
+  id: number
+  type: string
+  duration: number
+  name: string
+}
 
-    return {
-      create,
-      update,
+export const termsSelectorQuery = selector<
+  ReadonlyMap<number, TermsQueryResponse>
+>({
+  key: "termsSelectorQuery",
+  get: async ({ get }) => {
+    const api = get(apiSelector)
+    const { data } = await api.get<TermsQueryResponse[]>("terms")
+    const termsMap = new Map<number, TermsQueryResponse>()
+    for (const term of data) {
+      termsMap.set(term.id, term)
     }
+    return termsMap
   },
 })
