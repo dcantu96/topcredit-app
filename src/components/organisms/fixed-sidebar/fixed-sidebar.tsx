@@ -11,6 +11,7 @@ import { Role } from "src/schema.types"
 const FixedSidebar = () => {
   const roles = useRecoilValue(userRolesState)
   const isHomeActive = useMatch("/dashboard")
+  const isAdmin = roles.some((role) => role.value === "admin")
 
   return (
     <div className="w-16 bg-slate-50 border-gray-900/10 border-r overflow-y-auto inline-block h-[calc(100vh-4rem)]">
@@ -44,6 +45,19 @@ const FixedSidebar = () => {
               </NavLink>
             </li>
           ))}
+          {isAdmin && (
+            <>
+              <li>
+                <NavLink
+                  className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
+                  to="companies"
+                >
+                  <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200"></div>
+                  Clientes
+                </NavLink>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </div>
@@ -61,7 +75,7 @@ const NavIconByRole = ({ role }: { role: Role }) => {
           }`}
         />
       )
-    case "pre-authorization":
+    case "pre_authorizations":
       return (
         <CheckBadgeIcon
           className={`h-5 w-5 group-hover:text-sky-500 ${
