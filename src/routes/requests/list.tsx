@@ -7,6 +7,7 @@ import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 
 import { STATES_OF_MEXICO } from "../../constants"
 import { basicDetailsSortedSelector } from "./atoms"
+import SmallDot from "components/atoms/small-dot"
 
 const Screen = () => {
   const navigate = useNavigate()
@@ -52,12 +53,7 @@ const Screen = () => {
                         ?.label
                     }
                   </p>
-                  <svg
-                    viewBox="0 0 2 2"
-                    className="fill-[#d1d5db] flex-none w-[0.125rem] h-[0.125rem]"
-                  >
-                    <circle cx="1" cy="1" r="1"></circle>
-                  </svg>
+                  <SmallDot />
                   <p className="whitespace-nowrap">
                     {new Date(details.createdAt).toLocaleDateString()}
                   </p>
