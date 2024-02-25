@@ -1,11 +1,16 @@
 import { useRecoilValue } from "recoil"
-import { companies } from "./loader"
+import { useNavigate } from "react-router-dom"
+import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline"
+
 import ButtonLink from "components/atoms/button-link"
 import SmallDot from "components/atoms/small-dot"
-import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline"
-import { useNavigate } from "react-router-dom"
-import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import Chip from "components/atoms/chip"
+import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
+import ListContainer from "components/atoms/layout/list-container"
+import ListHeader from "components/atoms/layout/list-header"
+import List from "components/atoms/list"
+
+import { companies } from "./loader"
 import { DURATION_TYPES } from "../../constants"
 
 const CompaniesList = () => {
@@ -15,25 +20,21 @@ const CompaniesList = () => {
   console.log(companyData)
 
   return (
-    <div className="flex-1 flex-shrink-0">
-      <header className="py-4 px-4 sm:px-6 lg:px-8 border-gray-900/10 border-b flex items-center justify-between">
-        <div className="flex gap-2">
-          <h2 className="text-gray-900 leading-7 font-semibold text-base">
-            Clientes
-          </h2>
+    <ListContainer>
+      <ListHeader>
+        <ListHeader.Title text="Clientes">
           <ButtonLink to="new" status="secondary" size="sm">
             Nuevo
             <PlusIcon className="w-4 h-4 ml-1" />
           </ButtonLink>
-        </div>
-        <ListSortOrderHandler listName="companies" />
-      </header>
-      <ul className="list-none m-0 p-0" role="list">
+        </ListHeader.Title>
+        <ListHeader.Actions>
+          <ListSortOrderHandler listName="companies" />
+        </ListHeader.Actions>
+      </ListHeader>
+      <List>
         {companyData.map((company) => (
-          <li
-            key={company.id}
-            className="py-4 px-4 sm:px-6 lg:px-8 items-center flex relative border-b border-gray-900/10 flex-wrap"
-          >
+          <List.Item key={company.id}>
             <div className="flex-1 min-w-60">
               <div className="flex items-center gap-x-3">
                 <div className="bg-gray-100 p-1 rounded-full flex-none shadow-sm">
@@ -99,10 +100,10 @@ const CompaniesList = () => {
                 <ChevronRightIcon className="w-6 h-6 text-gray-400" />
               </button>
             </div>
-          </li>
+          </List.Item>
         ))}
-      </ul>
-    </div>
+      </List>
+    </ListContainer>
   )
 }
 
