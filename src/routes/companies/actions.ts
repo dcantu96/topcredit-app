@@ -1,6 +1,13 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { useRecoilCallback } from "recoil"
-import { EditCompany, EditTerm, NewCompany, NewTerm } from "./atoms"
+import {
+  EditCompany,
+  EditTerm,
+  NewCompany,
+  NewTerm,
+  NewTermForCompany,
+} from "./atoms"
+import { companySelectorQuery } from "./loader"
 
 export const useCompanyActions = () => {
   const createCompany = useRecoilCallback(
@@ -37,28 +44,70 @@ export const useCompanyActions = () => {
 export const useTermActions = () => {
   const createTerm = useRecoilCallback(
     ({ snapshot }) =>
-      async ({ name, type, duration }: NewTerm) => {
+      async ({ name, durationType, duration }: NewTerm) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
-        await api.create("term", {
+        const resp = await api.create("term", {
           name,
-          type,
+          durationType,
           duration,
         })
+        return resp
       },
   )
+
+  const assignTermToCompany = useRecoilCallback(
+    ({ snapshot }) =>
+      async ({
+        name,
+        durationType,
+        duration,
+        companyId,
+      }: NewTermForCompany) => {
+        const termResp = await createTerm({ name, durationType, duration })
+
+        const api = snapshot.getLoadable(apiSelector).getValue()
+        const companyResp = snapshot
+          .getLoadable(companySelectorQuery(companyId.toString()))
+          .getValue()
+        const currentTerms = companyResp.terms.map((term) => ({
+          id: term.id,
+          type: "terms",
+        }))
+        await api.update("company", {
+          id: companyId,
+          terms: {
+            data: [
+              ...currentTerms,
+              {
+                id: termResp.data.id,
+                type: "terms",
+              },
+            ],
+          },
+        })
+        return {
+          id: termResp.data.id,
+          name,
+          durationType,
+          duration,
+        }
+      },
+  )
+
   const updateTerm = useRecoilCallback(
     ({ snapshot }) =>
-      async ({ id, name, type, duration }: EditTerm) => {
+      async ({ id, name, durationType, duration }: EditTerm) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         await api.update("term", {
           id,
           name,
-          type,
+          durationType,
           duration,
         })
       },
   )
   return {
+    assignTermToCompany,
     createTerm,
     updateTerm,
   }
