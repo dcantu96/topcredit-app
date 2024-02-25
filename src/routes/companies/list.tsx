@@ -37,9 +37,9 @@ const CompaniesList = () => {
         {companyData.map((company) => (
           <li
             key={company.id}
-            className="py-4 px-4 sm:px-6 lg:px-8 items-center flex relative border-b border-gray-900/10"
+            className="py-4 px-4 sm:px-6 lg:px-8 items-center flex relative border-b border-gray-900/10 flex-wrap"
           >
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-60">
               <div className="flex items-center gap-x-3">
                 <div className="bg-gray-100 p-1 rounded-full flex-none shadow-sm">
                   <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
@@ -78,7 +78,7 @@ const CompaniesList = () => {
                 </p>
               </div>
             </div>
-            <div className="flex-1 min-w-0 flex justify-between">
+            <div className="flex-1 min-w-60 flex justify-between">
               <div>
                 <div className="flex items-center gap-x-3">
                   <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
@@ -93,7 +93,7 @@ const CompaniesList = () => {
                   {company.terms.map((term) => (
                     <span
                       key={term.id}
-                      className="rounded-full py-1 px-2 text-xs bg-indigo-400/10 text-indigo-400 border-indigo-400 border"
+                      className="whitespace-nowrap rounded-full py-1 px-2 text-xs bg-indigo-400/10 text-indigo-400 border-indigo-400 border"
                     >
                       {term.duration} {translateDurationType(term.durationType)}
                     </span>
