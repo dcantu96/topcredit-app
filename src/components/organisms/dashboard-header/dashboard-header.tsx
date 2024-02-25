@@ -6,7 +6,7 @@ import { BellAlertIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline"
 import DropdownList from "components/atoms/dropdown-list"
 import { authActions, myProfileState } from "components/providers/auth/atoms"
 
-import logoSmall from "../../../images/logo_small.png"
+import logoSmall from "../../../assets/logo_small.png"
 
 const DashboardHeader = () => {
   const profile = useRecoilValue(myProfileState)
@@ -46,7 +46,7 @@ const DashboardHeader = () => {
               className="btn btn-small btn-transparent rounded-full bg-gray-300 text-white p-4 relative"
             >
               <span className="absolute inset-0 flex items-center justify-center text-base font-semibold">
-                {profile.firstName?.[0]}
+                {profile?.firstName?.[0]}
               </span>
             </button>
             <AnimatePresence>
