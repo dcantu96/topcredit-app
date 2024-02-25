@@ -1,13 +1,13 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { useRecoilCallback } from "recoil"
 import {
+  AssignTermForCompany,
   EditCompany,
   EditTerm,
   NewCompany,
   NewTerm,
-  NewTermForCompany,
 } from "./atoms"
-import { companySelectorQuery } from "./loader"
+import { companySelectorQuery, companyState } from "./loader"
 
 export const useCompanyActions = () => {
   const createCompany = useRecoilCallback(
@@ -23,16 +23,17 @@ export const useCompanyActions = () => {
       },
   )
   const updateCompany = useRecoilCallback(
-    ({ snapshot }) =>
-      async ({ id, domain, name, rate, terms }: EditCompany) => {
+    ({ snapshot, refresh, reset }) =>
+      async ({ id, domain, name, rate }: EditCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         await api.update("company", {
           id,
           domain,
           name,
           rate,
-          terms,
         })
+        refresh(companySelectorQuery(id.toString()))
+        reset(companyState(id.toString()))
       },
   )
   return {
@@ -46,25 +47,18 @@ export const useTermActions = () => {
     ({ snapshot }) =>
       async ({ name, durationType, duration }: NewTerm) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
-        const resp = await api.create("term", {
+        const { data } = await api.create("term", {
           name,
           durationType,
           duration,
         })
-        return resp
+        return data
       },
   )
 
   const assignTermToCompany = useRecoilCallback(
     ({ snapshot }) =>
-      async ({
-        name,
-        durationType,
-        duration,
-        companyId,
-      }: NewTermForCompany) => {
-        const termResp = await createTerm({ name, durationType, duration })
-
+      async ({ termId, companyId }: AssignTermForCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         const companyResp = snapshot
           .getLoadable(companySelectorQuery(companyId.toString()))
@@ -79,18 +73,12 @@ export const useTermActions = () => {
             data: [
               ...currentTerms,
               {
-                id: termResp.data.id,
+                id: termId,
                 type: "terms",
               },
             ],
           },
         })
-        return {
-          id: termResp.data.id,
-          name,
-          durationType,
-          duration,
-        }
       },
   )
 
