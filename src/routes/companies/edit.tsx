@@ -2,11 +2,11 @@ import { useState } from "react"
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
-import { companiesActions } from "./atoms"
 import { useNavigate, useParams } from "react-router-dom"
 import { companySelectorQuery } from "./loader"
 import ButtonLink from "components/atoms/button-link"
 import { useFormErrors } from "hooks/useFormErrors"
+import { useCompanyActions } from "./actions"
 
 const EditCompany = () => {
   const { id } = useParams()
@@ -17,10 +17,9 @@ const EditCompany = () => {
   const [rate, setRate] = useState<number>(
     companyData?.rate ? companyData.rate * 100 : 0,
   )
-  const [terms, setTerms] = useState<string>(companyData.terms || "")
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { update } = useRecoilValue(companiesActions)
+  const { updateCompany } = useCompanyActions()
   const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id))
   const to = useNavigate()
 
@@ -30,7 +29,7 @@ const EditCompany = () => {
     try {
       clearErrors()
       setIsLoading(true)
-      await update({ id: Number(id), name, domain, rate: rate / 100, terms })
+      await updateCompany({ id: Number(id), name, domain, rate: rate / 100 })
       setIsLoading(false)
       to("/companies")
       refresh()
@@ -120,17 +119,7 @@ const EditCompany = () => {
             onChange={({ target }) => setRate(Number(target.value))}
           />
         </div>
-        <div>
-          <Input
-            id="terms"
-            label="Plazos"
-            required
-            value={terms}
-            error={errors.terms}
-            placeholder="2 años, 1 mes"
-            onChange={({ target }) => setTerms(target.value)}
-          />
-        </div>
+        <div></div>
         <div className="col-span-2">
           <Button type="submit" fullWidth disabled={isLoading}>
             Actualizar
