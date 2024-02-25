@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { ChevronRightIcon } from "@heroicons/react/24/outline"
 
 import NavLink from "components/atoms/nav-link"
+import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
+import SmallDot from "components/atoms/small-dot"
+import Button from "components/atoms/button"
 
 import { approvedUsersSortedSelector } from "./atoms"
-import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
+import { MXNFormat } from "../../constants"
 
 const Screen = () => {
-  const navigate = useNavigate()
   const approvedUsers = useRecoilValue(approvedUsersSortedSelector)
 
   return (
@@ -39,30 +39,55 @@ const Screen = () => {
                       </span>
                       <span className="text-gray-400">/</span>
                       <span className="whitespace-nowrap">
-                        {user.email.split("@")[1]}
+                        {new Date(user.createdAt).toLocaleDateString()}
                       </span>
                     </a>
                   </h2>
                 </div>
                 <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
-                  <p className="whitespace-nowrap"></p>
-                  <svg
-                    viewBox="0 0 2 2"
-                    className="fill-[#d1d5db] flex-none w-[0.125rem] h-[0.125rem]"
-                  >
-                    <circle cx="1" cy="1" r="1"></circle>
-                  </svg>
+                  <p className="whitespace-nowrap">{user.employeeNumber}</p>
+                  <SmallDot />
                   <p className="whitespace-nowrap">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {user.email.split("@")[1]}
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => navigate(user.id)}
-                className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
-              >
-                <ChevronRightIcon className="w-6 h-6 text-gray-400" />
-              </button>
+              <div className="flex-1 min-w-0 flex justify-between">
+                <div>
+                  <div className="flex items-center gap-x-3">
+                    <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+                      <a className="flex text-inherit decoration-inherit gap-x-2">
+                        <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                          {user.salary ? MXNFormat.format(user.salary) : 0}
+                        </span>
+                        <span className="text-gray-400">/</span>
+                        <span className="whitespace-nowrap">
+                          {user.salaryFrequency === "Q"
+                            ? "Quincenales"
+                            : "Mensuales"}
+                        </span>
+                      </a>
+                    </h2>
+                  </div>
+                  <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
+                    <p className="whitespace-nowrap">
+                      {user.salary ? MXNFormat.format(user.salary) : 0}
+                    </p>
+                    <SmallDot />
+                    <p className="whitespace-nowrap">
+                      {user.salaryFrequency === "Q"
+                        ? "Quincenales"
+                        : "Mensuales"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Button status="primary" disabled>
+                    Autorizar
+                  </Button>
+                  <Button status="secondary">Rechazar</Button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
