@@ -51,3 +51,9 @@ export const MXNFormat = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",
 })
+
+export const DURATION_TYPES = new Map([
+  ["two-weeks", "Quincenas"],
+  ["months", "Meses"],
+  ["years", "Años"],
+])
