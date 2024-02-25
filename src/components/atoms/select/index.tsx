@@ -36,7 +36,7 @@ const Select = ({
       >
         {label}
       </label>
-      <div className="mt-2">
+      <div className="mt-2 mb-7">
         <select
           id={id}
           name={id}
@@ -66,10 +66,12 @@ const Select = ({
             ),
           )}
         </select>
+        {typeof error === "string" && (
+          <p className="absolute -bottom-6 left-0 text-sm text-rose-600">
+            {error}
+          </p>
+        )}
       </div>
-      {typeof error === "string" && (
-        <p className="mt-2 text-sm text-rose-600">{error}</p>
-      )}
     </div>
   )
 }
