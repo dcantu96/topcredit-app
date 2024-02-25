@@ -1,41 +1,28 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { atom, selector, selectorFamily } from "recoil"
+import { Company, Term } from "src/schema.types"
 
-interface Company {
-  id: number
-  name: string
-  createdAt: string
-  updatedAt: string
-  domain?: string
-  rate?: number
-  terms?: string
+export interface CompanyWithTermsResponse extends Omit<Company, "terms"> {
+  terms: {
+    data: Term[]
+  }
 }
 
-interface CompanyResponse {
-  id: string
-  name: string
-  domain: string
-  rate?: number
-  terms?: string
-  "created-at": string
-  "updated-at": string
-}
-
-export const companiesSelectorQuery = selector({
+export const companiesSelectorQuery = selector<Company[]>({
   key: "companiesSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get("companies")
-    const companies = data as CompanyResponse[]
-    return companies.map((company) => ({
-      id: Number(company.id),
-      name: company.name,
-      domain: company.domain,
-      rate: company.rate,
-      terms: company.terms,
-      createdAt: company["created-at"],
-      updatedAt: company["updated-at"],
-    })) as Company[]
+    const { data } = await api.get<CompanyWithTermsResponse[]>("companies", {
+      params: {
+        include: "terms",
+      },
+    })
+    return data.map((company) => ({
+      ...company,
+      terms: company.terms.data.map((term) => ({
+        ...term,
+      })),
+    }))
   },
 })
 
@@ -50,16 +37,11 @@ export const companySelectorQuery = selectorFamily({
     (id: string) =>
     async ({ get }) => {
       const api = get(apiSelector)
-      const { data } = await api.get(`company/${id}`)
-      const company = data as CompanyResponse
-      return {
-        id: Number(company.id),
-        name: company.name,
-        domain: company.domain,
-        rate: company.rate,
-        terms: company.terms,
-        createdAt: company["created-at"],
-        updatedAt: company["updated-at"],
-      } as Company
+      const { data } = await api.get<Company>(`company/${id}`, {
+        params: {
+          include: "terms",
+        },
+      })
+      return data
     },
 })
