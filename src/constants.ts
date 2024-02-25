@@ -39,9 +39,15 @@ export const COUNTRIES = [{ value: "MX", label: "México" }]
 export const ROLES: { value: Role; label: string }[] = [
   { value: "requests", label: "Solicitudes" },
   { value: "pre_authorizations", label: "Pre Autorizaciones" },
+  { value: "admin", label: "Administrador" },
 ]
 
 export const SORT_ORDER = [
   { label: "Más recientes", value: "desc" as const },
   { label: "Más antiguas", value: "asc" as const },
 ]
+
+export const MXNFormat = new Intl.NumberFormat("es-MX", {
+  style: "currency",
+  currency: "MXN",
+})
