@@ -44,7 +44,7 @@ export interface User extends ObjectWithId, Timestamps {
 }
 
 export interface Term extends ObjectWithId, Timestamps {
-  name: string
+  name?: string
   durationType: string
   duration: number
 }
