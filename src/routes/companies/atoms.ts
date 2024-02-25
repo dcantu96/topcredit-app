@@ -1,5 +1,5 @@
 import { apiSelector } from "components/providers/api/atoms"
-import { selector } from "recoil"
+import { atom, selector } from "recoil"
 
 export interface NewTerm {
   name?: string
@@ -39,9 +39,7 @@ interface TermsQueryResponse {
   updatedAt: string
 }
 
-export const termsSelectorQuery = selector<
-  ReadonlyMap<string, TermsQueryResponse>
->({
+export const termsSelectorQuery = selector<Map<string, TermsQueryResponse>>({
   key: "termsSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
@@ -52,4 +50,9 @@ export const termsSelectorQuery = selector<
     }
     return termsMap
   },
+})
+
+export const termsState = atom<Map<string, TermsQueryResponse>>({
+  key: "termsState",
+  default: termsSelectorQuery,
 })

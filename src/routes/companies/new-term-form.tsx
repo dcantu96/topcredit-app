@@ -1,12 +1,10 @@
 import { useState } from "react"
-import { useSetRecoilState } from "recoil"
 
 import { useFormErrors } from "hooks/useFormErrors"
 import Button from "components/atoms/button"
 import Input from "components/atoms/input"
 
 import { useTermActions } from "./actions"
-import { companyState } from "./loader"
 import { DURATION_TYPES } from "../../constants"
 
 interface NewTermFormProps {
@@ -14,7 +12,6 @@ interface NewTermFormProps {
 }
 
 export const NewTermForm = ({ companyId }: NewTermFormProps) => {
-  const setCompanyData = useSetRecoilState(companyState(companyId))
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const { assignTermToCompany, createTerm } = useTermActions()
   const [duration, setDuration] = useState<number>(0)
@@ -34,19 +31,6 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
           companyId,
           termId: respTerm.id,
         })
-        setCompanyData((prev) => ({
-          ...prev,
-          terms: [
-            ...prev.terms,
-            {
-              id: respTerm.id,
-              duration,
-              durationType,
-              updatedAt: "",
-              createdAt: "",
-            },
-          ],
-        }))
         setDuration(0)
         setDurationType(undefined)
       } catch (error) {

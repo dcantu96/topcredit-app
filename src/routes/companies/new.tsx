@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useRecoilRefresher_UNSTABLE } from "recoil"
 import { useNavigate } from "react-router-dom"
 
 import Input from "components/atoms/input"
@@ -9,7 +8,6 @@ import FormContainer from "components/atoms/layout/form-container"
 import FormHeader from "components/atoms/layout/form-header"
 
 import { useCompanyActions } from "./actions"
-import { companiesSelectorQuery } from "./loader"
 
 const NewCompany = () => {
   const [name, setName] = useState<string>("")
@@ -17,7 +15,6 @@ const NewCompany = () => {
   const [rate, setRate] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { createCompany } = useCompanyActions()
-  const refresh = useRecoilRefresher_UNSTABLE(companiesSelectorQuery)
   const to = useNavigate()
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,7 +24,6 @@ const NewCompany = () => {
       setIsLoading(true)
       await createCompany({ name, domain, rate: rate / 100 })
       setIsLoading(false)
-      refresh()
       to("..")
     } catch (error) {
       console.log("error", error)

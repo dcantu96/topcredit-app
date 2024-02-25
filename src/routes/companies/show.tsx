@@ -1,7 +1,11 @@
 import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
+
 import { companySelectorQuery } from "./loader"
 import ButtonLink from "components/atoms/button-link"
+import Chip from "components/atoms/chip"
+
+import { DURATION_TYPES } from "../../constants"
 
 const ShowCompany = () => {
   const { id } = useParams()
@@ -160,8 +164,14 @@ const ShowCompany = () => {
           </span>
         </div>
       </div>
-      <p>Plazos: {terms}</p>
-      <p>Lista de empleados PENDIENTE</p>
+      <div>
+        Plazos
+        {terms.map((term) => (
+          <Chip key={term.id}>
+            {term.duration} {DURATION_TYPES.get(term.durationType)}
+          </Chip>
+        ))}
+      </div>
     </>
   )
 }

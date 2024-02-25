@@ -48,10 +48,10 @@ export const userGeneralDataQuerySelector = selector<
   key: "userGeneralDataQuerySelector",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { id } = get(myProfileState)
-    console.log("id => profile", id)
-    const { data } = await api.get<UserGeneralDataQuery>(`users/${id}`)
-    console.log(data)
+    const profile = get(myProfileState)
+    if (!profile) return undefined
+    const { data } = await api.get<UserGeneralDataQuery>(`users/${profile.id}`)
+
     if (data)
       return {
         id: data.id,

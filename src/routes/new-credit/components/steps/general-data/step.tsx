@@ -104,7 +104,7 @@ const Step = () => {
               type="money"
               error={salaryFieldError || salaryFrequencyFieldError}
               trailingDropdownLabel="MXN"
-              trailingDropdownOptions={["MXN"]}
+              trailingDropdownOptions={[{ value: "MXN", label: "MXN" }]}
               trailingDropdownId="salary-currency"
               onBlur={() => setSalaryTouched(true)}
               onChange={(e) => setSalary(e.target.value)}

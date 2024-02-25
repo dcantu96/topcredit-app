@@ -10,11 +10,11 @@ import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 
-import { companies } from "./loader"
+import { companiesState } from "./loader"
 import { DURATION_TYPES } from "../../constants"
 
 const CompaniesList = () => {
-  const companyData = useRecoilValue(companies)
+  const companyData = useRecoilValue(companiesState)
   const navigate = useNavigate()
 
   console.log(companyData)

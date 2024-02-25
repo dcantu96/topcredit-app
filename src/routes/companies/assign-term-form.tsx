@@ -1,12 +1,12 @@
 import { useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilValue } from "recoil"
 
 import Button from "components/atoms/button"
 import Select from "components/atoms/select"
 import { useFormErrors } from "hooks/useFormErrors"
 
 import { DURATION_TYPES } from "../../constants"
-import { termsSelectorQuery } from "./atoms"
+import { termsState } from "./atoms"
 import { useTermActions } from "./actions"
 import { companyState } from "./loader"
 
@@ -17,9 +17,9 @@ interface AssignTermFormProps {
 const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
   const [termId, setTermId] = useState<string>("")
   const { errors, handleErrors, clearErrors } = useFormErrors()
-  const termsMap = useRecoilValue(termsSelectorQuery)
+  const termsMap = useRecoilValue(termsState)
   const { assignTermToCompany } = useTermActions()
-  const [companyData, setCompanyData] = useRecoilState(companyState(companyId))
+  const companyData = useRecoilValue(companyState(companyId))
   const termOptions = Array.from(termsMap.values())
     .filter(({ id }) => !companyData.terms.some((term) => term.id === id))
     .map(({ duration, durationType, id }) => ({
@@ -31,17 +31,11 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
     if (termId) {
       try {
         clearErrors()
-        const termToAssign = termsMap.get(termId)
-        if (!termToAssign) throw new Error("Term not found")
         await assignTermToCompany({
           companyId,
           termId,
         })
         setTermId("")
-        setCompanyData((prev) => ({
-          ...prev,
-          terms: [...prev.terms, termToAssign],
-        }))
       } catch (error) {
         handleErrors(error, ["termId"])
       }

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil"
+import { useRecoilValue } from "recoil"
 import { useNavigate, useParams } from "react-router-dom"
 
 import { useFormErrors } from "hooks/useFormErrors"
@@ -13,7 +13,7 @@ import FormHeader from "components/atoms/layout/form-header"
 import FormContainer from "components/atoms/layout/form-container"
 
 import { useCompanyActions } from "./actions"
-import { companySelectorQuery, companyState } from "./loader"
+import { companyState } from "./loader"
 import { NewTermForm } from "./new-term-form"
 import AssignTermForm from "./assign-term-form"
 import { DURATION_TYPES } from "../../constants"
@@ -22,7 +22,6 @@ const EditCompany = () => {
   const { id } = useParams()
   if (!id) throw new Error("Missing id param")
   const companyData = useRecoilValue(companyState(id))
-  const refresh = useRecoilRefresher_UNSTABLE(companySelectorQuery(id))
   const [name, setName] = useState<string>(companyData.name)
   const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(
@@ -41,13 +40,12 @@ const EditCompany = () => {
       clearErrors()
       setIsLoading(true)
       await updateCompany({ id, name, domain, rate: rate / 100 })
-      setIsLoading(false)
-      to("../..")
       toast.success({
         title: "Cliente actualizado",
         message: "El cliente ha sido actualizado correctamente",
       })
-      refresh()
+      setIsLoading(false)
+      to("../..")
     } catch (error) {
       handleErrors(error, ["name", "domain", "rate"])
       setIsLoading(false)

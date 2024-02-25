@@ -35,7 +35,7 @@ export const useCreditScreenSubmitActions = () => {
   const submit = async () => {
     try {
       await api.patch("users", {
-        id: profile.id,
+        id: profile?.id,
         "employee-number": employeeNumber,
         "bank-account-number": bankAccountNumber,
         "address-line-one": addressLineOne,

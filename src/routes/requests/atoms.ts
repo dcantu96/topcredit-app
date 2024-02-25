@@ -18,7 +18,7 @@ type BasicDetailsTableResponse = Pick<
 >
 
 export const basicDetailsListSelectorQuery = selector<
-  ReadonlyMap<number, BasicDetailsTableResponse>
+  ReadonlyMap<string, BasicDetailsTableResponse>
 >({
   key: "basicDetailsListSelectorQuery",
   get: async ({ get }) => {
@@ -35,7 +35,7 @@ export const basicDetailsListSelectorQuery = selector<
       },
     })
 
-    const basicDetailsMap = new Map<number, BasicDetailsTableResponse>()
+    const basicDetailsMap = new Map<string, BasicDetailsTableResponse>()
     for (const details of data) {
       basicDetailsMap.set(details.id, details)
     }

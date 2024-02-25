@@ -24,7 +24,7 @@ type ApprovedUsersResponse = Pick<
 // 7. input for loan term (terms are available based on the company's loan terms)
 
 export const approvedUsersSelectorQuery = selector<
-  ReadonlyMap<number, ApprovedUsersResponse>
+  ReadonlyMap<string, ApprovedUsersResponse>
 >({
   key: "approvedUsersSelectorQuery",
   get: async ({ get }) => {
@@ -42,7 +42,7 @@ export const approvedUsersSelectorQuery = selector<
       },
     })
 
-    const map = new Map<number, ApprovedUsersResponse>()
+    const map = new Map<string, ApprovedUsersResponse>()
     for (const user of data) {
       map.set(user.id, user)
     }

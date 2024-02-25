@@ -26,7 +26,7 @@ export const companiesSelectorQuery = selector<Company[]>({
   },
 })
 
-export const companies = atom({
+export const companiesState = atom({
   key: "companiesState",
   default: companiesSelectorQuery,
 })
