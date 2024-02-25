@@ -42,3 +42,16 @@ export interface User extends ObjectWithId, Timestamps {
   state: string | null
   status: string | null
 }
+
+export interface Term extends ObjectWithId, Timestamps {
+  name: string
+  durationType: string
+  duration: number
+}
+
+export interface Company extends ObjectWithId, Timestamps {
+  domain: string
+  name: string
+  rate: number | null
+  terms: Term[]
+}
