@@ -5,11 +5,7 @@ import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer/file-viewer"
 import { useRequestActions } from "./actions"
-
-const MXNFormat = new Intl.NumberFormat("es-MX", {
-  style: "currency",
-  currency: "MXN",
-})
+import { MXNFormat } from "../../constants"
 
 const ShowRequest = () => {
   const { id } = useParams()
