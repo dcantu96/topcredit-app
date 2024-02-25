@@ -54,7 +54,7 @@ const Input = ({
 }: InputProps) => {
   const passwordPaddingRight = type === "password" ? "pr-14" : undefined
   const trailingDropdownPaddingRight = trailingProps.trailingDropdownId
-    ? "pr-20"
+    ? "pr-28"
     : "pr-3"
 
   const prefixPaddingLeft = prefix ? "pl-7" : "pl-3"
