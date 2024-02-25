@@ -28,7 +28,7 @@ const NewCompany = () => {
       await createCompany({ name, domain, rate: rate / 100 })
       setIsLoading(false)
       refresh()
-      to("/companies")
+      to("..")
     } catch (error) {
       console.log("error", error)
       setIsLoading(false)
