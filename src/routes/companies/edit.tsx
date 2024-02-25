@@ -36,7 +36,7 @@ const EditCompany = () => {
       setIsLoading(true)
       await updateCompany({ id, name, domain, rate: rate / 100 })
       setIsLoading(false)
-      to("/companies")
+      to("../..")
       refresh()
     } catch (error) {
       handleErrors(error, ["name", "domain", "rate"])
