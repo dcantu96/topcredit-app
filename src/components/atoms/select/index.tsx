@@ -29,7 +29,7 @@ const Select = ({
   defaultValue,
 }: SelectProps) => {
   return (
-    <div>
+    <div className="flex-1">
       <label
         htmlFor={id}
         className="block text-sm font-medium leading-6 text-gray-900"
