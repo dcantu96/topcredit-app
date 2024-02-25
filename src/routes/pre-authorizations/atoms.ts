@@ -42,11 +42,11 @@ export const approvedUsersSelectorQuery = selector<
       },
     })
 
-    const basicDetailsMap = new Map<number, ApprovedUsersResponse>()
-    for (const details of data) {
-      basicDetailsMap.set(details.id, details)
+    const map = new Map<number, ApprovedUsersResponse>()
+    for (const user of data) {
+      map.set(user.id, user)
     }
-    return basicDetailsMap
+    return map
   },
 })
 
