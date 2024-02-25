@@ -20,12 +20,26 @@ export const useFormErrors = () => {
     }
   }, [])
 
-  const handleErrors = (error: unknown, fields: string[]) => {
+  const handleErrors = (
+    error: unknown,
+    fields: ([string, string] | string)[],
+  ) => {
     if (typeof error === "object" && error !== null && "errors" in error) {
       const newErrorsObject: Record<string, string> = {}
       for (const errorItem of error.errors as { detail: string }[]) {
         for (const field of fields) {
-          if (errorItem.detail.includes(field)) {
+          if (Array.isArray(field)) {
+            const [fieldName, fieldAlias] = field
+            if (errorItem.detail.includes(fieldName)) {
+              const errorMessage = extractErrorMessage(
+                errorItem.detail,
+                fieldName,
+              )
+              if (errorMessage) {
+                newErrorsObject[camelize(fieldAlias)] = errorMessage
+              }
+            }
+          } else if (errorItem.detail.includes(field)) {
             const errorMessage = extractErrorMessage(errorItem.detail, field)
             if (errorMessage) {
               newErrorsObject[camelize(field)] = errorMessage
