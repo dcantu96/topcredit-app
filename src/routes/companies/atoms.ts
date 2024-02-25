@@ -8,7 +8,12 @@ export interface NewTerm {
 }
 
 export interface NewTermForCompany extends NewTerm {
-  companyId: number
+  companyId: string
+}
+
+export interface AssignTermForCompany {
+  termId: string
+  companyId: string
 }
 
 export interface EditTerm extends NewTerm {
@@ -22,25 +27,26 @@ export interface NewCompany {
 }
 
 export interface EditCompany extends NewCompany {
-  id: number
-  terms: EditTerm[]
+  id: string
 }
 
 interface TermsQueryResponse {
-  id: number
-  type: string
+  id: string
+  durationType: string
   duration: number
   name: string
+  createdAt: string
+  updatedAt: string
 }
 
 export const termsSelectorQuery = selector<
-  ReadonlyMap<number, TermsQueryResponse>
+  ReadonlyMap<string, TermsQueryResponse>
 >({
   key: "termsSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
     const { data } = await api.get<TermsQueryResponse[]>("terms")
-    const termsMap = new Map<number, TermsQueryResponse>()
+    const termsMap = new Map<string, TermsQueryResponse>()
     for (const term of data) {
       termsMap.set(term.id, term)
     }
