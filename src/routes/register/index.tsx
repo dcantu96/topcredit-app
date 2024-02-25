@@ -1,16 +1,16 @@
 import { useState } from "react"
+import { useRecoilValue } from "recoil"
+import { Switch } from "@headlessui/react"
 
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
 import ButtonLink from "components/atoms/button-link"
 import { withoutAuth } from "components/providers/auth/withoutAuth"
-
-import logo from "../../images/logo.png"
 import { useApi } from "components/providers/api/useApi"
-import { useRecoilValue } from "recoil"
 import { authActions } from "components/providers/auth/atoms"
-import { Switch } from "@headlessui/react"
 import { useFormErrors } from "hooks/useFormErrors"
+
+import logo from "../../assets/logo.png"
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ")
