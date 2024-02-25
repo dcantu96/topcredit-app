@@ -9,7 +9,7 @@ import ButtonLink from "components/atoms/button-link"
 import { withoutAuth } from "components/providers/auth/withoutAuth"
 import { authActions } from "components/providers/auth/atoms"
 
-import logo from "../../images/logo.png"
+import logo from "../../assets/logo.png"
 
 const Login = () => {
   const [email, setEmail] = useState<string>("")
