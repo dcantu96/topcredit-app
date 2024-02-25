@@ -40,19 +40,19 @@ const EditCompany = () => {
   }
 
   return (
-    <>
-      <div className="lg:flex lg:items-center lg:justify-between mb-4">
+    <div className="container mx-auto px-4 pt-4">
+      <div className="lg:flex lg:items-center lg:justify-between mb-4 w-full">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
             Editar Cliente
           </h2>
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
-          <span className="hidden sm:flex gap-2">
+          <span className="flex gap-2">
             <ButtonLink to=".." status="secondary">
               Ver
             </ButtonLink>
-            <ButtonLink to="/companies" status="secondary">
+            <ButtonLink to="../.." status="secondary">
               <svg
                 viewBox="0 0 24 24"
                 className="h-5 w-5 text-gray-400 mr-1.5"
@@ -81,7 +81,7 @@ const EditCompany = () => {
         </div>
       </div>
       <form
-        className="w-full container mx-auto grid grid-cols-2 gap-x-4 gap-y-6"
+        className="w-full grid grid-cols-2 gap-x-4 gap-y-6"
         onSubmit={handleUpdate}
       >
         <div>
@@ -126,7 +126,7 @@ const EditCompany = () => {
           </Button>
         </div>
       </form>
-    </>
+    </div>
   )
 }
 
