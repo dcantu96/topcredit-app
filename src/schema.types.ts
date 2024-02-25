@@ -16,7 +16,7 @@ export interface MeResponse {
 }
 
 export interface ObjectWithId {
-  id: number
+  id: string
 }
 
 export interface Timestamps {
