@@ -59,7 +59,7 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
         onChange={({ target }) => setTermId(target.value)}
       />
 
-      <Button type="button" onClick={handleAssignTerm}>
+      <Button type="button" disabled={!termId} onClick={handleAssignTerm}>
         Asignar
       </Button>
     </>
