@@ -12,6 +12,7 @@ import { DURATION_TYPES } from "../../constants"
 import Label from "components/atoms/label"
 import { NewTermForm } from "./new-term-form"
 import AssignTermForm from "./assign-term-form"
+import useToast from "components/providers/toaster/useToast"
 
 const EditCompany = () => {
   const { id } = useParams()
@@ -26,6 +27,7 @@ const EditCompany = () => {
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { updateCompany } = useCompanyActions()
+  const toast = useToast()
   const to = useNavigate()
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,6 +39,10 @@ const EditCompany = () => {
       await updateCompany({ id, name, domain, rate: rate / 100 })
       setIsLoading(false)
       to("../..")
+      toast.success({
+        title: "Cliente actualizado",
+        message: "El cliente ha sido actualizado correctamente",
+      })
       refresh()
     } catch (error) {
       handleErrors(error, ["name", "domain", "rate"])
