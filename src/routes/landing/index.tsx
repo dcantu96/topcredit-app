@@ -1,6 +1,6 @@
 import NavLink from "components/atoms/nav-link"
 import { NavLink as RouterLink } from "react-router-dom"
-import logoSmall from "../../images/logo_small.png"
+import logoSmall from "../../assets/logo_small.png"
 import { useState } from "react"
 import ButtonLink from "components/atoms/button-link"
 import withAuthorizationRedirect from "components/hocs/with-authorization-redirect"
