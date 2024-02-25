@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Label from "../label"
 
 interface InputBaseProps {
   id: string
@@ -22,7 +23,7 @@ interface InputBaseProps {
 interface InputWithTrailingDropdownProps extends InputBaseProps {
   trailingDropdownId: string
   trailingDropdownLabel: string
-  trailingDropdownOptions: string[]
+  trailingDropdownOptions: { label: string; value: string }[]
   trailingDropdownOnChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
@@ -65,12 +66,7 @@ const Input = ({
 
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium leading-6 text-gray-900"
-      >
-        {label}
-      </label>
+      <Label htmlFor={id}>{label}</Label>
       <div className="relative mt-2 rounded-md shadow-sm">
         {prefix && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -120,8 +116,10 @@ const Input = ({
               className="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               onChange={trailingProps.trailingDropdownOnChange}
             >
-              {trailingProps.trailingDropdownOptions.map((option) => (
-                <option key={option}>{option}</option>
+              {trailingProps.trailingDropdownOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
               ))}
             </select>
           </div>
