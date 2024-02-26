@@ -1,22 +1,25 @@
 import { useNavigate } from "react-router-dom"
 import { useApi } from "components/providers/api/useApi"
 import useToast from "components/providers/toaster/useToast"
-import { approvedUsersSortedSelector } from "./atoms"
-import { useRecoilRefresher_UNSTABLE } from "recoil"
+import { preAuthorizationUsersSelectorQuery } from "./atoms"
+import { useRecoilCallback, useRecoilRefresher_UNSTABLE } from "recoil"
 import { isJsonApiError } from "components/providers/api/utils"
+import { apiSelector } from "components/providers/api/atoms"
 
-export const useApprovedUserActions = (id: number) => {
+export const useUserActions = (id: string) => {
   const navigate = useNavigate()
-  const refresh = useRecoilRefresher_UNSTABLE(approvedUsersSortedSelector)
+  const refresh = useRecoilRefresher_UNSTABLE(
+    preAuthorizationUsersSelectorQuery,
+  )
   const toast = useToast()
   const api = useApi()
 
-  const approveUser = async () => {
+  const updateUserStatus = async (newStatus: string) => {
     try {
-      await api.update(`users`, { id, status: "approved" })
+      await api.update(`users`, { id, status: newStatus })
       toast.success({
         title: "Usuario actualizado",
-        message: "El usuario ha sido aprobado",
+        message: "El usuario ha sido enviado a pre autorización",
       })
       refresh()
       navigate("/pre-authorizations")
@@ -50,7 +53,43 @@ export const useApprovedUserActions = (id: number) => {
   }
 
   return {
-    approveUser,
+    updateUserStatus,
     denyUser,
   }
+}
+
+export interface CreateCreditProps {
+  userId: string
+  loan: number
+  termId: string
+}
+
+export const useCreditActions = () => {
+  const createCredit = useRecoilCallback(
+    ({ snapshot }) =>
+      async ({ loan, termId, userId }: CreateCreditProps) => {
+        const api = await snapshot.getPromise(apiSelector)
+        try {
+          await api.create("credits", {
+            loan,
+            status: "pre-authorized",
+            borrower: {
+              data: {
+                id: userId,
+                type: "users",
+              },
+            },
+            term: {
+              data: {
+                id: termId,
+                type: "terms",
+              },
+            },
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      },
+  )
+  return { createCredit }
 }
