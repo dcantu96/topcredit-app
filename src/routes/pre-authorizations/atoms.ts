@@ -3,7 +3,7 @@ import { apiSelector } from "components/providers/api/atoms"
 import { selector } from "recoil"
 import { User } from "src/schema.types"
 
-type ApprovedUsersResponse = Pick<
+export type ApprovedUsersResponse = Pick<
   User,
   | "createdAt"
   | "email"
