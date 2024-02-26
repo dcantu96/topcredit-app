@@ -36,17 +36,18 @@ export const useCreditScreenSubmitActions = () => {
     try {
       await api.patch("users", {
         id: profile?.id,
-        "employee-number": employeeNumber,
-        "bank-account-number": bankAccountNumber,
-        "address-line-one": addressLineOne,
-        "address-line-two": addressLineTwo,
+        employeeNumber,
+        bankAccountNumber,
+        addressLineOne,
+        addressLineTwo,
         city,
         state,
         country,
         rfc,
-        "postal-code": postalCode,
-        "salary-frequency": salaryFrequency,
+        postalCode,
+        salaryFrequency,
         salary,
+        status: "pending",
       })
     } catch (error) {
       console.error(error)

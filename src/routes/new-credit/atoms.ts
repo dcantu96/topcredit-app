@@ -14,6 +14,14 @@ interface GeneralDataResponse {
   employeeNumber: string | null
   rfc: string | null
   postalCode: number | null
+  status:
+    | "new"
+    | "pending"
+    | "invalid-documentation"
+    | "pre-authorization"
+    | "pre-authorized"
+    | "denied"
+    | null
   state: string | null
   createdAt: string
   updatedAt: string
@@ -21,19 +29,20 @@ interface GeneralDataResponse {
 
 interface UserGeneralDataQuery {
   id: string
-  "employee-number": string
-  "bank-account-number": string
-  "address-line-one": string
-  "address-line-two": string
+  employeeNumber: string
+  bankAccountNumber: string
+  addressLineOne: string
+  addressLineTwo: string
   city: string
   state: string
+  status: string
   country: string
   rfc: string
   salary: number
-  "salary-frequency": string
-  "postal-code": number
-  "created-at": string
-  "updated-at": string
+  salaryFrequency: string
+  postalCode: number
+  createdAt: string
+  updatedAt: string
 }
 
 /**
@@ -51,25 +60,7 @@ export const userGeneralDataQuerySelector = selector<
     const profile = get(myProfileState)
     if (!profile) return undefined
     const { data } = await api.get<UserGeneralDataQuery>(`users/${profile.id}`)
-
-    if (data)
-      return {
-        id: data.id,
-        addressLineOne: data["address-line-one"],
-        addressLineTwo: data["address-line-two"],
-        bankAccountNumber: data["bank-account-number"],
-        city: data["city"],
-        country: data["country"],
-        employeeNumber: data["employee-number"],
-        rfc: data["rfc"],
-        postalCode: data["postal-code"],
-        state: data["state"],
-        salary: data["salary"],
-        salaryFrequency: data["salary-frequency"],
-        createdAt: data["created-at"],
-        updatedAt: data["updated-at"],
-      }
-    return undefined
+    return data as GeneralDataResponse
   },
 })
 
@@ -103,7 +94,13 @@ export const initialActiveStep = selector<string>({
   get: ({ get }) => {
     const isGeneralDataComplete = get(isGeneralDataCompleteSelector)
     if (!isGeneralDataComplete) return "Datos Generales"
-    return "Another State"
+    const status = get(userGeneralDataQuerySelector)?.status
+    if (status === "new") return "Datos Generales"
+    if (status === "invalid-documentation") return "Datos Generales"
+    if (status === "pending" || status === "pre-authorization")
+      return "Datos Generales"
+    if (status === "pre-authorized") return "Pre Autorizado"
+    return "Autorizado"
   },
 })
 

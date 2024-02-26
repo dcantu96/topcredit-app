@@ -1,7 +1,12 @@
 import Input from "components/atoms/input"
 import FileField from "components/atoms/file-field"
 import Button from "components/atoms/button"
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  useRecoilRefresher_UNSTABLE,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil"
 import {
   editableAddressLineOneFieldState,
   editableAddressLineTwoFieldState,
@@ -28,6 +33,7 @@ import Select from "components/atoms/select"
 
 import { useCreditScreenSubmitActions } from "./actions"
 import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../constants"
+import { userGeneralDataQuerySelector } from "../../../atoms"
 
 const Step = () => {
   const setBankAccountNumberTouched = useSetRecoilState(
@@ -70,10 +76,13 @@ const Step = () => {
   const salaryFrequencyFieldError = useRecoilValue(
     salaryFrequencyFieldErrorsSelector,
   )
+  const refreshUser = useRecoilRefresher_UNSTABLE(userGeneralDataQuerySelector)
+  const user = useRecoilValue(userGeneralDataQuerySelector)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    submit()
+    await submit()
+    refreshUser()
   }
 
   const [salary, setSalary] = useRecoilState(editableSalaryFieldState)
@@ -84,17 +93,20 @@ const Step = () => {
     { value: "M", label: "Mensual" },
   ]
 
-  console.log(salaryFrequency)
+  const isWaiting =
+    user?.status === "pending" || user?.status === "pre-authorization"
 
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Datos Generales</h1>
       <p className="mt-1 text-sm leading-6 text-gray-600">
-        Necesitamos algunos datos para poder procesar tu solicitud.
+        {isWaiting
+          ? "Estamos procesando tus datos. Pronto te notificaremos si tu solicitud fue pre aprobada."
+          : "Necesitamos algunos datos para poder procesar tu solicitud."}
       </p>
-      <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+      <div className="mt-10 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
         <div className="col-span-full">
-          <div className="flex items-end gap-2">
+          <div className="flex items-center gap-2">
             <Input
               id="salary"
               label="¿Como percibes tu sueldo?"
@@ -113,7 +125,6 @@ const Step = () => {
               <Button
                 key={option.value}
                 type="button"
-                size="sm"
                 status={
                   salaryFrequency === option.value ? "primary" : "secondary"
                 }
@@ -127,7 +138,7 @@ const Step = () => {
             ))}
           </div>
         </div>
-        <div className="sm:col-span-4">
+        <div className="col-span-full lg:col-span-4">
           <Input
             id="payroll"
             label="Numero de Nómina"
@@ -136,7 +147,7 @@ const Step = () => {
             onChange={(e) => setEmployeeNumber(e.target.value)}
           />
         </div>
-        <div className="sm:col-span-4">
+        <div className="col-span-full lg:col-span-4">
           <Input
             id="rfc"
             label="RFC"
@@ -161,7 +172,7 @@ const Step = () => {
             onChange={(e) => setBankAccountNumber(e.target.value)}
           />
         </div>
-        <div className="sm:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <Input
             id="address-line-one"
             label="Calle y numero"
@@ -170,7 +181,7 @@ const Step = () => {
             onChange={(e) => setAddressLineOne(e.target.value)}
           />
         </div>
-        <div className="sm:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <Input
             id="address-line-two"
             label="Numero interior"
@@ -179,7 +190,7 @@ const Step = () => {
             onChange={(e) => setAddressLineTwo(e.target.value)}
           />
         </div>
-        <div className="sm:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <Input
             id="city"
             label="Ciudad"
@@ -188,7 +199,7 @@ const Step = () => {
             required
           />
         </div>
-        <div className="sm:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <Select
             id="state"
             label="Estado"
@@ -198,7 +209,7 @@ const Step = () => {
             options={STATES_OF_MEXICO}
           />
         </div>
-        <div className="sm:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <Select
             id="country"
             label="País"
@@ -208,7 +219,7 @@ const Step = () => {
             options={COUNTRIES}
           />
         </div>
-        <div className="sm:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <Input
             id="postal-code"
             label="Código Postal"
@@ -223,7 +234,7 @@ const Step = () => {
         <div className="col-span-full">
           <h1 className="text-gray-900 font-bold text-3xl">Documentación</h1>
         </div>
-        <div className="col-span-full">
+        <div className="col-span-full mb-4">
           <FileField
             id="official-identification"
             label="Identificación oficial"
@@ -239,7 +250,7 @@ const Step = () => {
             }}
           />
         </div>
-        <div className="col-span-full">
+        <div className="col-span-full mb-4">
           <FileField
             id="proof-of-address"
             label="Comprobante de Domicilio"
@@ -255,7 +266,7 @@ const Step = () => {
             }}
           />
         </div>
-        <div className="col-span-full">
+        <div className="col-span-full mb-4">
           <FileField
             id="cover"
             label="Estado de Cuenta Bancario"
@@ -271,7 +282,7 @@ const Step = () => {
             }}
           />
         </div>
-        <div className="col-span-full">
+        <div className="col-span-full mb-4">
           <FileField
             id="payroll-receipt"
             label="Recibo de Nomina"
@@ -289,10 +300,10 @@ const Step = () => {
         </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <Button status="secondary" type="button">
+        <Button status="secondary" type="button" disabled={isWaiting}>
           Cancelar
         </Button>
-        <Button size="md" type="submit">
+        <Button size="md" type="submit" disabled={isWaiting}>
           Enviar
         </Button>
       </div>
