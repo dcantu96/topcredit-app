@@ -9,11 +9,19 @@ import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 import Input from "components/atoms/input"
 
-import { ApprovedUsersResponse, approvedUsersSortedSelector } from "./atoms"
-import { MXNFormat } from "../../constants"
+import {
+  PreAuthorizationUsersResponse,
+  preAuthorizationUsersSortedSelector,
+  companiesForPreAuthSelectorQuery,
+} from "./atoms"
+import { DURATION_TYPES, MXNFormat } from "../../constants"
+import { useMemo, useState } from "react"
+import { useCreditActions, useUserActions } from "./actions"
 
 const Screen = () => {
-  const approvedUsers = useRecoilValue(approvedUsersSortedSelector)
+  const preAuthorizationUsers = useRecoilValue(
+    preAuthorizationUsersSortedSelector,
+  )
 
   return (
     <>
@@ -26,7 +34,7 @@ const Screen = () => {
           </ListHeader.Actions>
         </ListHeader>
         <List>
-          {approvedUsers.map((user) => (
+          {preAuthorizationUsers.map((user) => (
             <ApprovedUserItem key={user.id} user={user} />
           ))}
         </List>
@@ -47,10 +55,84 @@ const Screen = () => {
 }
 
 interface ApprovedUserItemProps {
-  user: ApprovedUsersResponse
+  user: PreAuthorizationUsersResponse
 }
 
 const ApprovedUserItem = ({ user }: ApprovedUserItemProps) => {
+  const { updateUserStatus } = useUserActions(user.id)
+  const { createCredit } = useCreditActions()
+  const companiesMap = useRecoilValue(companiesForPreAuthSelectorQuery)
+  const [loanAmount, setLoanAmount] = useState(0)
+  const [loanTermId, setLoanTermId] = useState("")
+
+  const userDomain = user.email.split("@")[1]
+  const company = companiesMap.get(userDomain)
+  const borrowerMaxCapacity =
+    user.salary && company?.borrowingCapacity
+      ? user.salary * company.borrowingCapacity
+      : undefined
+
+  const termOptions = useMemo(
+    () =>
+      company?.terms?.map((term) => ({
+        label: `${term.duration} ${DURATION_TYPES.get(term.durationType)}`,
+        value: term.id,
+      })),
+    [company],
+  )
+
+  const amortization = useMemo(() => {
+    // Ensure all necessary data is present
+    if (!loanAmount || !loanTermId || !company?.terms || !company.rate)
+      return undefined
+
+    // Find the matching term based on loanTermId
+    const term = company.terms.find((term) => term.id === loanTermId)
+    if (!term) return undefined
+
+    // payments should be monthly always, we need to calculate the total payment times
+    const monthlyPayments =
+      term.durationType === "years"
+        ? term.duration * 12
+        : term.durationType === "months"
+          ? term.duration
+          : term.durationType === "two-weeks"
+            ? term.duration / 2
+            : undefined
+
+    if (!monthlyPayments) return undefined
+
+    return calculatePayment({
+      loanAmount,
+      annualInterestRate: company.rate,
+      totalPayments: monthlyPayments,
+    })
+  }, [loanAmount, loanTermId, company?.terms, company?.rate])
+
+  const loanAmountErrorMsg = useMemo(() => {
+    if (
+      borrowerMaxCapacity &&
+      amortization &&
+      borrowerMaxCapacity < amortization
+    ) {
+      return `El monto es mayor a ${MXNFormat.format(borrowerMaxCapacity)}`
+    }
+    return undefined
+  }, [borrowerMaxCapacity, amortization])
+
+  const formattedBorrowingCapacity = company?.borrowingCapacity
+    ? `${company.borrowingCapacity * 100} %`
+    : undefined
+
+  const handlePreAuthorize = async () => {
+    await updateUserStatus("pre-authorized")
+    await createCredit({
+      userId: user.id,
+      loan: loanAmount,
+      termId: loanTermId,
+    })
+  }
+
   return (
     <List.Item>
       <div className="min-w-80">
@@ -83,35 +165,67 @@ const ApprovedUserItem = ({ user }: ApprovedUserItemProps) => {
           <p className="whitespace-nowrap">{user.employeeNumber}</p>
           <SmallDot />
           <p className="whitespace-nowrap">{user.email.split("@")[1]}</p>
+          <SmallDot />
+          <p className="whitespace-nowrap">
+            Max End {formattedBorrowingCapacity}
+          </p>
         </div>
       </div>
       <div className="flex-1 min-w-96 flex justify-between gap-4">
         <div>
           <Input
-            id="loan-amount"
-            value="1000"
-            onChange={() => {}}
+            id={`loan-amount-${user.id}`}
+            value={loanAmount.toString()}
+            onChange={({ target }) => setLoanAmount(Number(target.value))}
             type="number"
             prefix="$"
-            label="Préstamo"
-            placeholder="10000"
+            error={loanAmountErrorMsg}
+            label={`Préstamo ${
+              amortization ? `(${MXNFormat.format(amortization)} Mensual)` : ""
+            }`}
+            placeholder="10,000"
             trailingDropdownId="loan-amount-frequency"
             trailingDropdownLabel="Frecuencia de pago"
-            trailingDropdownOptions={[
-              { label: "10 Meses", value: "10 Meses" },
-              { label: "12 Meses", value: "12 Meses" },
-            ]}
+            trailingDropdownOptions={termOptions || []}
+            trailingDropdownOnChange={({ target }) => {
+              setLoanTermId(target.value)
+            }}
           />
         </div>
         <div className="flex items-center gap-4">
-          <Button status="primary" disabled>
-            Autorizar
+          <Button
+            status="primary"
+            onClick={handlePreAuthorize}
+            disabled={!!loanAmountErrorMsg || !loanAmount || !loanTermId}
+          >
+            Pre-Autorizar
           </Button>
           <Button status="secondary">Rechazar</Button>
         </div>
       </div>
     </List.Item>
   )
+}
+
+interface CalculatePaymentProps {
+  loanAmount: number
+  annualInterestRate: number
+  totalPayments: number
+}
+
+function calculatePayment({
+  loanAmount,
+  annualInterestRate,
+  totalPayments,
+}: CalculatePaymentProps) {
+  // Calculate total interest
+  const monthlyInterestRate = annualInterestRate / 12
+
+  const monthlyPayment =
+    (monthlyInterestRate * loanAmount) /
+    (1 - Math.pow(1 + monthlyInterestRate, -totalPayments))
+
+  return Number(monthlyPayment.toFixed(2))
 }
 
 export default Screen
