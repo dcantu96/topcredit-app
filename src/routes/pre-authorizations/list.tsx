@@ -11,17 +11,19 @@ import Input from "components/atoms/input"
 
 import {
   PreAuthorizationUsersResponse,
-  preAuthorizationUsersSortedSelector,
+  preAuthorizationUsersState,
   companiesForPreAuthSelectorQuery,
 } from "./atoms"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 import { useMemo, useState } from "react"
-import { useCreditActions, useUserActions } from "./actions"
+import {
+  useCreditActions,
+  usePreAuthorizationActions,
+  useUserActions,
+} from "./actions"
 
 const Screen = () => {
-  const preAuthorizationUsers = useRecoilValue(
-    preAuthorizationUsersSortedSelector,
-  )
+  const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
 
   return (
     <>
@@ -35,7 +37,7 @@ const Screen = () => {
         </ListHeader>
         <List>
           {preAuthorizationUsers.map((user) => (
-            <ApprovedUserItem key={user.id} user={user} />
+            <PreAuthorizationUserItem key={user.id} user={user} />
           ))}
         </List>
       </ListContainer>
@@ -54,12 +56,13 @@ const Screen = () => {
   )
 }
 
-interface ApprovedUserItemProps {
+interface PreAuthorizationUserItemProps {
   user: PreAuthorizationUsersResponse
 }
 
-const ApprovedUserItem = ({ user }: ApprovedUserItemProps) => {
+const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
   const { updateUserStatus } = useUserActions(user.id)
+  const { removeUser } = usePreAuthorizationActions()
   const { createCredit } = useCreditActions()
   const companiesMap = useRecoilValue(companiesForPreAuthSelectorQuery)
   const [loanAmount, setLoanAmount] = useState(0)
@@ -131,6 +134,12 @@ const ApprovedUserItem = ({ user }: ApprovedUserItemProps) => {
       loan: loanAmount,
       termId: loanTermId,
     })
+    removeUser(user.id)
+  }
+
+  const handleDeny = async () => {
+    await updateUserStatus("denied")
+    removeUser(user.id)
   }
 
   return (
@@ -200,7 +209,9 @@ const ApprovedUserItem = ({ user }: ApprovedUserItemProps) => {
           >
             Pre-Autorizar
           </Button>
-          <Button status="secondary">Rechazar</Button>
+          <Button onClick={handleDeny} status="secondary">
+            Rechazar
+          </Button>
         </div>
       </div>
     </List.Item>

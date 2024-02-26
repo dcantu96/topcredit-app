@@ -1,6 +1,6 @@
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
-import { selector } from "recoil"
+import { atom, selector } from "recoil"
 import { Company, Term, User } from "src/schema.types"
 
 export type PreAuthorizationUsersResponse = Pick<
@@ -64,8 +64,17 @@ export const preAuthorizationUsersSortedSelector = selector<
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
   },
-  set: (_, newValue) => newValue,
+  set: ({ set }, newValue) => {
+    set(preAuthorizationUsersState, newValue)
+  },
 })
+
+export const preAuthorizationUsersState = atom<PreAuthorizationUsersResponse[]>(
+  {
+    key: "preAuthorizationUsersState",
+    default: preAuthorizationUsersSortedSelector,
+  },
+)
 
 type CompanyForPreAuthResponse = Pick<
   Company,
