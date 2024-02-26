@@ -1,11 +1,12 @@
 import Kitsu from "kitsu"
 import { selector } from "recoil"
-import { authState } from "../auth/atoms"
+import { authActions, authState } from "../auth/atoms"
 
 export const apiSelector = selector({
   key: "apiSelector",
   get: ({ get }) => {
     const auth = get(authState)
+    const { logout } = get(authActions)
     const authHeader = auth?.token ? `Bearer ${auth.token}` : undefined
     if (!import.meta.env.VITE_APP_API_URL)
       throw new Error("VITE_APP_API_URL is not defined")
@@ -18,6 +19,16 @@ export const apiSelector = selector({
           Authorization: authHeader,
         },
       })
+
+      api.interceptors.response.use(
+        (response) => response,
+        (error) => {
+          if (error.response?.status === 401) {
+            logout()
+          }
+          return Promise.reject(error)
+        },
+      )
 
       return api
     }
