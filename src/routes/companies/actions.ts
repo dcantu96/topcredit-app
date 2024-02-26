@@ -8,28 +8,30 @@ import {
   NewTerm,
   termsState,
 } from "./atoms"
-import { companiesState, companySelectorQuery, companyState } from "./loader"
+import { companiesState, companyState } from "./loader"
 
 export const useCompanyActions = () => {
-  const { isCompaniesListSet } = useCompaniesActions()
+  const { isCompaniesListActive } = useCompaniesActions()
   const createCompany = useRecoilCallback(
     ({ snapshot, set }) =>
-      async ({ domain, name, rate }: NewCompany) => {
+      async ({ domain, name, rate, borrowingCapacity }: NewCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         const { data } = await api.create("company", {
           domain,
           name,
           rate,
+          borrowingCapacity,
         })
-        if (!isCompaniesListSet()) return
+        if (!isCompaniesListActive()) return
         set(companiesState, (prev) => [
           ...prev,
           {
+            id: data.id,
             domain,
             name,
-            rate: rate ?? null,
             terms: [],
-            id: data.id,
+            rate: rate ?? null,
+            borrowingCapacity: borrowingCapacity ?? null,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
           },
@@ -37,22 +39,24 @@ export const useCompanyActions = () => {
       },
   )
   const updateCompany = useRecoilCallback(
-    ({ snapshot, refresh, set }) =>
-      async ({ id, domain, name, rate }: EditCompany) => {
+    ({ snapshot, set }) =>
+      async ({ id, domain, name, rate, borrowingCapacity }: EditCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         await api.update("company", {
           id,
           domain,
           name,
           rate,
+          borrowingCapacity,
         })
-        refresh(companySelectorQuery(id))
         set(companyState(id), (prev) => ({
           ...prev,
           domain: domain ?? null,
           rate: rate ?? null,
+          borrowingCapacity: borrowingCapacity ?? null,
         }))
-        if (!isCompaniesListSet()) return
+
+        if (!isCompaniesListActive()) return
         set(companiesState, (prev) =>
           prev.map((prevCompany) => {
             if (prevCompany.id === id) {
@@ -60,6 +64,7 @@ export const useCompanyActions = () => {
                 ...prevCompany,
                 domain: domain ?? null,
                 rate: rate ?? null,
+                borrowingCapacity: borrowingCapacity ?? null,
               }
             }
             return prevCompany
@@ -74,16 +79,16 @@ export const useCompanyActions = () => {
 }
 
 export const useCompaniesActions = () => {
-  const isCompaniesListSet = useRecoilCallback(({ snapshot }) => () => {
-    return snapshot.getInfo_UNSTABLE(companiesState).isSet
+  const isCompaniesListActive = useRecoilCallback(({ snapshot }) => () => {
+    return snapshot.getInfo_UNSTABLE(companiesState).isActive
   })
   return {
-    isCompaniesListSet,
+    isCompaniesListActive,
   }
 }
 
 export const useTermActions = () => {
-  const { isCompaniesListSet } = useCompaniesActions()
+  const { isCompaniesListActive } = useCompaniesActions()
   const createTerm = useRecoilCallback(
     ({ snapshot, set }) =>
       async ({ name, durationType, duration }: NewTerm) => {
@@ -126,7 +131,7 @@ export const useTermActions = () => {
           ...prev,
           terms: [...prev.terms, termToAssign],
         }))
-        if (!isCompaniesListSet()) return
+        if (!isCompaniesListActive()) return
         set(companiesState, (prev) =>
           prev.map((prevCompany) => {
             if (prevCompany.id === companyId) {

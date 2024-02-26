@@ -27,6 +27,9 @@ const EditCompany = () => {
   const [rate, setRate] = useState<number>(
     companyData?.rate ? companyData.rate * 100 : 0,
   )
+  const [borrowingCapacity, setBorrowingCapacity] = useState<number>(
+    companyData.borrowingCapacity ? companyData.borrowingCapacity * 100 : 0,
+  )
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { updateCompany } = useCompanyActions()
@@ -39,7 +42,13 @@ const EditCompany = () => {
     try {
       clearErrors()
       setIsLoading(true)
-      await updateCompany({ id, name, domain, rate: rate / 100 })
+      await updateCompany({
+        id,
+        name,
+        domain,
+        rate: rate / 100,
+        borrowingCapacity: borrowingCapacity / 100,
+      })
       toast.success({
         title: "Cliente actualizado",
         message: "El cliente ha sido actualizado correctamente",
@@ -113,7 +122,7 @@ const EditCompany = () => {
             onChange={({ target }) => setDomain(target.value)}
           />
         </div>
-        <div className="col-span-2">
+        <div>
           <Input
             id="rate"
             label="Taza"
@@ -124,6 +133,21 @@ const EditCompany = () => {
             placeholder="10"
             prefix="%"
             onChange={({ target }) => setRate(Number(target.value))}
+          />
+        </div>
+        <div>
+          <Input
+            id="borrowing-capacity"
+            label="Capacidad de endeudamiento"
+            type="number"
+            required
+            error={errors.borrowingCapacity}
+            value={borrowingCapacity.toString()}
+            placeholder="10%"
+            prefix="%"
+            onChange={({ target }) =>
+              setBorrowingCapacity(Number(target.value))
+            }
           />
         </div>
         <div className="flex gap-4 items-center col-span-2">

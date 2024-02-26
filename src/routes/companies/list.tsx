@@ -66,7 +66,19 @@ const CompaniesList = () => {
               </div>
               <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
                 <p className="whitespace-nowrap">
-                  Tasa {company.rate ? `${company.rate * 100}%` : "N/A"}
+                  Tasa{" "}
+                  <span className="font-medium text-gray-500">
+                    {company.rate ? `${company.rate * 100}%` : "N/A"}
+                  </span>
+                </p>
+                <SmallDot />
+                <p className="whitespace-nowrap">
+                  Cap End.{" "}
+                  <span className="font-medium text-gray-500">
+                    {company.borrowingCapacity
+                      ? `${company.borrowingCapacity * 100}%`
+                      : "N/A"}
+                  </span>
                 </p>
                 <SmallDot />
                 <p className="whitespace-nowrap">

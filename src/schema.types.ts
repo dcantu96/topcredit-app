@@ -53,5 +53,6 @@ export interface Company extends ObjectWithId, Timestamps {
   domain: string
   name: string
   rate: number | null
+  borrowingCapacity: number | null
   terms: Term[]
 }

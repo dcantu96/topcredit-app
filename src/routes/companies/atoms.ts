@@ -23,6 +23,7 @@ export interface NewCompany {
   name: string
   domain: string
   rate?: number
+  borrowingCapacity?: number
   terms?: NewTerm[]
 }
 
