@@ -1,16 +1,11 @@
-import { useNavigate } from "react-router-dom"
+import { useRecoilCallback } from "recoil"
+
 import { useApi } from "components/providers/api/useApi"
 import useToast from "components/providers/toaster/useToast"
-import { preAuthorizationUsersSelectorQuery } from "./atoms"
-import { useRecoilCallback, useRecoilRefresher_UNSTABLE } from "recoil"
 import { isJsonApiError } from "components/providers/api/utils"
 import { apiSelector } from "components/providers/api/atoms"
 
 export const useUserActions = (id: string) => {
-  const navigate = useNavigate()
-  const refresh = useRecoilRefresher_UNSTABLE(
-    preAuthorizationUsersSelectorQuery,
-  )
   const toast = useToast()
   const api = useApi()
 
@@ -21,8 +16,6 @@ export const useUserActions = (id: string) => {
         title: "Usuario actualizado",
         message: "El usuario ha sido enviado a pre autorización",
       })
-      refresh()
-      navigate("/pre-authorizations")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
       if (isJsonApiError(error)) message = error.errors[0].title
@@ -40,8 +33,6 @@ export const useUserActions = (id: string) => {
         title: "Usuario actualizado",
         message: "El usuario ha sido denegado",
       })
-      refresh()
-      navigate("/pre-authorizations")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
       if (isJsonApiError(error)) message = error.errors[0].title
