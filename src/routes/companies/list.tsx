@@ -17,8 +17,6 @@ const CompaniesList = () => {
   const companyData = useRecoilValue(companiesState)
   const navigate = useNavigate()
 
-  console.log(companyData)
-
   return (
     <ListContainer>
       <ListHeader>
