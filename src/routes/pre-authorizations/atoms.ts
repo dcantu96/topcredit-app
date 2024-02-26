@@ -1,9 +1,9 @@
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
 import { selector } from "recoil"
-import { User } from "src/schema.types"
+import { Company, Term, User } from "src/schema.types"
 
-export type ApprovedUsersResponse = Pick<
+export type PreAuthorizationUsersResponse = Pick<
   User,
   | "createdAt"
   | "email"
@@ -23,26 +23,26 @@ export type ApprovedUsersResponse = Pick<
 // 6. input for loan amount (warning message if it's more than max loan amount, which is calculated based on the company max loan amount and the user's salary)
 // 7. input for loan term (terms are available based on the company's loan terms)
 
-export const approvedUsersSelectorQuery = selector<
-  ReadonlyMap<string, ApprovedUsersResponse>
+export const preAuthorizationUsersSelectorQuery = selector<
+  ReadonlyMap<string, PreAuthorizationUsersResponse>
 >({
-  key: "approvedUsersSelectorQuery",
+  key: "preAuthorizationUsersSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<ApprovedUsersResponse[]>("users", {
+    const { data } = await api.get<PreAuthorizationUsersResponse[]>("users", {
       params: {
         fields: {
           users:
             "createdAt,email,employeeNumber,firstName,id,lastName,salary,salaryFrequency",
         },
         filter: {
-          status: "approved",
+          status: "pre-authorization",
           byRole: "",
         },
       },
     })
 
-    const map = new Map<string, ApprovedUsersResponse>()
+    const map = new Map<string, PreAuthorizationUsersResponse>()
     for (const user of data) {
       map.set(user.id, user)
     }
@@ -50,10 +50,12 @@ export const approvedUsersSelectorQuery = selector<
   },
 })
 
-export const approvedUsersSortedSelector = selector<ApprovedUsersResponse[]>({
+export const preAuthorizationUsersSortedSelector = selector<
+  PreAuthorizationUsersResponse[]
+>({
   key: "approvedUsersSortedSelector",
   get: ({ get }) => {
-    const approvedUsersMap = get(approvedUsersSelectorQuery)
+    const approvedUsersMap = get(preAuthorizationUsersSelectorQuery)
     const sortOrder = get(listSortOrderState("pre-authorizations")) ?? "asc"
     return Array.from(approvedUsersMap.values()).toSorted((a, b) => {
       if (sortOrder === "asc") {
@@ -63,4 +65,46 @@ export const approvedUsersSortedSelector = selector<ApprovedUsersResponse[]>({
     })
   },
   set: (_, newValue) => newValue,
+})
+
+type CompanyForPreAuthResponse = Pick<
+  Company,
+  "borrowingCapacity" | "id" | "domain" | "rate"
+> & {
+  terms: {
+    data: Term[]
+  }
+}
+
+export const companiesForPreAuthSelectorQuery = selector<
+  Map<
+    string,
+    { borrowingCapacity: number | null; terms: Term[]; rate: number | null }
+  >
+>({
+  key: "companiesForPreAuthSelectorQuery",
+  get: async ({ get }) => {
+    const api = get(apiSelector)
+    const { data } = await api.get<CompanyForPreAuthResponse[]>("companies", {
+      params: {
+        fields: {
+          companies: "borrowingCapacity,id,domain,terms,rate",
+        },
+        include: "terms",
+      },
+    })
+
+    const map = new Map<
+      string,
+      { borrowingCapacity: number | null; terms: Term[]; rate: number | null }
+    >()
+    for (const company of data) {
+      map.set(company.domain, {
+        borrowingCapacity: company.borrowingCapacity,
+        terms: company.terms.data,
+        rate: company.rate,
+      })
+    }
+    return map
+  },
 })
