@@ -20,7 +20,15 @@ const Step = () => {
         <b>{MXNFormat.format(credit?.loan || 0)}</b>
       </p>
       <p className="mt-1 text-base leading-6 text-gray-600">
-        Necesitamos unos documentos para poder continuar con el proceso.
+        {credit?.status === "new"
+          ? "Necesitamos unos documentos para poder continuar con el proceso."
+          : credit?.status === "pending"
+            ? "Estamos revisando tus documentos, en breve te notificaremos si necesitamos algo más."
+            : credit?.status === "invalid-documentation"
+              ? "Hay un problema con tus documentos, necesitamos que los revises y los vuelvas a enviar."
+              : credit?.status === "authorized"
+                ? "¡Felicidades! Tu crédito ha sido autorizado."
+                : ""}
       </p>
       <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-8">
         <div className="col-span-full">
