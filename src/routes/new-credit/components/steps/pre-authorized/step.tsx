@@ -1,8 +1,12 @@
 import FileField from "components/atoms/file-field"
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer"
+import { useRecoilValue } from "recoil"
+import { userLatestCreditSelectorQuery } from "../../../atoms"
+import { MXNFormat } from "../../../../../constants"
 
 const Step = () => {
+  const credit = useRecoilValue(userLatestCreditSelectorQuery)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
   }
@@ -10,10 +14,15 @@ const Step = () => {
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Pre Autorización</h1>
-      <p className="mt-1 text-sm leading-6 text-gray-600">
-        Necesitamos algunos documentos para poder procesar tu solicitud.
+
+      <p className="mt-1 text-lg leading-6 text-gray-600">
+        ¡Felicidades! Fuiste pre autorizado por un monto de{" "}
+        <b>{MXNFormat.format(credit?.loan || 0)}</b>
       </p>
-      <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8">
+      <p className="mt-1 text-base leading-6 text-gray-600">
+        Necesitamos unos documentos para poder continuar con el proceso.
+      </p>
+      <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-8">
         <div className="col-span-full">
           <FileField
             id="payment-receipt"
