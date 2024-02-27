@@ -62,28 +62,24 @@ const Login = () => {
           </div>
         )}
         <form className="w-full max-w-sm" onSubmit={handleLogin}>
-          <div className="mb-6">
-            <Input
-              required
-              id="email"
-              type="email"
-              label="Correo"
-              error={!!errorMsg}
-              value={email}
-              onChange={({ target }) => setEmail(target.value)}
-            />
-          </div>
-          <div className="mb-6">
-            <Input
-              id="password"
-              type="password"
-              label="Contraseña"
-              required
-              error={!!errorMsg}
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
+          <Input
+            required
+            id="email"
+            type="email"
+            label="Correo"
+            error={!!errorMsg}
+            value={email}
+            onChange={({ target }) => setEmail(target.value)}
+          />
+          <Input
+            id="password"
+            type="password"
+            label="Contraseña"
+            required
+            error={!!errorMsg}
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
           <Button type="submit" disabled={isLoading} fullWidth status="dark">
             Ingresar
           </Button>
