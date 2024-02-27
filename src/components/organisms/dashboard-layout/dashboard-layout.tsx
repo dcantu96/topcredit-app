@@ -11,7 +11,9 @@ const DashboardLayout = () => {
   const showSidebar = useRecoilValue(showDashboardSidebarSelector)
   return (
     <div className="overflow-y-hidden w-screen h-screen">
-      <DashboardHeader />
+      <DashboardHeader>
+        <DashboardHeader.Search />
+      </DashboardHeader>
       <div className="flex">
         {showSidebar && <FixedSidebar />}
         <div className="flex flex-wrap h-[calc(100vh-4rem)] overflow-y-auto w-full">

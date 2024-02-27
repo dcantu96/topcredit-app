@@ -8,7 +8,11 @@ import { authActions, myProfileState } from "components/providers/auth/atoms"
 
 import logoSmall from "../../../assets/logo_small.png"
 
-const DashboardHeader = () => {
+interface DashboardHeaderProps {
+  children?: React.ReactNode
+}
+
+const DashboardHeader = ({ children }: DashboardHeaderProps) => {
   const profile = useRecoilValue(myProfileState)
   const { logout } = useRecoilValue(authActions)
   const profileButtonRef = useRef<HTMLButtonElement>(null)
@@ -24,16 +28,7 @@ const DashboardHeader = () => {
           <img className="h-8 w-auto" src={logoSmall} alt="topcredit-logo" />
         </a>
         {/* search input */}
-        <div className="self-stretch flex-1 flex">
-          <div className="relative w-full">
-            <MagnifyingGlassIcon className="absolute inset-y-0 left-0 w-5 h-full text-gray-400 pointer-events-none" />
-            <input
-              type="text"
-              className="pr-0 pl-8 placeholder:text-gray-400 py-0 bg-transparent border-0 w-full h-full block focus:ring-0 focus:border-0 focus:outline-none"
-              placeholder="Buscar"
-            />
-          </div>
-        </div>
+        {children}
         {/* user */}
         <div className="flex justify-end gap-x-8">
           <button className="btn btn-small btn-transparent group">
@@ -67,5 +62,22 @@ const DashboardHeader = () => {
     </header>
   )
 }
+
+const Search = () => {
+  return (
+    <div className="self-stretch flex-1 flex">
+      <div className="relative w-full">
+        <MagnifyingGlassIcon className="absolute inset-y-0 left-0 w-5 h-full text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          className="pr-0 pl-8 placeholder:text-gray-400 py-0 bg-transparent border-0 w-full h-full block focus:ring-0 focus:border-0 focus:outline-none"
+          placeholder="Buscar"
+        />
+      </div>
+    </div>
+  )
+}
+
+DashboardHeader.Search = Search
 
 export default DashboardHeader
