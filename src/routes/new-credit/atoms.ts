@@ -11,7 +11,7 @@ type UserStatus =
   | "denied"
 
 type CreditStatus =
-  | "pre-authorized"
+  | "new"
   | "pending"
   | "invalid-documentation"
   | "authorized"
@@ -102,7 +102,7 @@ export const userLatestCreditSelectorQuery = selector<
         params: {
           sort: "-id",
           filter: {
-            status: "pre-authorized,pending,invalid-documentation",
+            status: "new,pending,invalid-documentation",
           },
           page: {
             limit: 1,
