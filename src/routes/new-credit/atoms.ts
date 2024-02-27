@@ -125,12 +125,15 @@ export const initialActiveStep = selector<string>({
   key: "initialActiveStep",
   get: ({ get }) => {
     const status = get(userGeneralDataQuerySelector)?.status
-    if (status === "new") return "Datos Generales"
+    const credit = get(userLatestCreditSelectorQuery)
+    if (!status || status === "new") return "Datos Generales"
     if (status === "invalid-documentation") return "Datos Generales"
     if (status === "pending" || status === "pre-authorization")
       return "Datos Generales"
-    if (status === "pre-authorized") return "Pre Autorizado"
-    return "Autorizado"
+    if (credit?.status === "new") return "Pre Autorizado"
+    if (credit?.status === "pending") return "Pre Autorizado"
+    if (credit?.status === "invalid-documentation") return "Pre Autorizado"
+    else return "Autorizado"
   },
 })
 
