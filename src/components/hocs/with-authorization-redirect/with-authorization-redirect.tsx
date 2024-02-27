@@ -19,9 +19,10 @@ function withAuthorizationRedirect<P extends object>(
     const isLoggedIn = useRecoilValue(isLoggedInState)
     const hasNoRoles = useRecoilValue(hasNoRolesState)
     const location = useLocation() // Use useLocation hook to get the current route
+    const hasARole = !hasNoRoles
 
     // If the user has any roles, always redirect to /dashboard
-    if (!hasNoRoles) {
+    if (isLoggedIn && hasARole) {
       return <Navigate to="/dashboard" replace />
     }
 
