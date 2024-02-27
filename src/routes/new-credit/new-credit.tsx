@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil"
 import { activeStepSelectorState } from "./atoms"
 import withAuthorizationRedirect from "components/hocs/with-authorization-redirect"
 import withAuth from "components/hocs/with-auth/with-auth"
+import DashboardHeader from "components/organisms/dashboard-header"
 
 const steps = [
   {
@@ -23,8 +24,10 @@ const steps = [
 const Screen = () => {
   const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState)
   return (
-    <div className="grid grid-cols-[400px_1fr] h-screen grid-rows-[40px_1fr] overflow-hidden">
-      <div className="w-full col-span-2 bg-black"></div>
+    <div className="grid grid-cols-[400px_1fr] h-screen grid-rows-[60px_1fr] overflow-hidden">
+      <div className="w-full col-span-2">
+        <DashboardHeader />
+      </div>
       <div className="flex items-center justify-center self-center">
         <Steps
           steps={steps}
