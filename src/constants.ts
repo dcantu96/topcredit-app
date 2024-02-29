@@ -1,4 +1,4 @@
-import { Role } from "./schema.types"
+import { DurationType, Role } from "./schema.types"
 
 export const STATES_OF_MEXICO = [
   { value: "AGU", label: "Aguascalientes" },
@@ -52,7 +52,7 @@ export const MXNFormat = new Intl.NumberFormat("es-MX", {
   currency: "MXN",
 })
 
-export const DURATION_TYPES = new Map([
+export const DURATION_TYPES = new Map<DurationType, string>([
   ["two-weeks", "Quincenas"],
   ["months", "Meses"],
   ["years", "Años"],

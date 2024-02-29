@@ -6,6 +6,7 @@ import Input from "components/atoms/input"
 
 import { useTermActions } from "./actions"
 import { DURATION_TYPES } from "../../constants"
+import { DurationType } from "src/schema.types"
 
 interface NewTermFormProps {
   companyId: string
@@ -15,7 +16,7 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const { assignTermToCompany, createTerm } = useTermActions()
   const [duration, setDuration] = useState<number>(0)
-  const [durationType, setDurationType] = useState<string | undefined>(
+  const [durationType, setDurationType] = useState<DurationType | undefined>(
     undefined,
   )
 
@@ -51,11 +52,13 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
         onChange={({ target }) => setDuration(Number(target.value))}
         trailingDropdownId="term-duration-type"
         trailingDropdownLabel="Duración"
-        trailingDropdownOnChange={({ target }) => setDurationType(target.value)}
+        trailingDropdownOnChange={({ target }) =>
+          setDurationType(target.value as DurationType)
+        }
         trailingDropdownOptions={Array.from(DURATION_TYPES.entries()).map(
           ([key, value]) => ({
-            label: value,
             value: key,
+            label: value,
           }),
         )}
       />

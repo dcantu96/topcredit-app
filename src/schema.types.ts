@@ -19,6 +19,9 @@ export type CreditStatus =
   | "invalid-documentation"
   | "authorized"
   | "denied"
+
+export type DurationType = "years" | "months" | "two-weeks"
+
 export interface TokenResponse {
   access_token: string
   created_at: number
@@ -71,7 +74,7 @@ export interface Credit extends ObjectWithId, Timestamps {
 
 export interface Term extends ObjectWithId, Timestamps {
   name?: string
-  durationType: "years" | "months" | "two-weeks"
+  durationType: DurationType
   duration: number
 }
 

@@ -1,15 +1,8 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { atom, selector } from "recoil"
+import { Term } from "src/schema.types"
 
-export interface NewTerm {
-  name?: string
-  durationType: string
-  duration: number
-}
-
-export interface NewTermForCompany extends NewTerm {
-  companyId: string
-}
+export type NewTerm = Omit<Term, "id" | "createdAt" | "updatedAt">
 
 export interface AssignTermForCompany {
   termId: string
@@ -17,7 +10,7 @@ export interface AssignTermForCompany {
 }
 
 export interface EditTerm extends NewTerm {
-  id: number
+  id: string
 }
 export interface NewCompany {
   name: string
@@ -31,21 +24,12 @@ export interface EditCompany extends NewCompany {
   id: string
 }
 
-interface TermsQueryResponse {
-  id: string
-  durationType: string
-  duration: number
-  name: string
-  createdAt: string
-  updatedAt: string
-}
-
-export const termsSelectorQuery = selector<Map<string, TermsQueryResponse>>({
+export const termsSelectorQuery = selector<Map<string, Term>>({
   key: "termsSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<TermsQueryResponse[]>("terms")
-    const termsMap = new Map<string, TermsQueryResponse>()
+    const { data } = await api.get<Term[]>("terms")
+    const termsMap = new Map<string, Term>()
     for (const term of data) {
       termsMap.set(term.id, term)
     }
@@ -53,7 +37,7 @@ export const termsSelectorQuery = selector<Map<string, TermsQueryResponse>>({
   },
 })
 
-export const termsState = atom<Map<string, TermsQueryResponse>>({
+export const termsState = atom<Map<string, Term>>({
   key: "termsState",
   default: termsSelectorQuery,
 })
