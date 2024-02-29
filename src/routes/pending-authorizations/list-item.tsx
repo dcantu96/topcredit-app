@@ -1,19 +1,16 @@
+import { useNavigate } from "react-router-dom"
 import { ChevronRightIcon } from "@heroicons/react/24/outline"
+
 import List from "components/atoms/list"
 import SmallDot from "components/atoms/small-dot"
-import { useNavigate } from "react-router-dom"
-import { MXNFormat } from "../../constants"
+
 import { Credit } from "src/schema.types"
-import useCompanies from "hooks/useCompanies"
-import useCreditAmortization from "hooks/useCreditAmortization"
+import { DURATION_TYPES, MXNFormat } from "../../constants"
 
 const ListItem = ({ credit }: { credit: Credit }) => {
   const navigate = useNavigate()
-  const companiesMap = useCompanies()
-  const amortization = useCreditAmortization(credit.id)
 
   const companyDomain = credit.borrower.email.split("@")[1]
-  const company = companiesMap.get(companyDomain)
   return (
     <List.Item>
       <div className="flex-1 min-w-0">
@@ -40,6 +37,34 @@ const ListItem = ({ credit }: { credit: Credit }) => {
             {new Date(credit.createdAt).toLocaleDateString()}
           </p>
         </div>
+      </div>
+      <div className="min-w-32">
+        <div className="flex items-center gap-x-3">
+          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+            <a className="flex text-inherit decoration-inherit gap-x-2">
+              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                Crédito
+              </span>
+            </a>
+          </h2>
+        </div>
+        <span className="whitespace-nowrap">
+          {credit.loan ? MXNFormat.format(credit.loan) : 0}
+        </span>
+      </div>
+      <div className="min-w-32">
+        <div className="flex items-center gap-x-3">
+          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+            <a className="flex text-inherit decoration-inherit gap-x-2">
+              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                Plazo
+              </span>
+            </a>
+          </h2>
+        </div>
+        <span className="whitespace-nowrap">
+          {credit.term.duration} {DURATION_TYPES.get(credit.term.durationType)}
+        </span>
       </div>
       <button
         onClick={() =>

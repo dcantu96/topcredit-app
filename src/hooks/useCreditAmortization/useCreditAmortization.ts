@@ -6,12 +6,10 @@ import { creditSelector } from "../../routes/pending-authorizations/atoms"
 
 const useCreditAmortization = (creditId: string) => {
   const credit = useRecoilValue(creditSelector(creditId))
-
   const companiesMap = useCompanies()
 
   const userDomain = credit?.borrower.email.split("@")[1]
   const company = userDomain ? companiesMap.get(userDomain) : undefined
-
   const rate = company?.rate
   const duration = credit?.term.duration
   const durationType = credit?.term.durationType
