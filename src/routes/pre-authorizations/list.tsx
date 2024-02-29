@@ -16,11 +16,9 @@ import {
 } from "./atoms"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 import { useMemo, useState } from "react"
-import {
-  useCreditActions,
-  usePreAuthorizationActions,
-  useUserActions,
-} from "./actions"
+import { usePreAuthorizationActions } from "./actions"
+import useUserActions from "hooks/useUserActions"
+import useCreditActions from "hooks/useCreditActions"
 
 const Screen = () => {
   const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
