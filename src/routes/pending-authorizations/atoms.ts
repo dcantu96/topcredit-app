@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil"
+import { atom, selector, selectorFamily } from "recoil"
 
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
@@ -70,4 +70,14 @@ export const pendingAuthorizationsSortedSelector = selector<Credit[]>({
 export const pendingAuthorizationsState = atom<Credit[]>({
   key: "preAuthorizationUsersState",
   default: pendingAuthorizationsSortedSelector,
+})
+
+export const creditSelector = selectorFamily<Credit | undefined, string>({
+  key: "creditSelector",
+  get:
+    (creditId) =>
+    ({ get }) => {
+      const credits = get(pendingAuthorizationsSelectorQuery)
+      return credits.get(creditId)
+    },
 })

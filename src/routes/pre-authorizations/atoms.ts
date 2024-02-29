@@ -1,7 +1,7 @@
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
 import { atom, selector } from "recoil"
-import { Company, Term, User } from "src/schema.types"
+import { User } from "src/schema.types"
 
 export type PreAuthorizationUsersResponse = Pick<
   User,
@@ -75,45 +75,3 @@ export const preAuthorizationUsersState = atom<PreAuthorizationUsersResponse[]>(
     default: preAuthorizationUsersSortedSelector,
   },
 )
-
-type CompanyForPreAuthResponse = Pick<
-  Company,
-  "borrowingCapacity" | "id" | "domain" | "rate"
-> & {
-  terms: {
-    data: Term[]
-  }
-}
-
-export const companiesForPreAuthSelectorQuery = selector<
-  Map<
-    string,
-    { borrowingCapacity: number | null; terms: Term[]; rate: number | null }
-  >
->({
-  key: "companiesForPreAuthSelectorQuery",
-  get: async ({ get }) => {
-    const api = get(apiSelector)
-    const { data } = await api.get<CompanyForPreAuthResponse[]>("companies", {
-      params: {
-        fields: {
-          companies: "borrowingCapacity,id,domain,terms,rate",
-        },
-        include: "terms",
-      },
-    })
-
-    const map = new Map<
-      string,
-      { borrowingCapacity: number | null; terms: Term[]; rate: number | null }
-    >()
-    for (const company of data) {
-      map.set(company.domain, {
-        borrowingCapacity: company.borrowingCapacity,
-        terms: company.terms.data,
-        rate: company.rate,
-      })
-    }
-    return map
-  },
-})

@@ -22,6 +22,7 @@ import Toaster from "components/providers/toaster/toaster"
 import CreditScreen from "../routes/new-credit"
 import PreAuthorizationsList from "../routes/pre-authorizations/list"
 import PendingAuthorizations from "../routes/pending-authorizations/list"
+import ShowPendingAuthorization from "../routes/pending-authorizations/show"
 import Landing from "../routes/landing"
 
 function App() {
@@ -75,6 +76,7 @@ function App() {
             element={<ProtectedRoute allowedRoles={["authorizations"]} />}
           >
             <Route index element={<PendingAuthorizations />} />
+            <Route path=":id" element={<ShowPendingAuthorization />} />
           </Route>
         </Route>
         <Route

@@ -71,7 +71,7 @@ export interface Credit extends ObjectWithId, Timestamps {
 
 export interface Term extends ObjectWithId, Timestamps {
   name?: string
-  durationType: string
+  durationType: "years" | "months" | "two-weeks"
   duration: number
 }
 

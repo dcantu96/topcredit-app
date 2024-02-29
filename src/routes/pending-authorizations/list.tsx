@@ -7,6 +7,7 @@ import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 
 import { pendingAuthorizationsState } from "./atoms"
+import ListItem from "./list-item"
 
 const Screen = () => {
   const credits = useRecoilValue(pendingAuthorizationsState)
@@ -16,16 +17,14 @@ const Screen = () => {
       {/* pending request */}
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text="Solicitudes Pre-Aprobadas" />
+          <ListHeader.Title text="Autorizaciones Pendientes" />
           <ListHeader.Actions>
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>
         <List>
           {credits.map((credit) => (
-            <div key={credit.id}>
-              {credit.status} - {credit.loan}
-            </div>
+            <ListItem key={credit.id} credit={credit} />
           ))}
         </List>
       </ListContainer>

@@ -1,4 +1,5 @@
 import { useRecoilValue } from "recoil"
+import { useMemo, useState } from "react"
 
 import NavLink from "components/atoms/nav-link"
 import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
@@ -8,17 +9,17 @@ import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 import Input from "components/atoms/input"
+import useUserActions from "hooks/useUserActions"
+import useCreditActions from "hooks/useCreditActions"
+import useCompanies from "hooks/useCompanies"
 
 import {
   PreAuthorizationUsersResponse,
   preAuthorizationUsersState,
-  companiesForPreAuthSelectorQuery,
 } from "./atoms"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import { useMemo, useState } from "react"
 import { usePreAuthorizationActions } from "./actions"
-import useUserActions from "hooks/useUserActions"
-import useCreditActions from "hooks/useCreditActions"
+import { calculateAmortization } from "hooks/useCreditAmortization/utils"
 
 const Screen = () => {
   const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
@@ -62,7 +63,7 @@ const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
   const { updateUserStatus } = useUserActions(user.id)
   const { removeUser } = usePreAuthorizationActions()
   const { createCredit } = useCreditActions()
-  const companiesMap = useRecoilValue(companiesForPreAuthSelectorQuery)
+  const companiesMap = useCompanies()
   const [loanAmount, setLoanAmount] = useState(0)
   const [loanTermId, setLoanTermId] = useState("")
 
@@ -81,34 +82,20 @@ const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
       })),
     [company],
   )
+  const term = company?.terms.find((term) => term.id === loanTermId)
 
   const amortization = useMemo(() => {
-    // Ensure all necessary data is present
-    if (!loanAmount || !loanTermId || !company?.terms || !company.rate)
-      return undefined
-
-    // Find the matching term based on loanTermId
-    const term = company.terms.find((term) => term.id === loanTermId)
     if (!term) return undefined
 
-    // payments should be monthly always, we need to calculate the total payment times
-    const monthlyPayments =
-      term.durationType === "years"
-        ? term.duration * 12
-        : term.durationType === "months"
-          ? term.duration
-          : term.durationType === "two-weeks"
-            ? term.duration / 2
-            : undefined
+    if (!loanAmount || !company?.rate) return undefined
 
-    if (!monthlyPayments) return undefined
-
-    return calculatePayment({
+    return calculateAmortization({
+      duration: term.duration,
+      durationType: term.durationType,
       loanAmount,
-      annualInterestRate: company.rate,
-      totalPayments: monthlyPayments,
+      rate: company?.rate,
     })
-  }, [loanAmount, loanTermId, company?.terms, company?.rate])
+  }, [term, loanAmount, company?.rate])
 
   const loanAmountErrorMsg = useMemo(() => {
     if (
@@ -214,27 +201,6 @@ const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
       </div>
     </List.Item>
   )
-}
-
-interface CalculatePaymentProps {
-  loanAmount: number
-  annualInterestRate: number
-  totalPayments: number
-}
-
-function calculatePayment({
-  loanAmount,
-  annualInterestRate,
-  totalPayments,
-}: CalculatePaymentProps) {
-  // Calculate total interest
-  const monthlyInterestRate = annualInterestRate / 12
-
-  const monthlyPayment =
-    (monthlyInterestRate * loanAmount) /
-    (1 - Math.pow(1 + monthlyInterestRate, -totalPayments))
-
-  return Number(monthlyPayment.toFixed(2))
 }
 
 export default Screen
