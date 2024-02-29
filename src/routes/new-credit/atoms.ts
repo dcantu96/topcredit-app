@@ -1,21 +1,7 @@
 import { atom, selector } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
-
-type UserStatus =
-  | "new"
-  | "pending"
-  | "invalid-documentation"
-  | "pre-authorization"
-  | "pre-authorized"
-  | "denied"
-
-type CreditStatus =
-  | "new"
-  | "pending"
-  | "invalid-documentation"
-  | "authorized"
-  | "denied"
+import { CreditStatus, UserStatus } from "src/schema.types"
 
 interface UserGeneralDataQuery {
   id: string
