@@ -59,7 +59,7 @@ export interface User extends ObjectWithId, Timestamps {
   salary: number | null
   salaryFrequency: string | null
   state: string | null
-  status: string | null
+  status: UserStatus | null
 }
 
 export interface Credit extends ObjectWithId, Timestamps {

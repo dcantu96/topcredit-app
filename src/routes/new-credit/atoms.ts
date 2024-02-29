@@ -1,33 +1,9 @@
 import { atom, selector } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
-import { CreditStatus, UserStatus } from "src/schema.types"
+import { Credit, User } from "src/schema.types"
 
-interface UserGeneralDataQuery {
-  id: string
-  employeeNumber: string
-  bankAccountNumber: string
-  addressLineOne: string
-  addressLineTwo: string
-  city: string
-  state: string
-  status: UserStatus | null
-  country: string
-  rfc: string
-  salary: number
-  salaryFrequency: string
-  postalCode: number
-  createdAt: string
-  updatedAt: string
-}
-
-interface UserCreditQuery {
-  id: string
-  status: CreditStatus
-  loan: number
-  createdAt: string
-  updatedAt: string
-}
+type CreditWithoutBorrower = Omit<Credit, "borrower">
 
 /**
  * This query should return null if no credit is found
@@ -35,16 +11,14 @@ interface UserCreditQuery {
  * If a credit is found, it should return the credit with the values
  *
  */
-export const userGeneralDataQuerySelector = selector<
-  UserGeneralDataQuery | undefined
->({
+export const userGeneralDataQuerySelector = selector<User | undefined>({
   key: "userGeneralDataQuerySelector",
   get: async ({ get }) => {
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<UserGeneralDataQuery>(`users/${profile.id}`)
-    return data as UserGeneralDataQuery
+    const { data } = await api.get<User>(`users/${profile.id}`)
+    return data as User
   },
 })
 
@@ -75,14 +49,14 @@ export const isGeneralDataCompleteSelector = selector({
  *
  */
 export const userLatestCreditSelectorQuery = selector<
-  UserCreditQuery | undefined
+  CreditWithoutBorrower | undefined
 >({
   key: "userLatestCreditSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<UserCreditQuery[]>(
+    const { data } = await api.get<CreditWithoutBorrower[]>(
       `users/${profile.id}/credits`,
       {
         params: {
