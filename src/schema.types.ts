@@ -1,5 +1,24 @@
-export type Role = "admin" | "requests" | "companies" | "pre_authorizations"
+export type Role =
+  | "admin"
+  | "requests"
+  | "companies"
+  | "pre_authorizations"
+  | "authorizations"
 
+export type UserStatus =
+  | "new"
+  | "pending"
+  | "invalid-documentation"
+  | "pre-authorization"
+  | "pre-authorized"
+  | "denied"
+
+export type CreditStatus =
+  | "new"
+  | "pending"
+  | "invalid-documentation"
+  | "authorized"
+  | "denied"
 export interface TokenResponse {
   access_token: string
   created_at: number
@@ -41,6 +60,13 @@ export interface User extends ObjectWithId, Timestamps {
   salaryFrequency: string | null
   state: string | null
   status: string | null
+}
+
+export interface Credit extends ObjectWithId, Timestamps {
+  loan: number | null
+  status: CreditStatus
+  borrower: User
+  term: Term
 }
 
 export interface Term extends ObjectWithId, Timestamps {
