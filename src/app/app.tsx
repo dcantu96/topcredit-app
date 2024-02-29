@@ -20,6 +20,8 @@ import RequestsList from "../routes/requests/list"
 import ShowRequest from "../routes/requests/show"
 import Toaster from "components/providers/toaster/toaster"
 import CreditScreen from "../routes/new-credit"
+import PreAuthorizationsList from "../routes/pre-authorizations/list"
+import PendingAuthorizations from "../routes/pending-authorizations/list"
 import Landing from "../routes/landing"
 
 function App() {
@@ -61,6 +63,18 @@ function App() {
             <Route path=":id">
               <Route index element={<ShowRequest />} />
             </Route>
+          </Route>
+          <Route
+            path="pre-authorizations"
+            element={<ProtectedRoute allowedRoles={["pre_authorizations"]} />}
+          >
+            <Route index element={<PreAuthorizationsList />} />
+          </Route>
+          <Route
+            path="pending-authorizations"
+            element={<ProtectedRoute allowedRoles={["authorizations"]} />}
+          >
+            <Route index element={<PendingAuthorizations />} />
           </Route>
         </Route>
         <Route
