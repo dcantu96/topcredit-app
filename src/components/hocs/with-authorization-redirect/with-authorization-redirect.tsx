@@ -29,7 +29,6 @@ function withAuthorizationRedirect<P extends object>(
     // If the user is on the /new-credit route and doesn't have any roles, stay on this page
     // Otherwise, if logged in and not on /new-credit and without roles, redirect to /new-credit
     else if (isLoggedIn && location.pathname !== "/new-credit" && hasNoRoles) {
-      console.log("Redirecting to /new-credit", location.pathname, hasNoRoles)
       return <Navigate to="/new-credit" replace />
     }
 

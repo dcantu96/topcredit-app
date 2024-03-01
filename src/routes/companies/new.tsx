@@ -26,7 +26,6 @@ const NewCompany = () => {
       setIsLoading(false)
       to("..")
     } catch (error) {
-      console.log("error", error)
       setIsLoading(false)
     }
   }

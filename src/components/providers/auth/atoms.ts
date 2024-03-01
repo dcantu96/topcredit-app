@@ -12,7 +12,6 @@ interface AuthState {
 const authInitializer = selector<AuthState | undefined>({
   key: "authInitializer",
   get: () => {
-    console.log("authState effect")
     // 0. check if auth is in local storage
     const localAuth = localStorage.getItem("auth")
 
@@ -133,11 +132,9 @@ export const isLoggedInState = selector({
   key: "isLoggedInState",
   get: async ({ get }) => {
     const auth = get(authState)
-    console.log("auth state in isLoggedInState", auth)
     if (!auth) return false
-    console.log("auth state in isLoggedInState", auth)
     const profile = get(myProfileState)
-    console.log("profile state in isLoggedInState", profile)
+
     return !!profile
   },
 })
@@ -146,11 +143,10 @@ export const myProfileState = selector<MeResponse | undefined>({
   key: "myProfileState",
   get: async ({ get }) => {
     const auth = get(authState)
-    console.log("auth state in myProfileState", auth)
     const { logout } = get(authActions)
+
     if (auth) {
       try {
-        console.log("fetch me request")
         const response = await fetch(
           `${import.meta.env.VITE_APP_API_URL}/api/me`,
           {
@@ -171,11 +167,9 @@ export const myProfileState = selector<MeResponse | undefined>({
         const data = await response.json()
         return data
       } catch (error) {
-        console.log(error)
         logout()
       }
     } else {
-      console.log("no auth, logout")
       logout()
       return undefined
     }
@@ -198,7 +192,6 @@ export const userRolesState = selector({
   key: "userRolesState",
   get: ({ get }) => {
     const profile = get(myProfileState)
-    console.log(profile?.roles)
     return ROLES.filter((role) => profile?.roles.includes(role.value))
   },
 })

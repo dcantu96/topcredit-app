@@ -23,7 +23,6 @@ import { calculateAmortization } from "hooks/useCreditAmortization/utils"
 
 const Screen = () => {
   const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
-  console.log({ preAuthorizationUsers })
   return (
     <>
       {/* pending request */}
