@@ -23,6 +23,8 @@ import CreditScreen from "../routes/new-credit"
 import PreAuthorizationsList from "../routes/pre-authorizations/list"
 import PendingAuthorizations from "../routes/pending-authorizations/list"
 import ShowPendingAuthorization from "../routes/pending-authorizations/show"
+import Dispersions from "../routes/dispersions/list"
+import ShowDispersions from "../routes/dispersions/show"
 import Landing from "../routes/landing"
 
 function App() {
@@ -77,6 +79,13 @@ function App() {
           >
             <Route index element={<PendingAuthorizations />} />
             <Route path=":id" element={<ShowPendingAuthorization />} />
+          </Route>
+          <Route
+            path="dispersions"
+            element={<ProtectedRoute allowedRoles={["dispersions"]} />}
+          >
+            <Route index element={<Dispersions />} />
+            <Route path=":id" element={<ShowDispersions />} />
           </Route>
         </Route>
         <Route

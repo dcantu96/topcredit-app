@@ -40,6 +40,8 @@ export const ROLES: { value: Role; label: string }[] = [
   { value: "requests", label: "Solicitudes" },
   { value: "pre_authorizations", label: "Pre Autorizaciones" },
   { value: "admin", label: "Administrador" },
+  { value: "authorizations", label: "Autorizaciones" },
+  { value: "dispersions", label: "Dispersiones" },
 ]
 
 export const SORT_ORDER = [

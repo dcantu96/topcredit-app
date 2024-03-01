@@ -4,6 +4,7 @@ export type Role =
   | "companies"
   | "pre_authorizations"
   | "authorizations"
+  | "dispersions"
 
 export type UserStatus =
   | "new"
@@ -19,6 +20,7 @@ export type CreditStatus =
   | "invalid-documentation"
   | "authorized"
   | "denied"
+  | "dispersed"
 
 export type DurationType = "years" | "months" | "two-weeks"
 

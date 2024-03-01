@@ -23,7 +23,7 @@ import { calculateAmortization } from "hooks/useCreditAmortization/utils"
 
 const Screen = () => {
   const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
-
+  console.log({ preAuthorizationUsers })
   return (
     <>
       {/* pending request */}
@@ -67,7 +67,7 @@ const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
   const [loanAmount, setLoanAmount] = useState(0)
   const [loanTermId, setLoanTermId] = useState("")
 
-  const userDomain = user.email.split("@")[1]
+  const userDomain = user.email?.split("@")?.[1]
   const company = companiesMap.get(userDomain)
   const borrowerMaxCapacity =
     user.salary && company?.borrowingCapacity

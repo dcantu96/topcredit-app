@@ -16,6 +16,7 @@ const SUCCESS_MESSAGES = new Map<CreditStatus, string>([
   ["invalid-documentation", "El usuario ha enviado documentación inválida"],
   ["authorized", "El usuario ha sido autorizado"],
   ["denied", "El usuario ha sido denegado"],
+  ["dispersed", "El crédito ha sido dispersado"],
 ])
 
 const ERROR_MESSAGES = new Map([
@@ -27,6 +28,7 @@ const ERROR_MESSAGES = new Map([
   ],
   ["authorized", "Ocurrió un error al autorizar el usuario"],
   ["denied", "Ocurrió un error al denegar el usuario"],
+  ["dispersed", "Ocurrió un error al dispersar el crédito"],
 ])
 
 const useCreditActions = () => {

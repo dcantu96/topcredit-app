@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { CurrencyDollarIcon, XMarkIcon } from "@heroicons/react/24/solid"
 
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer/file-viewer"
@@ -8,22 +8,22 @@ import useCreditActions from "hooks/useCreditActions"
 import useCompanies from "hooks/useCompanies"
 import useCreditAmortization from "hooks/useCreditAmortization"
 
-import { creditSelector } from "./atoms"
-import { usePendingAuthorizationsActions } from "./actions"
+import { dispersionsSelector } from "./atoms"
+import { useDispersionsActions } from "./actions"
 import { MXNFormat } from "../../constants"
 
 const ShowScreen = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
-  const credit = useRecoilValue(creditSelector(id))
+  const credit = useRecoilValue(dispersionsSelector(id))
   if (!credit) throw new Error("Credit not found")
-  const { removeCredit } = usePendingAuthorizationsActions()
+  const { removeCredit } = useDispersionsActions()
   const { updateCreditStatus } = useCreditActions()
   const companiesMap = useCompanies()
 
-  const companyDomain = credit?.borrower.email.split("@")[1]
-  const company = companyDomain ? companiesMap.get(companyDomain) : undefined
+  const userDomain = credit?.borrower.email.split("@")[1]
+  const company = userDomain ? companiesMap.get(userDomain) : undefined
   const rate = company?.rate
   const duration = credit?.term.duration
   const durationType = credit?.term.durationType
@@ -39,7 +39,7 @@ const ShowScreen = () => {
   if (!credit) return null
 
   const handleApproveCredit = () => {
-    updateCreditStatus(credit.id, "authorized")
+    updateCreditStatus(credit.id, "dispersed")
     removeCredit(credit.id)
     navigate("..")
   }
@@ -104,8 +104,8 @@ const ShowScreen = () => {
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="flex gap-2">
             <Button onClick={handleApproveCredit}>
-              <CheckIcon className="h-5 w-5 text-white mr-1.5" />
-              Aprobar
+              <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
+              Dispersar
             </Button>
             <Button status="secondary" onClick={handleDenyCredit}>
               <XMarkIcon className="h-5 w-5 mr-1.5" />

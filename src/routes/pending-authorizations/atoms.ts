@@ -68,7 +68,7 @@ export const pendingAuthorizationsSortedSelector = selector<Credit[]>({
 })
 
 export const pendingAuthorizationsState = atom<Credit[]>({
-  key: "preAuthorizationUsersState",
+  key: "pendingAuthorizationsState",
   default: pendingAuthorizationsSortedSelector,
 })
 

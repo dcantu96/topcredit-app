@@ -53,7 +53,7 @@ export const preAuthorizationUsersSelectorQuery = selector<
 export const preAuthorizationUsersSortedSelector = selector<
   PreAuthorizationUsersResponse[]
 >({
-  key: "approvedUsersSortedSelector",
+  key: "preAuthorizationUsersSortedSelector",
   get: ({ get }) => {
     const approvedUsersMap = get(preAuthorizationUsersSelectorQuery)
     const sortOrder = get(listSortOrderState("pre-authorizations")) ?? "asc"

@@ -9,6 +9,7 @@ const PreAuthorizations = lazy(
 const PendingAuthorizations = lazy(
   () => import("../../routes/pending-authorizations/list"),
 )
+const Dispersions = lazy(() => import("../../routes/dispersions/list"))
 
 /**
  * This component is in charge of rendering a screen depending on the user's role.
@@ -24,6 +25,8 @@ const Dashboard = () => {
     return <PreAuthorizations />
   } else if (profile?.roles.includes("authorizations")) {
     return <PendingAuthorizations />
+  } else if (profile?.roles.includes("dispersions")) {
+    return <Dispersions />
   } else {
     return <div>error</div>
   }
