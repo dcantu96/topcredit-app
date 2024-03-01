@@ -192,6 +192,7 @@ export const userRolesState = selector({
   key: "userRolesState",
   get: ({ get }) => {
     const profile = get(myProfileState)
+    if (profile?.roles.includes("admin")) return ROLES
     return ROLES.filter((role) => profile?.roles.includes(role.value))
   },
 })

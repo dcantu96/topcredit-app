@@ -36,12 +36,20 @@ export const STATES_OF_MEXICO = [
 
 export const COUNTRIES = [{ value: "MX", label: "México" }]
 
-export const ROLES: { value: Role; label: string }[] = [
-  { value: "requests", label: "Solicitudes" },
-  { value: "pre_authorizations", label: "Pre Autorizaciones" },
-  { value: "admin", label: "Administrador" },
-  { value: "authorizations", label: "Autorizaciones" },
-  { value: "dispersions", label: "Dispersiones" },
+export const ROLES: { value: Role; label: string; path: string }[] = [
+  { value: "requests", label: "Sol", path: "requests" },
+  {
+    value: "pre_authorizations",
+    label: "Pre-Aut",
+    path: "pre-authorizations",
+  },
+  { value: "admin", label: "Administrador", path: "administrador" },
+  {
+    value: "authorizations",
+    label: "Aut",
+    path: "pending-authorizations",
+  },
+  { value: "dispersions", label: "Disp", path: "dispersions" },
 ]
 
 export const SORT_ORDER = [
