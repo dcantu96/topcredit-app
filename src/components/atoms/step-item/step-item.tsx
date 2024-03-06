@@ -51,7 +51,7 @@ const StepItem = ({
             )}
           </span>
         </span>
-        <span className="flex ml-4 min-w-0 flex-col">
+        <span className="hidden md:flex ml-4 min-w-0 flex-col">
           <span
             className={`
             text-sm font-medium

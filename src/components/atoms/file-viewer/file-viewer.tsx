@@ -35,14 +35,16 @@ const FileViewer = ({
         <div className="flex justify-between w-full mb-4">
           <DocumentIcon className="h-5 w-5 text-gray-500" />
 
-          <TrashIcon
-            onClick={(e) => {
-              console.log("click")
-              e.stopPropagation()
-              onDelete && onDelete()
-            }}
-            className="h-5 w-5 text-red-500"
-          />
+          {onDelete && (
+            <TrashIcon
+              onClick={(e) => {
+                console.log("click")
+                e.stopPropagation()
+                onDelete()
+              }}
+              className="h-5 w-5 text-red-500"
+            />
+          )}
         </div>
         <p className="text-gray-900 font-medium mb-2">{fileName}</p>
         <p className="text-gray-500 text-sm">

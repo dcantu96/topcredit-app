@@ -46,7 +46,7 @@ const Step = () => {
             }}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <FileField
             id="contract"
             label="Contrato"
@@ -61,7 +61,7 @@ const Step = () => {
             }}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <FileViewer
             label="Contrato"
             fileName="contrato.pdf"
@@ -69,7 +69,7 @@ const Step = () => {
             fileSize="1.9MB"
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <FileField
             id="authorization-letter"
             label="Carta de Autorización"
@@ -84,7 +84,7 @@ const Step = () => {
             }}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <FileViewer
             label="Carta de Autorización"
             fileName="carta_aut.pdf"

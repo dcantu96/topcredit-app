@@ -24,7 +24,7 @@ const steps = [
 const Screen = () => {
   const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState)
   return (
-    <div className="grid grid-cols-[400px_1fr] h-screen grid-rows-[60px_1fr] overflow-hidden">
+    <div className="grid grid-cols-[64px_1fr] md:grid-cols-[400px_1fr] h-screen grid-rows-[60px_1fr] overflow-hidden">
       <div className="w-full col-span-2">
         <DashboardHeader />
       </div>
