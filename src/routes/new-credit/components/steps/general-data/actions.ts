@@ -11,6 +11,10 @@ import {
   editableRFCFieldState,
   editableSalaryFrequencyFieldState,
   editableSalaryFieldState,
+  editableIdentityDocumentFieldState,
+  editableProofOfAddressFieldState,
+  editableBankStatementFieldState,
+  editablePayrollReceiptFieldState,
 } from "./atoms"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
@@ -31,6 +35,10 @@ export const useCreditScreenSubmitActions = () => {
   const postalCode = useRecoilValue(editablePostalCodeFieldState)
   const salaryFrequency = useRecoilValue(editableSalaryFrequencyFieldState)
   const salary = useRecoilValue(editableSalaryFieldState)
+  const identityDocument = useRecoilValue(editableIdentityDocumentFieldState)
+  const proofOfAddress = useRecoilValue(editableProofOfAddressFieldState)
+  const bankStatement = useRecoilValue(editableBankStatementFieldState)
+  const payrollReceipt = useRecoilValue(editablePayrollReceiptFieldState)
 
   const submit = async () => {
     try {
@@ -47,6 +55,10 @@ export const useCreditScreenSubmitActions = () => {
         postalCode,
         salaryFrequency,
         salary,
+        identityDocument,
+        proofOfAddress,
+        bankStatement,
+        payrollReceipt,
         status: "pending",
       })
     } catch (error) {
