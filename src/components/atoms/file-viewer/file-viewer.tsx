@@ -26,7 +26,9 @@ const FileViewer = ({
         {label}
       </label>
       <div
-        className="ring-1 ring-gray-300 rounded-md w-full p-4 mt-2"
+        className={`ring-1 ring-gray-300 rounded-md w-full p-4 mt-2 ${
+          fileUrl ? "cursor-pointer" : ""
+        }`}
         onClick={() => {
           if (!fileUrl) return
           window.open(fileUrl, "_blank")
@@ -46,7 +48,13 @@ const FileViewer = ({
             />
           )}
         </div>
-        <p className="text-gray-900 font-medium mb-2">{fileName}</p>
+        <p
+          className={`${
+            fileUrl ? "text-indigo-600" : "text-gray-900"
+          } font-medium mb-2 inline-flex`}
+        >
+          {fileName}
+        </p>
         <p className="text-gray-500 text-sm">
           {new Date(fileDate).toLocaleDateString()} &#x2022;{" "}
           {bytesToMb(Number(fileSize))} &#x2022; {contentType}
