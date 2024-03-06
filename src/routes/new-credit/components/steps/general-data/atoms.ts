@@ -7,6 +7,7 @@ import {
   salaryFieldValidation,
   salaryFrequencyFieldValidation,
 } from "./validations"
+import { ReadonlyFile } from "components/atoms/file-field/file-field"
 
 export const readonlySalaryFrequencyFieldSelector = selector<string | null>({
   key: "readonlySalaryFrequencyField",
@@ -156,7 +157,7 @@ export const editableAddressLineTwoFieldState = atom<string>({
 
 export const readonlyCityFieldSelector = selector<string | null>({
   key: "readonlyCityField",
-  get: async ({ get }) => {
+  get: ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
     return generalData?.city ?? null
   },
@@ -175,7 +176,7 @@ export const editableCityFieldState = atom<string>({
 
 export const readonlyStateFieldSelector = selector<string | null>({
   key: "readonlyStateField",
-  get: async ({ get }) => {
+  get: ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
     return generalData?.state ?? null
   },
@@ -191,6 +192,135 @@ export const editableStateFieldState = atom<string>({
     },
   }),
 })
+
+export const readonlyIdentityDocumentSelector = selector<
+  ReadonlyFile | undefined
+>({
+  key: "readonlyIdentityDocumentSelector",
+  get: ({ get }) => {
+    const generalData = get(userGeneralDataQuerySelector)
+    const url = generalData?.identityDocumentUrl
+    const filename = generalData?.identityDocumentFilename
+    const contentType = generalData?.identityDocumentContentType
+    const size = generalData?.identityDocumentSize
+    const uploadedAt = generalData?.identityDocumentUploadedAt
+    if (url && filename && contentType && size && uploadedAt) {
+      return {
+        url,
+        filename,
+        contentType,
+        size,
+        uploadedAt,
+      }
+    } else {
+      return undefined
+    }
+  },
+})
+
+export const editableIdentityDocumentFieldState = atom<
+  string | null | undefined
+>({
+  key: "editableIdentityDocumentField",
+  default: undefined,
+})
+
+export const editableBankStatementFieldState = atom<string | null | undefined>({
+  key: "editableBankStatementField",
+  default: undefined,
+})
+
+export const readonlyBankStatementSelector = selector<ReadonlyFile | undefined>(
+  {
+    key: "readonlyBankStatementSelector",
+    get: ({ get }) => {
+      const generalData = get(userGeneralDataQuerySelector)
+      const url = generalData?.bankStatementUrl
+      const filename = generalData?.bankStatementFilename
+      const contentType = generalData?.bankStatementContentType
+      const size = generalData?.bankStatementSize
+      const uploadedAt = generalData?.bankStatementUploadedAt
+      if (url && filename && contentType && size && uploadedAt) {
+        return {
+          url,
+          filename,
+          contentType,
+          size,
+          uploadedAt,
+        }
+      } else {
+        return undefined
+      }
+    },
+  },
+)
+
+export const editablePayrollReceiptFieldState = atom<string | null | undefined>(
+  {
+    key: "editablePayrollReceiptField",
+    default: undefined,
+  },
+)
+
+export const readonlyPayrollReceiptSelector = selector<
+  ReadonlyFile | undefined
+>({
+  key: "readonlyPayrollReceiptSelector",
+  get: ({ get }) => {
+    const generalData = get(userGeneralDataQuerySelector)
+    const url = generalData?.payrollReceiptUrl
+    const filename = generalData?.payrollReceiptFilename
+    const contentType = generalData?.payrollReceiptContentType
+    const size = generalData?.payrollReceiptSize
+    const uploadedAt = generalData?.payrollReceiptUploadedAt
+    if (url && filename && contentType && size && uploadedAt) {
+      return {
+        url,
+        filename,
+        contentType,
+        size,
+        uploadedAt,
+      }
+    } else {
+      return undefined
+    }
+  },
+})
+
+export const editableProofOfAddressFieldState = atom<string | null | undefined>(
+  {
+    key: "editableProofOfAddressField",
+    default: undefined,
+  },
+)
+
+export const readonlyProofOfAddressSelector = selector<
+  ReadonlyFile | undefined
+>({
+  key: "readonlyProofOfAddressSelector",
+  get: ({ get }) => {
+    const generalData = get(userGeneralDataQuerySelector)
+    const url = generalData?.proofOfAddressUrl
+    const filename = generalData?.proofOfAddressFilename
+    const contentType = generalData?.proofOfAddressContentType
+    const size = generalData?.proofOfAddressSize
+    const uploadedAt = generalData?.proofOfAddressUploadedAt
+    if (url && filename && contentType && size && uploadedAt) {
+      return {
+        url,
+        filename,
+        contentType,
+        size,
+        uploadedAt,
+      }
+    } else {
+      return undefined
+    }
+  },
+})
+
+// editableProofOfAddressFieldState
+// readonlyProofOfAddressSelector
 
 export const readonlyCountryFieldSelector = selector<string | null>({
   key: "readonlyCountryField",
