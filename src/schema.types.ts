@@ -93,6 +93,21 @@ export interface Credit extends ObjectWithId, Timestamps {
   status: CreditStatus
   borrower: User
   term: Term
+  payrollReceiptUrl: string | null
+  payrollReceiptFilename: string | null
+  payrollReceiptContentType: string | null
+  payrollReceiptSize: string | null
+  payrollReceiptUploadedAt: string | null
+  contractUrl: string | null
+  contractFilename: string | null
+  contractContentType: string | null
+  contractSize: string | null
+  contractUploadedAt: string | null
+  authorizationUrl: string | null
+  authorizationFilename: string | null
+  authorizationContentType: string | null
+  authorizationSize: string | null
+  authorizationUploadedAt: string | null
 }
 
 export interface Term extends ObjectWithId, Timestamps {

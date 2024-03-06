@@ -1,14 +1,32 @@
 import FileField from "components/atoms/file-field"
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { userLatestCreditSelectorQuery } from "../../../atoms"
 import { MXNFormat } from "../../../../../constants"
+import {
+  creditAuthorizationState,
+  creditContractState,
+  creditPayrollReceiptState,
+  readonlyCreditAuthorizationSelector,
+  readonlyCreditContractSelector,
+  readonlyCreditPayrollReceiptSelector,
+} from "./atoms"
+import { useSubmitCredit } from "./actions"
 
 const Step = () => {
   const credit = useRecoilValue(userLatestCreditSelectorQuery)
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const setPayrollReceipt = useSetRecoilState(creditPayrollReceiptState)
+  const payrollReceipt = useRecoilValue(readonlyCreditPayrollReceiptSelector)
+  const setContract = useSetRecoilState(creditContractState)
+  const contract = useRecoilValue(readonlyCreditContractSelector)
+  const setAuthorization = useSetRecoilState(creditAuthorizationState)
+  const authorization = useRecoilValue(readonlyCreditAuthorizationSelector)
+  const { submit } = useSubmitCredit()
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    await submit()
   }
 
   return (
@@ -35,14 +53,11 @@ const Step = () => {
           <FileField
             id="payment-receipt"
             label="Recibo de Nómina"
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            initialFile={payrollReceipt}
+            onRemove={() => setPayrollReceipt(null)}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setPayrollReceipt(signedId)
             }}
           />
         </div>
@@ -50,14 +65,11 @@ const Step = () => {
           <FileField
             id="contract"
             label="Contrato"
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            initialFile={contract}
+            onRemove={() => setContract(null)}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setContract(signedId)
             }}
           />
         </div>
@@ -73,14 +85,11 @@ const Step = () => {
           <FileField
             id="authorization-letter"
             label="Carta de Autorización"
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            initialFile={authorization}
+            onRemove={() => setAuthorization(null)}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setAuthorization(signedId)
             }}
           />
         </div>
@@ -90,21 +99,6 @@ const Step = () => {
             fileName="carta_aut.pdf"
             fileDate="Sat Feb 25"
             fileSize="1.9MB"
-          />
-        </div>
-        <div className="col-span-full">
-          <FileField
-            id="hr-letter"
-            label="Carta RH"
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
-            }}
           />
         </div>
       </div>
