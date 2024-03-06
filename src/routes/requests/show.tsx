@@ -16,7 +16,7 @@ const ShowRequest = () => {
   if (!user) return null
 
   return (
-    <div className="flex flex-col container lg:w-2/3 mx-auto px-4 pt-4">
+    <div className="flex flex-col container lg:w-2/3 mx-auto px-4 py-4">
       <div className="lg:flex lg:items-center lg:justify-between mb-4">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -142,36 +142,40 @@ const ShowRequest = () => {
         <div className="col-span-1">
           <FileViewer
             label="Identificación Oficial"
-            fileName="Document1.pdf"
-            fileDate="Sat Feb 25"
-            fileSize="2.5MB"
+            fileUrl={user.identityDocumentUrl ?? undefined}
+            fileName={user.identityDocumentFilename ?? undefined}
+            fileDate={user.identityDocumentUploadedAt ?? undefined}
+            fileSize={user.identityDocumentSize ?? undefined}
           />
         </div>
 
         <div className="col-span-1">
           <FileViewer
             label="Comprobante de Domicilio"
-            fileName="Document2.pdf"
-            fileDate="Sat Feb 25"
-            fileSize="1.9MB"
+            fileUrl={user.proofOfAddressUrl ?? undefined}
+            fileName={user.proofOfAddressFilename ?? undefined}
+            fileDate={user.proofOfAddressUploadedAt ?? undefined}
+            fileSize={user.proofOfAddressSize ?? undefined}
           />
         </div>
 
         <div className="col-span-1">
           <FileViewer
             label="Estado de Cuenta"
-            fileName="Document2.pdf"
-            fileDate="Sat Feb 25"
-            fileSize="1.9MB"
+            fileUrl={user.bankStatementUrl ?? undefined}
+            fileName={user.bankStatementFilename ?? undefined}
+            fileDate={user.bankStatementUploadedAt ?? undefined}
+            fileSize={user.bankStatementSize ?? undefined}
           />
         </div>
 
         <div className="col-span-1">
           <FileViewer
             label="Recibo de Nómina"
-            fileName="nomina.pdf"
-            fileDate="Sat Feb 25"
-            fileSize="1.05MB"
+            fileUrl={user.payrollReceiptUrl ?? undefined}
+            fileName={user.payrollReceiptFilename ?? undefined}
+            fileDate={user.payrollReceiptUploadedAt ?? undefined}
+            fileSize={user.payrollReceiptSize ?? undefined}
           />
         </div>
       </div>
