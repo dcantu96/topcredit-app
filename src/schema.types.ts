@@ -65,6 +65,26 @@ export interface User extends ObjectWithId, Timestamps {
   salaryFrequency: string | null
   state: string | null
   status: UserStatus | null
+  identityDocumentUrl: string | null
+  identityDocumentContentType: string | null
+  identityDocumentFilename: string | null
+  identityDocumentSize: string | null
+  identityDocumentUploadedAt: string | null
+  payrollReceiptUrl: string | null
+  payrollReceiptContentType: string | null
+  payrollReceiptFilename: string | null
+  payrollReceiptSize: string | null
+  payrollReceiptUploadedAt: string | null
+  proofOfAddressUrl: string | null
+  proofOfAddressContentType: string | null
+  proofOfAddressFilename: string | null
+  proofOfAddressSize: string | null
+  proofOfAddressUploadedAt: string | null
+  bankStatementUrl: string | null
+  bankStatementContentType: string | null
+  bankStatementFilename: string | null
+  bankStatementSize: string | null
+  bankStatementUploadedAt: string | null
 }
 
 export interface Credit extends ObjectWithId, Timestamps {
