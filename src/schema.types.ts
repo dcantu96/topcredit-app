@@ -108,6 +108,7 @@ export interface Credit extends ObjectWithId, Timestamps {
   authorizationContentType: string | null
   authorizationSize: string | null
   authorizationUploadedAt: string | null
+  reason: string | null
 }
 
 export interface Term extends ObjectWithId, Timestamps {
