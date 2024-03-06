@@ -63,10 +63,10 @@ const useCreditActions = () => {
 
   const updateCreditStatus = useRecoilCallback(
     ({ snapshot }) =>
-      async (creditId: string, status: CreditStatus) => {
+      async (creditId: string, status: CreditStatus, reason?: string) => {
         const api = await snapshot.getPromise(apiSelector)
         try {
-          await api.update(`credits`, { id: creditId, status })
+          await api.update(`credits`, { id: creditId, status, reason })
           const message = SUCCESS_MESSAGES.get(status)
           const defaultMessage = "Usuario actualizado"
           toast.success({

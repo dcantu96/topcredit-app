@@ -86,7 +86,7 @@ const ShowRequest = () => {
             </Button>
             <Button status="secondary" onClick={openModal}>
               <DocumentIcon className="h-5 w-5 mr-1.5" />
-              Rechazar
+              Doc. Inválida
             </Button>
           </span>
         </div>
