@@ -28,6 +28,14 @@ import {
   salaryFieldTouchedState,
   salaryFieldErrorsSelector,
   salaryFrequencyFieldErrorsSelector,
+  editableIdentityDocumentFieldState,
+  readonlyIdentityDocumentSelector,
+  editableBankStatementFieldState,
+  editablePayrollReceiptFieldState,
+  editableProofOfAddressFieldState,
+  readonlyBankStatementSelector,
+  readonlyPayrollReceiptSelector,
+  readonlyProofOfAddressSelector,
 } from "./atoms"
 import Select from "components/atoms/select"
 
@@ -78,6 +86,18 @@ const Step = () => {
   )
   const refreshUser = useRecoilRefresher_UNSTABLE(userGeneralDataQuerySelector)
   const user = useRecoilValue(userGeneralDataQuerySelector)
+  const storedIdentityDocument = useRecoilValue(
+    readonlyIdentityDocumentSelector,
+  )
+  const setIdentityDocument = useSetRecoilState(
+    editableIdentityDocumentFieldState,
+  )
+  const setBankStatement = useSetRecoilState(editableBankStatementFieldState)
+  const setPayrollReceipt = useSetRecoilState(editablePayrollReceiptFieldState)
+  const setProofOfAddress = useSetRecoilState(editableProofOfAddressFieldState)
+  const storedBankStatement = useRecoilValue(readonlyBankStatementSelector)
+  const storedPayrollReceipt = useRecoilValue(readonlyPayrollReceiptSelector)
+  const storedProofOfAddress = useRecoilValue(readonlyProofOfAddressSelector)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -239,14 +259,11 @@ const Step = () => {
             id="official-identification"
             label="Identificación oficial"
             description="Unicamente INE o Pasaporte"
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            initialFile={storedIdentityDocument}
+            onRemove={() => setIdentityDocument(null)}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setIdentityDocument(signedId)
             }}
           />
         </div>
@@ -255,14 +272,11 @@ const Step = () => {
             id="proof-of-address"
             label="Comprobante de Domicilio"
             description="Antigüedad no mayor a 3 meses."
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            onRemove={() => setProofOfAddress(null)}
+            initialFile={storedProofOfAddress}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setProofOfAddress(signedId)
             }}
           />
         </div>
@@ -271,14 +285,11 @@ const Step = () => {
             id="cover"
             label="Estado de Cuenta Bancario"
             description="Antigüedad no mayor a 3 meses."
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            initialFile={storedBankStatement}
+            onRemove={() => setBankStatement(null)}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setBankStatement(signedId)
             }}
           />
         </div>
@@ -287,14 +298,11 @@ const Step = () => {
             id="payroll-receipt"
             label="Recibo de Nomina"
             description="Antigüedad no mayor a 1 mes."
-            handleFile={(e) => {
-              if ("dataTransfer" in e && e.dataTransfer.files) {
-                // Handle drag and drop files
-                console.log(e.dataTransfer.files)
-              } else if ("target" in e && "files" in e.target) {
-                // Handle files selected through file input
-                console.log(e.target.files)
-              }
+            initialFile={storedPayrollReceipt}
+            onRemove={() => setPayrollReceipt(null)}
+            handleFileUpload={({ signedId }) => {
+              if (!signedId) return
+              setPayrollReceipt(signedId)
             }}
           />
         </div>
@@ -303,7 +311,7 @@ const Step = () => {
         <Button status="secondary" type="button" disabled={isWaiting}>
           Cancelar
         </Button>
-        <Button size="md" type="submit" disabled={isWaiting}>
+        <Button size="md" type="submit">
           Enviar
         </Button>
       </div>
