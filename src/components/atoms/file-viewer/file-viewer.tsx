@@ -29,7 +29,7 @@ const FileViewer = ({
         className="ring-1 ring-gray-300 rounded-md w-full p-4 mt-2"
         onClick={() => {
           if (!fileUrl) return
-          window.location.href = fileUrl
+          window.open(fileUrl, "_blank")
         }}
       >
         <div className="flex justify-between w-full mb-4">
