@@ -85,6 +85,7 @@ export interface User extends ObjectWithId, Timestamps {
   bankStatementFilename: string | null
   bankStatementSize: string | null
   bankStatementUploadedAt: string | null
+  reason: string | null
 }
 
 export interface Credit extends ObjectWithId, Timestamps {

@@ -13,13 +13,13 @@ export const useRequestActions = (id: number) => {
 
   const approveUser = async () => {
     try {
-      await api.update(`users`, { id, status: "approved" })
+      await api.update(`users`, { id, status: "pre-authorization" })
       toast.success({
         title: "Usuario actualizado",
         message: "El usuario ha sido aprobado",
       })
       refresh()
-      navigate("/requests")
+      navigate("/dashboard/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
       if (isJsonApiError(error)) message = error.errors[0].title
@@ -38,7 +38,26 @@ export const useRequestActions = (id: number) => {
         message: "El usuario ha sido denegado",
       })
       refresh()
-      navigate("/requests")
+      navigate("/dashboard/requests")
+    } catch (error) {
+      let message = "Ocurrió un error al actualizar el usuario"
+      if (isJsonApiError(error)) message = error.errors[0].title
+      toast.error({
+        title: "Error al actualizar el usuario",
+        message,
+      })
+    }
+  }
+
+  const missingDocumentation = async (reason: string) => {
+    try {
+      await api.update(`users`, { id, status: "invalid-documentation", reason })
+      toast.success({
+        title: "Usuario actualizado",
+        message: "El usuario ha sido marcado como falta de documentación",
+      })
+      refresh()
+      navigate("/dashboard/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
       if (isJsonApiError(error)) message = error.errors[0].title
@@ -52,5 +71,6 @@ export const useRequestActions = (id: number) => {
   return {
     approveUser,
     denyUser,
+    missingDocumentation,
   }
 }

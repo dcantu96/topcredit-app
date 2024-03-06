@@ -1,17 +1,25 @@
 import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { basicDetailsSelector } from "./atoms"
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { CheckIcon, DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer/file-viewer"
 import { useRequestActions } from "./actions"
 import { MXNFormat } from "../../constants"
+import { useState } from "react"
+import Input from "components/atoms/input"
 
 const ShowRequest = () => {
   const { id } = useParams()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const user = useRecoilValue(basicDetailsSelector(Number(id)))
-  const { approveUser, denyUser } = useRequestActions(Number(id))
+  const { approveUser, denyUser, missingDocumentation } = useRequestActions(
+    Number(id),
+  )
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [reason, setReason] = useState("")
+
+  const openModal = () => setIsModalOpen(true)
 
   if (!user) return null
 
@@ -76,10 +84,36 @@ const ShowRequest = () => {
               <XMarkIcon className="h-5 w-5 mr-1.5" />
               Rechazar
             </Button>
+            <Button status="secondary" onClick={openModal}>
+              <DocumentIcon className="h-5 w-5 mr-1.5" />
+              Rechazar
+            </Button>
           </span>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
+        {isModalOpen && (
+          <div className="col-span-2">
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <Input
+                id="rejection-reason"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                label="Motivo"
+                placeholder="Escribe el motivo por el cual se rechaza la solicitud"
+              />
+              <div className="flex gap-4">
+                <Button
+                  status="secondary"
+                  onClick={() => missingDocumentation(reason)}
+                >
+                  Enviar
+                </Button>
+                <Button onClick={() => setIsModalOpen(false)}>Cerrar</Button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">
             Numero de Nomina

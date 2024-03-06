@@ -116,6 +116,8 @@ const Step = () => {
   const isWaiting =
     user?.status === "pending" || user?.status === "pre-authorization"
 
+  const isInvalidDocumentation = user?.status === "invalid-documentation"
+
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Datos Generales</h1>
@@ -124,6 +126,11 @@ const Step = () => {
           ? "Estamos procesando tus datos. Pronto te notificaremos si tu solicitud fue pre aprobada."
           : "Necesitamos algunos datos para poder procesar tu solicitud."}
       </p>
+      {isInvalidDocumentation && (
+        <p className="mt-1 text-sm leading-6 text-red-600">
+          Hay un problema con tus documentos: {user.reason}
+        </p>
+      )}
       <div className="mt-10 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
         <div className="col-span-full">
           <div className="flex items-center gap-2">
