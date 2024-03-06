@@ -18,7 +18,7 @@ export const userGeneralDataQuerySelector = selector<User | undefined>({
     const profile = get(myProfileState)
     if (!profile) return undefined
     const { data } = await api.get<User>(`users/${profile.id}`)
-    return data as User
+    return data
   },
 })
 
