@@ -40,7 +40,11 @@ import {
 import Select from "components/atoms/select"
 
 import { useCreditScreenSubmitActions } from "./actions"
-import { COUNTRIES, STATES_OF_MEXICO } from "../../../../../constants"
+import {
+  COUNTRIES,
+  SALARY_FREQUENCIES,
+  STATES_OF_MEXICO,
+} from "../../../../../constants"
 import { userGeneralDataQuerySelector } from "../../../atoms"
 
 const Step = () => {
@@ -108,11 +112,6 @@ const Step = () => {
   const [salary, setSalary] = useRecoilState(editableSalaryFieldState)
   const setSalaryTouched = useSetRecoilState(salaryFieldTouchedState)
 
-  const salaryFrequencyOptions = [
-    { value: "Q", label: "Quincenal" },
-    { value: "M", label: "Mensual" },
-  ]
-
   const isWaiting =
     user?.status === "pending" || user?.status === "pre-authorization"
 
@@ -148,19 +147,17 @@ const Step = () => {
               onBlur={() => setSalaryTouched(true)}
               onChange={(e) => setSalary(e.target.value)}
             />
-            {salaryFrequencyOptions.map((option) => (
+            {Array.from(SALARY_FREQUENCIES.entries()).map(([value, label]) => (
               <Button
-                key={option.value}
+                key={value}
                 type="button"
-                status={
-                  salaryFrequency === option.value ? "primary" : "secondary"
-                }
+                status={salaryFrequency === value ? "primary" : "secondary"}
                 onClick={() => {
-                  setSalaryFrequency(option.value)
+                  setSalaryFrequency(value)
                   setSalaryFrequencyTouched(true)
                 }}
               >
-                {option.label}
+                {label}
               </Button>
             ))}
           </div>

@@ -67,3 +67,8 @@ export const DURATION_TYPES = new Map<DurationType, string>([
   ["months", "Meses"],
   ["years", "Años"],
 ])
+
+export const SALARY_FREQUENCIES = new Map<"Q" | "M", "Quincenas" | "Meses">([
+  ["Q", "Quincenas"],
+  ["M", "Meses"],
+])
