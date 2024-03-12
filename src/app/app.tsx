@@ -26,6 +26,8 @@ import ShowPendingAuthorization from "../routes/pending-authorizations/show"
 import Dispersions from "../routes/dispersions/list"
 import ShowDispersions from "../routes/dispersions/show"
 import Landing from "../routes/landing"
+import LatestCreditMonitor from "./latest-credit-monitor"
+import MyCredits from "../routes/my-credits/my-credits"
 
 function App() {
   return (
@@ -37,7 +39,10 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Route>
-        <Route path="new-credit" element={<CreditScreen />} />
+        <Route element={<LatestCreditMonitor />}>
+          <Route path="new-credit" element={<CreditScreen />} />
+        </Route>
+        <Route path="my-credits" element={<MyCredits />} />
         <Route
           path="dashboard"
           element={

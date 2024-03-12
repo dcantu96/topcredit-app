@@ -6,6 +6,11 @@ import withAuthorizationRedirect from "components/hocs/with-authorization-redire
 import withAuth from "components/hocs/with-auth/with-auth"
 import DashboardHeader from "components/organisms/dashboard-header"
 
+export type StepLabelOptions =
+  | "Datos Generales"
+  | "Pre Autorizado"
+  | "Autorizado"
+
 const steps = [
   {
     label: "Datos Generales",
@@ -32,7 +37,7 @@ const Screen = () => {
         <Steps
           steps={steps}
           activeStep={activeStep}
-          setActiveStep={(label) => setActiveStep(label)}
+          setActiveStep={(label) => setActiveStep(label as StepLabelOptions)}
         />
       </div>
       <div className="overflow-y-auto">

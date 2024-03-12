@@ -39,6 +39,25 @@ const Header = ({ columns }: ITableHeader) => {
   )
 }
 
+const Body = ({ children }: ITable) => {
+  return <tbody className="bg-white">{children}</tbody>
+}
+
+const Row = ({ children }: ITable) => {
+  return <tr>{children}</tr>
+}
+
+const Cell = ({ children }: ITable) => {
+  return (
+    <td className="border-b border-slate-100 p-4 first:pl-8 last:pr-8 text-slate-500">
+      <div className="inline-flex items-center">{children}</div>
+    </td>
+  )
+}
+
 Table.Header = Header
+Table.Body = Body
+Table.Row = Row
+Table.Cell = Cell
 
 export { Table }

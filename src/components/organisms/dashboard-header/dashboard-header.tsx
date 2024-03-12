@@ -7,6 +7,7 @@ import DropdownList from "components/atoms/dropdown-list"
 import { authActions, myProfileState } from "components/providers/auth/atoms"
 
 import logoSmall from "../../../assets/logo_small.png"
+import { NavLink } from "react-router-dom"
 
 interface DashboardHeaderProps {
   children?: React.ReactNode
@@ -23,10 +24,10 @@ const DashboardHeader = ({ children }: DashboardHeaderProps) => {
     <header className="sticky border-b border-gray-900/10 inset-x-0 top-0 z-40 bg-white">
       <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-x-6">
         {/* logo */}
-        <a href="#" className="p-2 -ml-2">
+        <NavLink to="/" className="p-2 -ml-2">
           <span className="sr-only">Topcredit</span>
           <img className="h-8 w-auto" src={logoSmall} alt="topcredit-logo" />
-        </a>
+        </NavLink>
         {/* search input */}
         {children}
         {/* user */}

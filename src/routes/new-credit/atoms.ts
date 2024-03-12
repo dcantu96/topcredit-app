@@ -1,7 +1,7 @@
 import { atom, selector } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
-import { Credit, User } from "src/schema.types"
+import { Credit, Term, User } from "src/schema.types"
 
 type CreditWithoutBorrower = Omit<Credit, "borrower">
 
@@ -61,9 +61,6 @@ export const userLatestCreditSelectorQuery = selector<
       {
         params: {
           sort: "-id",
-          filter: {
-            status: "new,pending,invalid-documentation",
-          },
           page: {
             limit: 1,
             offset: 0,
@@ -76,15 +73,25 @@ export const userLatestCreditSelectorQuery = selector<
   },
 })
 
+type CreditWithTerm = CreditWithoutBorrower & {
+  term: Term
+}
+
+type CreditWithTermResponse = CreditWithoutBorrower & {
+  term: {
+    data: Term
+  }
+}
+
 export const userLatestAuthorizedCreditSelectorQuery = selector<
-  CreditWithoutBorrower | undefined
+  CreditWithTerm | undefined
 >({
   key: "userLatestAuthorizedCreditSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<CreditWithoutBorrower[]>(
+    const { data } = await api.get<CreditWithTermResponse[]>(
       `users/${profile.id}/credits`,
       {
         params: {
@@ -92,6 +99,7 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
           filter: {
             status: "authorized,dispersed",
           },
+          include: "term",
           page: {
             limit: 1,
             offset: 0,
@@ -100,7 +108,12 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
       },
     )
 
-    return data?.[0]
+    const credit = data?.[0]
+
+    return {
+      ...credit,
+      term: credit.term.data,
+    }
   },
 })
 
@@ -109,19 +122,36 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
  *
  * if no credit is found, it should return "Datos Generales"
  */
-export const initialActiveStep = selector<string>({
+export const initialActiveStep = selector<
+  "Datos Generales" | "Pre Autorizado" | "Autorizado"
+>({
   key: "initialActiveStep",
   get: ({ get }) => {
     const status = get(userGeneralDataQuerySelector)?.status
     const credit = get(userLatestCreditSelectorQuery)
-    if (!status || status === "new") return "Datos Generales"
-    if (status === "invalid-documentation") return "Datos Generales"
-    if (status === "pending" || status === "pre-authorization")
-      return "Datos Generales"
-    if (credit?.status === "new") return "Pre Autorizado"
-    if (credit?.status === "pending") return "Pre Autorizado"
-    if (credit?.status === "invalid-documentation") return "Pre Autorizado"
-    else return "Autorizado"
+    switch (status) {
+      case null:
+      case undefined:
+      case "new":
+      case "invalid-documentation":
+      case "pending":
+      case "pre-authorization":
+        return "Datos Generales"
+      default:
+        break
+    }
+    console.log(credit)
+    switch (credit?.status) {
+      case "new":
+      case "pending":
+      case "invalid-documentation":
+        return "Pre Autorizado"
+      case "authorized":
+      case "dispersed":
+        return "Autorizado"
+      default:
+        throw new Error("No credit found")
+    }
   },
 })
 
