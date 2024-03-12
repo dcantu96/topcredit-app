@@ -10,7 +10,7 @@ import useCreditAmortization from "hooks/useCreditAmortization"
 
 import { dispersionsSelector } from "./atoms"
 import { useDispersionsActions } from "./actions"
-import { MXNFormat } from "../../constants"
+import { DURATION_TYPES, MXNFormat } from "../../constants"
 
 const ShowScreen = () => {
   const { id } = useParams()
@@ -159,12 +159,7 @@ const ShowScreen = () => {
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">Plazo</label>
           <p className="text-gray-900 font-medium">
-            {credit.term.duration}{" "}
-            {credit.term.durationType === "years"
-              ? "Años"
-              : credit.term.durationType === "months"
-                ? "Meses"
-                : "Quincenas"}
+            {DURATION_TYPES.get(credit.term.durationType)}
           </p>
         </div>
         <div className="col-span-1">

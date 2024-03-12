@@ -11,7 +11,7 @@ import useCreditAmortization from "hooks/useCreditAmortization"
 
 import { creditSelector } from "./atoms"
 import { usePendingAuthorizationsActions } from "./actions"
-import { MXNFormat } from "../../constants"
+import { DURATION_TYPES, MXNFormat } from "../../constants"
 import Input from "components/atoms/input"
 
 const ShowScreen = () => {
@@ -198,11 +198,7 @@ const ShowScreen = () => {
           <label className="text-gray-500 font-medium text-sm">Plazo</label>
           <p className="text-gray-900 font-medium">
             {credit.term.duration}{" "}
-            {credit.term.durationType === "years"
-              ? "Años"
-              : credit.term.durationType === "months"
-                ? "Meses"
-                : "Quincenas"}
+            {DURATION_TYPES.get(credit.term.durationType)}
           </p>
         </div>
         <div className="col-span-1">
