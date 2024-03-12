@@ -76,6 +76,34 @@ export const userLatestCreditSelectorQuery = selector<
   },
 })
 
+export const userLatestAuthorizedCreditSelectorQuery = selector<
+  CreditWithoutBorrower | undefined
+>({
+  key: "userLatestAuthorizedCreditSelectorQuery",
+  get: async ({ get }) => {
+    const api = get(apiSelector)
+    const profile = get(myProfileState)
+    if (!profile) return undefined
+    const { data } = await api.get<CreditWithoutBorrower[]>(
+      `users/${profile.id}/credits`,
+      {
+        params: {
+          sort: "-id",
+          filter: {
+            status: "authorized,dispersed",
+          },
+          page: {
+            limit: 1,
+            offset: 0,
+          },
+        },
+      },
+    )
+
+    return data?.[0]
+  },
+})
+
 /**
  * if a credit is found, it should derive the step judging by the values of the credit
  *

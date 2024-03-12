@@ -46,6 +46,7 @@ import {
   STATES_OF_MEXICO,
 } from "../../../../../constants"
 import { userGeneralDataQuerySelector } from "../../../atoms"
+import { InformationCircleIcon } from "@heroicons/react/24/outline"
 
 const Step = () => {
   const setBankAccountNumberTouched = useSetRecoilState(
@@ -120,14 +121,21 @@ const Step = () => {
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Datos Generales</h1>
-      <p className="mt-1 text-sm leading-6 text-gray-600">
-        {isWaiting
-          ? "Estamos procesando tus datos. Pronto te notificaremos si tu solicitud fue pre aprobada."
-          : "Necesitamos algunos datos para poder procesar tu solicitud."}
-      </p>
-      {isInvalidDocumentation && (
-        <p className="mt-1 text-sm leading-6 text-red-600">
-          Hay un problema con tus documentos: {user.reason}
+      {isWaiting ? (
+        <div className="mt-2 rounded-md border-2 border-dashed border-indigo-600 p-2 inline-flex">
+          <InformationCircleIcon className="h-6 w-6 text-indigo-600 mr-2" />
+          Estamos procesando tus datos. Pronto te notificaremos si tu solicitud
+          fue pre aprobada.
+        </div>
+      ) : isInvalidDocumentation ? (
+        <div className="mt-2 rounded-md border-2 border-dashed border-rose-600 p-2 inline-flex">
+          <InformationCircleIcon className="h-6 w-6 text-rose-600 mr-2" />
+          Hay un problema con tus documentos: <b>{user.reason}</b> Por favor
+          vuelve a subirlos.
+        </div>
+      ) : (
+        <p className="mt-1 text-sm leading-6 text-gray-600">
+          Necesitamos algunos datos para poder procesar tu solicitud.
         </p>
       )}
       <div className="mt-10 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
@@ -140,6 +148,7 @@ const Step = () => {
               value={salary}
               prefix="$"
               type="money"
+              disabled={isWaiting}
               error={salaryFieldError || salaryFrequencyFieldError}
               trailingDropdownLabel="MXN"
               trailingDropdownOptions={[{ value: "MXN", label: "MXN" }]}
@@ -151,6 +160,7 @@ const Step = () => {
               <Button
                 key={value}
                 type="button"
+                disabled={isWaiting}
                 status={salaryFrequency === value ? "primary" : "secondary"}
                 onClick={() => {
                   setSalaryFrequency(value)
@@ -168,6 +178,7 @@ const Step = () => {
             label="Numero de Nómina"
             required
             value={employeeNumber}
+            disabled={isWaiting}
             onChange={(e) => setEmployeeNumber(e.target.value)}
           />
         </div>
@@ -180,6 +191,7 @@ const Step = () => {
             error={rfcError}
             value={rfc}
             onBlur={() => setRFCTouched(true)}
+            disabled={isWaiting}
             onChange={(e) => setRfc(e.target.value)}
           />
         </div>
@@ -193,6 +205,7 @@ const Step = () => {
             maxLength={18}
             error={bankAccountNumberError}
             value={bankAccountNumber}
+            disabled={isWaiting}
             onChange={(e) => setBankAccountNumber(e.target.value)}
           />
         </div>
@@ -202,6 +215,7 @@ const Step = () => {
             label="Calle y numero"
             required
             value={addressLineOne}
+            disabled={isWaiting}
             onChange={(e) => setAddressLineOne(e.target.value)}
           />
         </div>
@@ -211,6 +225,7 @@ const Step = () => {
             label="Numero interior"
             placeholder="1206 Torre 4"
             value={addressLineTwo}
+            disabled={isWaiting}
             onChange={(e) => setAddressLineTwo(e.target.value)}
           />
         </div>
@@ -219,6 +234,7 @@ const Step = () => {
             id="city"
             label="Ciudad"
             value={city}
+            disabled={isWaiting}
             onChange={(e) => setCity(e.target.value)}
             required
           />
@@ -227,6 +243,7 @@ const Step = () => {
           <Select
             id="state"
             label="Estado"
+            disabled={isWaiting}
             value={state}
             required
             onChange={(e) => setState(e.target.value)}
@@ -237,6 +254,7 @@ const Step = () => {
           <Select
             id="country"
             label="País"
+            disabled={isWaiting}
             value={country}
             required
             onChange={(e) => setCountry(e.target.value)}
@@ -245,6 +263,7 @@ const Step = () => {
         </div>
         <div className="col-span-full lg:col-span-3">
           <Input
+            disabled={isWaiting}
             id="postal-code"
             label="Código Postal"
             maxLength={5}
@@ -315,7 +334,7 @@ const Step = () => {
         <Button status="secondary" type="button" disabled={isWaiting}>
           Cancelar
         </Button>
-        <Button size="md" type="submit">
+        <Button size="md" type="submit" disabled={isWaiting}>
           Enviar
         </Button>
       </div>

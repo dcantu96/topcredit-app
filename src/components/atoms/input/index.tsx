@@ -4,6 +4,7 @@ import Label from "../label"
 interface InputBaseProps {
   id: string
   label: string
+  disabled?: boolean
   type?: string
   placeholder?: string
   required?: boolean
@@ -43,6 +44,7 @@ const Input = ({
   label,
   onChange,
   value,
+  disabled,
   required,
   error,
   maxLength,
@@ -77,6 +79,7 @@ const Input = ({
           type={inputType}
           name={id}
           id={id}
+          disabled={disabled}
           required={required}
           maxLength={maxLength}
           onBlur={onBlur}
@@ -88,7 +91,7 @@ const Input = ({
               : "ring-gray-300 focus:ring-indigo-600"
           } ${prefixPaddingLeft} ${
             passwordPaddingRight || trailingDropdownPaddingRight
-          } text-gray-900 ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+          } text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed`}
           placeholder={placeholder}
         />
         {type === "password" && (
@@ -111,6 +114,7 @@ const Input = ({
               {trailingProps.trailingDropdownLabel}
             </label>
             <select
+              disabled={disabled}
               id={trailingProps.trailingDropdownId}
               name={trailingProps.trailingDropdownId}
               className="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"

@@ -15,6 +15,7 @@ interface SelectProps {
    * When set to `string`, the input will be marked as errored and the string will be displayed as error message.
    */
   error?: boolean | string
+  disabled?: boolean
 }
 
 const Select = ({
@@ -27,6 +28,7 @@ const Select = ({
   error,
   options,
   defaultValue,
+  disabled,
 }: SelectProps) => {
   return (
     <div className="flex-1">
@@ -43,13 +45,14 @@ const Select = ({
           required={required}
           defaultValue={defaultValue}
           value={value}
+          disabled={disabled}
           autoComplete={autoComplete}
           onChange={onChange}
           className={`block w-full rounded-md border-0 py-1.5 ${
             error
               ? "ring-rose-400 focus:ring-rose-600"
               : "ring-gray-300 focus:ring-indigo-600"
-          } text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+          } text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed`}
         >
           <option value="" disabled>
             Selecciona una opción

@@ -13,6 +13,7 @@ import {
   readonlyCreditPayrollReceiptSelector,
 } from "./atoms"
 import { useSubmitCredit } from "./actions"
+import { InformationCircleIcon } from "@heroicons/react/24/outline"
 
 const Step = () => {
   const credit = useRecoilValue(userLatestCreditSelectorQuery)
@@ -29,6 +30,11 @@ const Step = () => {
     await submit()
   }
 
+  const isSubmitDisabled =
+    credit?.status === "pending" ||
+    credit?.status === "authorized" ||
+    credit?.status === "denied"
+
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Pre Autorización</h1>
@@ -37,17 +43,27 @@ const Step = () => {
         ¡Felicidades! Fuiste pre autorizado por un monto de{" "}
         <b>{MXNFormat.format(credit?.loan || 0)}</b>
       </p>
-      <p className="mt-1 text-base leading-6 text-gray-600">
-        {credit?.status === "new"
-          ? "Necesitamos unos documentos para poder continuar con el proceso."
-          : credit?.status === "pending"
-            ? "Estamos revisando tus documentos, en breve te notificaremos si necesitamos algo más."
-            : credit?.status === "invalid-documentation"
-              ? `Hay un problema con tus documentos, ${credit.reason}`
-              : credit?.status === "authorized"
-                ? "¡Felicidades! Tu crédito ha sido autorizado."
-                : ""}
-      </p>
+      {credit?.status === "new" ? (
+        <p className="mt-1 text-sm leading-6 text-gray-600">
+          Necesitamos unos documentos para poder continuar con el proceso.
+        </p>
+      ) : credit?.status === "pending" ? (
+        <div className="mt-2 rounded-md border-2 border-dashed border-indigo-600 p-2 inline-flex">
+          <InformationCircleIcon className="h-6 w-6 text-indigo-600 mr-2" />
+          Estamos procesando tus datos. Pronto te notificaremos si autorizamos
+          tu crédito.
+        </div>
+      ) : credit?.status === "invalid-documentation" ? (
+        <div className="mt-2 rounded-md border-2 border-dashed border-rose-600 p-2 inline-flex">
+          <InformationCircleIcon className="h-6 w-6 text-rose-600 mr-2" />
+          Hay un problema con tus documentos, {credit.reason}
+        </div>
+      ) : credit?.status === "authorized" ? (
+        <div className="mt-2 rounded-md border-2 border-dashed border-green-600 p-2 inline-flex">
+          <InformationCircleIcon className="h-6 w-6 text-green-600 mr-2" />
+          ¡Felicidades! Tu crédito ha sido autorizado.
+        </div>
+      ) : null}
 
       <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-8">
         <div className="col-span-full">
@@ -107,7 +123,7 @@ const Step = () => {
         <Button status="secondary" type="button">
           Cancelar
         </Button>
-        <Button size="md" type="submit">
+        <Button size="md" type="submit" disabled={isSubmitDisabled}>
           Enviar
         </Button>
       </div>
