@@ -52,20 +52,23 @@ const ListItem = ({ credit }: { credit: Credit }) => {
           {credit.loan ? MXNFormat.format(credit.loan) : 0}
         </span>
       </div>
-      <div className="min-w-32">
-        <div className="flex items-center gap-x-3">
-          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-            <a className="flex text-inherit decoration-inherit gap-x-2">
-              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Plazo
-              </span>
-            </a>
-          </h2>
+      {credit.term && (
+        <div className="min-w-32">
+          <div className="flex items-center gap-x-3">
+            <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+              <a className="flex text-inherit decoration-inherit gap-x-2">
+                <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                  Plazo
+                </span>
+              </a>
+            </h2>
+          </div>
+          <span className="whitespace-nowrap">
+            {credit.term.duration}{" "}
+            {DURATION_TYPES.get(credit.term.durationType)}
+          </span>
         </div>
-        <span className="whitespace-nowrap">
-          {credit.term.duration} {DURATION_TYPES.get(credit.term.durationType)}
-        </span>
-      </div>
+      )}
       <button
         onClick={() =>
           navigate("/dashboard/pending-authorizations/" + credit.id)

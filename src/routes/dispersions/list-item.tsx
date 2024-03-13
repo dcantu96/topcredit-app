@@ -64,9 +64,12 @@ const ListItem = ({ credit }: { credit: Credit }) => {
             </a>
           </h2>
         </div>
-        <span className="whitespace-nowrap">
-          {credit.term.duration} {DURATION_TYPES.get(credit.term.durationType)}
-        </span>
+        {credit.term && (
+          <span className="whitespace-nowrap">
+            {credit.term.duration}{" "}
+            {DURATION_TYPES.get(credit.term.durationType)}
+          </span>
+        )}
       </div>
       <button
         onClick={() => navigate("/dashboard/dispersions/" + credit.id)}
