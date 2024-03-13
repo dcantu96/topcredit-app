@@ -79,8 +79,8 @@ type CreditWithTerm = CreditWithoutBorrower & {
 
 type CreditWithTermResponse = CreditWithoutBorrower & {
   term: {
-    data: Term
-  }
+    data: Term | null
+  } | null
 }
 
 export const userLatestAuthorizedCreditSelectorQuery = selector<
@@ -91,7 +91,7 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<CreditWithTermResponse[]>(
+    const { data } = await api.get<(CreditWithTermResponse | undefined)[]>(
       `users/${profile.id}/credits`,
       {
         params: {
@@ -109,10 +109,13 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
     )
 
     const credit = data?.[0]
+    const term = credit?.term?.data
+
+    if (!term || !credit) return undefined
 
     return {
       ...credit,
-      term: credit.term.data,
+      term,
     }
   },
 })

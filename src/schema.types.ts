@@ -92,7 +92,7 @@ export interface Credit extends ObjectWithId, Timestamps {
   loan: number | null
   status: CreditStatus
   borrower: User
-  term: Term
+  term: Term | null
   payrollReceiptUrl: string | null
   payrollReceiptFilename: string | null
   payrollReceiptContentType: string | null
