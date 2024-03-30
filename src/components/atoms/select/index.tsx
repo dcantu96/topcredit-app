@@ -1,24 +1,33 @@
-interface SelectProps {
+type OptionType = string | number
+
+type OptionsArray = OptionType[]
+
+interface OptionObject {
+  value: OptionType
+  label: OptionType
+}
+
+// Utility type to extract the `value` type from an array of options
+type ExtractOptionValueType<T> = T extends (infer U)[]
+  ? U extends OptionObject
+    ? U["value"]
+    : U
+  : never
+
+interface SelectProps<TOptions extends OptionsArray | OptionObject[]> {
   id: string
   label: string
   required?: boolean
   autoComplete?: string
-  defaultValue?: string | number | readonly string[]
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
-  value: string | number | readonly string[]
-  options?:
-    | (string | number)[]
-    | { value: string | number; label: string | number }[]
-  /**
-   * When set to `true`, the input will be marked as errored.
-   *
-   * When set to `string`, the input will be marked as errored and the string will be displayed as error message.
-   */
+  defaultValue?: ExtractOptionValueType<TOptions>
+  onChange: (value?: ExtractOptionValueType<TOptions>) => void
+  value?: ExtractOptionValueType<TOptions>
+  options?: TOptions
   error?: boolean | string
   disabled?: boolean
 }
 
-const Select = ({
+const Select = <TOptions extends OptionsArray | OptionObject[]>({
   id,
   label,
   autoComplete,
@@ -29,7 +38,7 @@ const Select = ({
   options,
   defaultValue,
   disabled,
-}: SelectProps) => {
+}: SelectProps<TOptions>) => {
   return (
     <div className="flex-1">
       <label
@@ -47,7 +56,9 @@ const Select = ({
           value={value}
           disabled={disabled}
           autoComplete={autoComplete}
-          onChange={onChange}
+          onChange={({ target: { value } }) =>
+            onChange(value as ExtractOptionValueType<TOptions> | undefined)
+          }
           className={`block w-full rounded-md border-0 py-1.5 ${
             error
               ? "ring-rose-400 focus:ring-rose-600"
