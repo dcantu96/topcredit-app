@@ -72,3 +72,8 @@ export const SALARY_FREQUENCIES = new Map<"Q" | "M", "Quincenas" | "Meses">([
   ["Q", "Quincenas"],
   ["M", "Meses"],
 ])
+
+export const FREQUENCY_OPTIONS = [
+  { value: "monthly" as const, label: "Mensual" },
+  { value: "biweekly" as const, label: "Quincenal" },
+]

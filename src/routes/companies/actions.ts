@@ -14,13 +14,20 @@ export const useCompanyActions = () => {
   const { isCompaniesListActive } = useCompaniesActions()
   const createCompany = useRecoilCallback(
     ({ snapshot, set }) =>
-      async ({ domain, name, rate, borrowingCapacity }: NewCompany) => {
+      async ({
+        domain,
+        name,
+        rate,
+        borrowingCapacity,
+        employeeSalaryFrequency,
+      }: NewCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         const { data } = await api.create("company", {
           domain,
           name,
           rate,
           borrowingCapacity,
+          employeeSalaryFrequency,
         })
         if (!isCompaniesListActive()) return
         set(companiesState, (prev) => [
@@ -34,13 +41,21 @@ export const useCompanyActions = () => {
             borrowingCapacity: borrowingCapacity ?? null,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
+            employeeSalaryFrequency: employeeSalaryFrequency,
           },
         ])
       },
   )
   const updateCompany = useRecoilCallback(
     ({ snapshot, set }) =>
-      async ({ id, domain, name, rate, borrowingCapacity }: EditCompany) => {
+      async ({
+        id,
+        domain,
+        name,
+        rate,
+        borrowingCapacity,
+        employeeSalaryFrequency,
+      }: EditCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
         await api.update("company", {
           id,
@@ -48,12 +63,14 @@ export const useCompanyActions = () => {
           name,
           rate,
           borrowingCapacity,
+          employeeSalaryFrequency,
         })
         set(companyState(id), (prev) => ({
           ...prev,
           domain: domain ?? null,
           rate: rate ?? null,
           borrowingCapacity: borrowingCapacity ?? null,
+          employeeSalaryFrequency,
         }))
 
         if (!isCompaniesListActive()) return
@@ -65,6 +82,7 @@ export const useCompanyActions = () => {
                 domain: domain ?? null,
                 rate: rate ?? null,
                 borrowingCapacity: borrowingCapacity ?? null,
+                employeeSalaryFrequency,
               }
             }
             return prevCompany

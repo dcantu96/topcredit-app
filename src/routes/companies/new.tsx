@@ -8,21 +8,35 @@ import FormContainer from "components/atoms/layout/form-container"
 import FormHeader from "components/atoms/layout/form-header"
 
 import { useCompanyActions } from "./actions"
+import Select from "components/atoms/select"
+import { FREQUENCY_OPTIONS } from "../../constants"
 
 const NewCompany = () => {
   const [name, setName] = useState<string>("")
   const [domain, setDomain] = useState<string>("")
   const [rate, setRate] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [employeeSalaryFrequency, setEmployeeSalaryFrequency] = useState<
+    "biweekly" | "monthly" | undefined
+  >(undefined)
+  const [borrowingCapacity, setBorrowingCapacity] = useState<number>(0)
   const { createCompany } = useCompanyActions()
   const to = useNavigate()
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    if (!employeeSalaryFrequency) return
+
     try {
       setIsLoading(true)
-      await createCompany({ name, domain, rate: rate / 100 })
+      await createCompany({
+        name,
+        domain,
+        rate: rate / 100,
+        employeeSalaryFrequency,
+        borrowingCapacity,
+      })
       setIsLoading(false)
       to("..")
     } catch (error) {
@@ -92,6 +106,30 @@ const NewCompany = () => {
           prefix="%"
           onChange={({ target }) => setRate(Number(target.value))}
         />
+        <div>
+          <Input
+            id="borrowing-capacity"
+            label="Capacidad de endeudamiento"
+            type="number"
+            required
+            value={borrowingCapacity.toString()}
+            placeholder="10%"
+            prefix="%"
+            onChange={({ target }) =>
+              setBorrowingCapacity(Number(target.value))
+            }
+          />
+        </div>
+        <div>
+          <Select
+            id="employee-salary-frequency"
+            label="Frecuencia de nómina"
+            required
+            value={employeeSalaryFrequency}
+            options={FREQUENCY_OPTIONS}
+            onChange={(newValue) => setEmployeeSalaryFrequency(newValue)}
+          />
+        </div>
         <div className="col-span-2">
           <Button type="submit" fullWidth disabled={isLoading}>
             Crear

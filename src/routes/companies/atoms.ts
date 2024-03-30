@@ -1,6 +1,6 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { atom, selector } from "recoil"
-import { Term } from "src/schema.types"
+import { Term, Company } from "src/schema.types"
 
 export type NewTerm = Omit<Term, "id" | "createdAt" | "updatedAt">
 
@@ -12,11 +12,8 @@ export interface AssignTermForCompany {
 export interface EditTerm extends NewTerm {
   id: string
 }
-export interface NewCompany {
-  name: string
-  domain: string
-  rate?: number
-  borrowingCapacity?: number
+export interface NewCompany
+  extends Omit<Company, "id" | "terms" | "createdAt" | "updatedAt"> {
   terms?: NewTerm[]
 }
 

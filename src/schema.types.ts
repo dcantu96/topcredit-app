@@ -122,5 +122,6 @@ export interface Company extends ObjectWithId, Timestamps {
   name: string
   rate: number | null
   borrowingCapacity: number | null
+  employeeSalaryFrequency: "biweekly" | "monthly"
   terms: Term[]
 }
