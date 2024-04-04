@@ -48,12 +48,45 @@ export interface Timestamps {
   updatedAt: string
 }
 
+export type StateOfMexico =
+  | "AGU"
+  | "BCN"
+  | "BCS"
+  | "CAM"
+  | "CHP"
+  | "CHH"
+  | "COA"
+  | "COL"
+  | "DUR"
+  | "GUA"
+  | "GRO"
+  | "HID"
+  | "JAL"
+  | "MEX"
+  | "MIC"
+  | "MOR"
+  | "NAY"
+  | "NLE"
+  | "OAX"
+  | "PUE"
+  | "QUE"
+  | "ROO"
+  | "SLP"
+  | "SIN"
+  | "SON"
+  | "TAB"
+  | "TAM"
+  | "TLA"
+  | "VER"
+  | "YUC"
+  | "ZAC"
+
 export interface User extends ObjectWithId, Timestamps {
   addressLineOne: string | null
   addressLineTwo: string | null
   bankAccountNumber: string | null
   city: string | null
-  country: string | null
+  country: "MX" | null
   email: string
   employeeNumber: string | null
   firstName: string | null
@@ -63,7 +96,7 @@ export interface User extends ObjectWithId, Timestamps {
   rfc: string | null
   salary: number | null
   salaryFrequency: string | null
-  state: string | null
+  state: StateOfMexico | null
   status: UserStatus | null
   identityDocumentUrl: string | null
   identityDocumentContentType: string | null
@@ -120,7 +153,7 @@ export interface Term extends ObjectWithId, Timestamps {
 export interface Company extends ObjectWithId, Timestamps {
   domain: string
   name: string
-  rate: number | null
+  rate: number
   borrowingCapacity: number | null
   employeeSalaryFrequency: "biweekly" | "monthly"
   terms: Term[]
