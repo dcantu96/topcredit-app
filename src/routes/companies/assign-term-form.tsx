@@ -50,7 +50,7 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
         error={errors.termId}
         options={termOptions}
         value={termId}
-        onChange={({ target }) => setTermId(target.value)}
+        onChange={(newValue) => setTermId(newValue ?? "")}
       />
 
       <Button type="button" disabled={!termId} onClick={handleAssignTerm}>
