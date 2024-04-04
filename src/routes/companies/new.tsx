@@ -10,6 +10,7 @@ import FormHeader from "components/atoms/layout/form-header"
 import { useCompanyActions } from "./actions"
 import Select from "components/atoms/select"
 import { FREQUENCY_OPTIONS } from "../../constants"
+import { useFormErrors } from "hooks/useFormErrors"
 
 const NewCompany = () => {
   const [name, setName] = useState<string>("")
@@ -20,6 +21,7 @@ const NewCompany = () => {
     "biweekly" | "monthly" | undefined
   >(undefined)
   const [borrowingCapacity, setBorrowingCapacity] = useState<number>(0)
+  const { clearErrors, handleErrors, errors } = useFormErrors()
   const { createCompany } = useCompanyActions()
   const to = useNavigate()
 
@@ -29,6 +31,7 @@ const NewCompany = () => {
     if (!employeeSalaryFrequency) return
 
     try {
+      clearErrors()
       setIsLoading(true)
       await createCompany({
         name,
@@ -40,6 +43,16 @@ const NewCompany = () => {
       setIsLoading(false)
       to("..")
     } catch (error) {
+      handleErrors(
+        error,
+        new Set([
+          "name",
+          "domain",
+          "rate",
+          "employeeSalaryFrequency",
+          "borrowingCapacity",
+        ]),
+      )
       setIsLoading(false)
     }
   }
@@ -85,6 +98,7 @@ const NewCompany = () => {
           label="Nombre"
           required
           value={name}
+          error={errors.name}
           placeholder="Mi empresa"
           onChange={({ target }) => setName(target.value)}
         />
@@ -93,6 +107,7 @@ const NewCompany = () => {
           label="Dominio"
           required
           value={domain}
+          error={errors.domain}
           placeholder="miempresa.com"
           onChange={({ target }) => setDomain(target.value)}
         />
@@ -102,6 +117,7 @@ const NewCompany = () => {
           type="number"
           required
           value={rate.toString()}
+          error={errors.rate}
           placeholder="10"
           prefix="%"
           onChange={({ target }) => setRate(Number(target.value))}
@@ -113,6 +129,7 @@ const NewCompany = () => {
             type="number"
             required
             value={borrowingCapacity.toString()}
+            error={errors.borrowingCapacity}
             placeholder="10%"
             prefix="%"
             onChange={({ target }) =>
@@ -126,6 +143,7 @@ const NewCompany = () => {
             label="Frecuencia de nómina"
             required
             value={employeeSalaryFrequency}
+            error={errors.employeeSalaryFrequency}
             options={FREQUENCY_OPTIONS}
             onChange={(newValue) => setEmployeeSalaryFrequency(newValue)}
           />

@@ -1,50 +1,18 @@
 import { useEffect, useState } from "react"
 
-const extractErrorMessage = (
-  errorDetail: string,
-  field: string,
-): string | null => {
-  if (errorDetail.includes(field)) {
-    const splitMsg = errorDetail.split(" - ")
-    return splitMsg.length > 1 ? splitMsg[1] : null
-  }
-  return null
-}
-
 export const useFormErrors = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    return () => {
-      setFormErrors({})
-    }
+    return () => clearErrors()
   }, [])
-
-  const handleErrors = (
-    error: unknown,
-    fields: ([string, string] | string)[],
-  ) => {
+  const handleErrors = (error: unknown, fields: Set<string>) => {
     if (typeof error === "object" && error !== null && "errors" in error) {
       const newErrorsObject: Record<string, string> = {}
       for (const errorItem of error.errors as { detail: string }[]) {
-        for (const field of fields) {
-          if (Array.isArray(field)) {
-            const [fieldName, fieldAlias] = field
-            if (errorItem.detail.includes(fieldName)) {
-              const errorMessage = extractErrorMessage(
-                errorItem.detail,
-                fieldName,
-              )
-              if (errorMessage) {
-                newErrorsObject[camelize(fieldAlias)] = errorMessage
-              }
-            }
-          } else if (errorItem.detail.includes(field)) {
-            const errorMessage = extractErrorMessage(errorItem.detail, field)
-            if (errorMessage) {
-              newErrorsObject[camelize(field)] = errorMessage
-            }
-          }
+        const [fieldKey, message] = errorItem.detail.split(" - ")
+        if (fields.has(fieldKey)) {
+          newErrorsObject[fieldKey] = message
         }
       }
       setFormErrors(newErrorsObject)
@@ -60,14 +28,4 @@ export const useFormErrors = () => {
     handleErrors,
     clearErrors,
   }
-}
-
-function camelize(str: string) {
-  const arr = str.split("-")
-  const capital = arr.map((item, index) =>
-    index
-      ? item.charAt(0).toUpperCase() + item.slice(1).toLowerCase()
-      : item.toLowerCase(),
-  )
-  return capital.join("")
 }

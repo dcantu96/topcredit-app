@@ -56,7 +56,7 @@ const EditCompany = () => {
       setIsLoading(false)
       to("../..")
     } catch (error) {
-      handleErrors(error, ["name", "domain", "rate"])
+      handleErrors(error, new Set(["name", "domain", "rate"]))
       setIsLoading(false)
     }
   }

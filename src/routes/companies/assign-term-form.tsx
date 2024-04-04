@@ -37,7 +37,7 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
         })
         setTermId("")
       } catch (error) {
-        handleErrors(error, ["termId"])
+        handleErrors(error, new Set(["termId"]))
       }
     }
   }

@@ -35,7 +35,7 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
         setDuration(0)
         setDurationType(undefined)
       } catch (error) {
-        handleErrors(error, ["duration", "durationType"])
+        handleErrors(error, new Set(["duration", "durationType"]))
       }
     }
   }

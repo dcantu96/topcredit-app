@@ -43,13 +43,10 @@ const Register = () => {
       })
       await login(email, password)
     } catch (error) {
-      handleErrors(error, [
-        "email",
-        "firstName",
-        "lastName",
-        "phone",
-        "password",
-      ])
+      handleErrors(
+        error,
+        new Set(["email", "firstName", "lastName", "phone", "password"]),
+      )
     }
   }
 
