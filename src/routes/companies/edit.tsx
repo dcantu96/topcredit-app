@@ -150,7 +150,7 @@ const EditCompany = () => {
             }
           />
         </div>
-        <div>
+        <div className="mb-4">
           <Label>Frecuencia de nómina</Label>
           <Chip>
             {
