@@ -17,7 +17,6 @@ import { companyState } from "./loader"
 import { NewTermForm } from "./new-term-form"
 import AssignTermForm from "./assign-term-form"
 import { DURATION_TYPES, FREQUENCY_OPTIONS } from "../../constants"
-import Select from "components/atoms/select"
 
 const EditCompany = () => {
   const { id } = useParams()
@@ -31,20 +30,14 @@ const EditCompany = () => {
   const [borrowingCapacity, setBorrowingCapacity] = useState<number>(
     companyData.borrowingCapacity ? companyData.borrowingCapacity * 100 : 0,
   )
-  const [employeeSalaryFrequency, setEmployeeSalaryFrequency] = useState<
-    "biweekly" | "monthly" | undefined
-  >(companyData.employeeSalaryFrequency)
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { updateCompany } = useCompanyActions()
   const toast = useToast()
   const to = useNavigate()
 
-  console.log("employeeSalaryFrequency", employeeSalaryFrequency)
-
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!employeeSalaryFrequency) return
 
     try {
       clearErrors()
@@ -55,7 +48,6 @@ const EditCompany = () => {
         domain,
         rate: rate / 100,
         borrowingCapacity: borrowingCapacity / 100,
-        employeeSalaryFrequency,
       })
       toast.success({
         title: "Cliente actualizado",
@@ -159,14 +151,14 @@ const EditCompany = () => {
           />
         </div>
         <div>
-          <Select
-            id="employee-salary-frequency"
-            label="Frecuencia de nómina"
-            required
-            value={employeeSalaryFrequency}
-            options={FREQUENCY_OPTIONS}
-            onChange={(newValue) => setEmployeeSalaryFrequency(newValue)}
-          />
+          <Label>Frecuencia de nómina</Label>
+          <Chip>
+            {
+              FREQUENCY_OPTIONS.find(
+                (op) => op.value === companyData.employeeSalaryFrequency,
+              )?.label
+            }
+          </Chip>
         </div>
         <div className="flex gap-4 items-center col-span-2">
           <AssignTermForm companyId={id} />
