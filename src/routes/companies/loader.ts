@@ -12,12 +12,12 @@ export const companiesSelectorQuery = selector<Company[]>({
   key: "companiesSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<CompanyWithTermsResponse[]>("companies", {
+    const { data } = await api.get("companies", {
       params: {
         include: "terms",
       },
     })
-    return data.map((company) => ({
+    return data.map((company: CompanyWithTermsResponse) => ({
       ...company,
       terms: company.terms.data.map((term) => ({
         ...term,
@@ -37,7 +37,7 @@ export const companySelectorQuery = selectorFamily<Company, string>({
     (id) =>
     async ({ get }) => {
       const api = get(apiSelector)
-      const { data } = await api.get<CompanyWithTermsResponse>(
+      const { data }: { data: CompanyWithTermsResponse } = await api.get(
         `company/${id}`,
         {
           params: {

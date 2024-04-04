@@ -22,7 +22,7 @@ export const pendingAuthorizationsSelectorQuery = selector<Map<string, Credit>>(
     key: "pendingAuthorizationsSelectorQuery",
     get: async ({ get }) => {
       const api = get(apiSelector)
-      const { data } = await api.get<PendingAuthorizationsResponse[]>(
+      const { data }: { data: PendingAuthorizationsResponse[] } = await api.get(
         "credit",
         {
           params: {

@@ -17,7 +17,7 @@ export const userGeneralDataQuerySelector = selector<User | undefined>({
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<User>(`users/${profile.id}`)
+    const { data }: { data: User } = await api.get(`users/${profile.id}`)
     return data
   },
 })
@@ -56,7 +56,7 @@ export const userLatestCreditSelectorQuery = selector<
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<CreditWithoutBorrower[]>(
+    const { data }: { data: CreditWithoutBorrower[] } = await api.get(
       `users/${profile.id}/credits`,
       {
         params: {
@@ -91,9 +91,8 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data } = await api.get<(CreditWithTermResponse | undefined)[]>(
-      `users/${profile.id}/credits`,
-      {
+    const { data }: { data: (CreditWithTermResponse | undefined)[] } =
+      await api.get(`users/${profile.id}/credits`, {
         params: {
           sort: "-id",
           filter: {
@@ -105,8 +104,7 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
             offset: 0,
           },
         },
-      },
-    )
+      })
 
     const credit = data?.[0]
     const term = credit?.term?.data

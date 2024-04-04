@@ -18,7 +18,7 @@ export const dispersionsSelectorQuery = selector<Map<string, Credit>>({
   key: "dispersionsSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<DispersionsResponse[]>("credit", {
+    const { data }: { data: DispersionsResponse[] } = await api.get("credit", {
       params: {
         fields: {
           credits: "id,status,borrower,updatedAt,createdAt,loan,term",

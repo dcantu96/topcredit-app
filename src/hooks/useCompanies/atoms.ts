@@ -21,14 +21,17 @@ export const companiesSelectorQuery = selector<
   key: "companiesForPreAuthSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<CompanyAuthResponse[]>("companies", {
-      params: {
-        fields: {
-          companies: "borrowingCapacity,id,domain,terms,rate",
+    const { data }: { data: CompanyAuthResponse[] } = await api.get(
+      "companies",
+      {
+        params: {
+          fields: {
+            companies: "borrowingCapacity,id,domain,terms,rate",
+          },
+          include: "terms",
         },
-        include: "terms",
       },
-    })
+    )
 
     const map = new Map<
       string,

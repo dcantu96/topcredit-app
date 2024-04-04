@@ -23,17 +23,20 @@ export const basicDetailsListSelectorQuery = selector<
   key: "basicDetailsListSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<BasicDetailsTableResponse[]>("users", {
-      params: {
-        fields: {
-          users:
-            "employeeNumber,rfc,salary,salaryFrequency,firstName,lastName,email,createdAt,state",
-        },
-        filter: {
-          byRole: "",
+    const { data }: { data: BasicDetailsTableResponse[] } = await api.get(
+      "users",
+      {
+        params: {
+          fields: {
+            users:
+              "employeeNumber,rfc,salary,salaryFrequency,firstName,lastName,email,createdAt,state",
+          },
+          filter: {
+            byRole: "",
+          },
         },
       },
-    })
+    )
 
     const basicDetailsMap = new Map<string, BasicDetailsTableResponse>()
     for (const details of data) {
@@ -70,7 +73,7 @@ export const basicDetailsSelector = selectorFamily<User | undefined, number>({
     (id) =>
     async ({ get }) => {
       const api = get(apiSelector)
-      const { data } = await api.get<User>(`users/${id}`)
+      const { data }: { data: User } = await api.get(`users/${id}`)
       return data
     },
 })

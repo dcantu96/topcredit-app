@@ -29,18 +29,21 @@ export const preAuthorizationUsersSelectorQuery = selector<
   key: "preAuthorizationUsersSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<PreAuthorizationUsersResponse[]>("users", {
-      params: {
-        fields: {
-          users:
-            "createdAt,email,employeeNumber,firstName,id,lastName,salary,salaryFrequency",
-        },
-        filter: {
-          status: "pre-authorization",
-          byRole: "",
+    const { data }: { data: PreAuthorizationUsersResponse[] } = await api.get(
+      "users",
+      {
+        params: {
+          fields: {
+            users:
+              "createdAt,email,employeeNumber,firstName,id,lastName,salary,salaryFrequency",
+          },
+          filter: {
+            status: "pre-authorization",
+            byRole: "",
+          },
         },
       },
-    })
+    )
 
     const map = new Map<string, PreAuthorizationUsersResponse>()
     for (const user of data) {

@@ -67,10 +67,11 @@ export const useCompanyActions = () => {
         })
         set(companyState(id), (prev) => ({
           ...prev,
-          domain: domain ?? null,
-          rate: rate ?? null,
-          borrowingCapacity: borrowingCapacity ?? null,
-          employeeSalaryFrequency,
+          domain: domain ?? prev.domain,
+          rate: rate ?? prev.rate,
+          borrowingCapacity: borrowingCapacity ?? prev.borrowingCapacity,
+          employeeSalaryFrequency:
+            employeeSalaryFrequency ?? prev.employeeSalaryFrequency,
         }))
 
         if (!isCompaniesListActive()) return
@@ -79,10 +80,13 @@ export const useCompanyActions = () => {
             if (prevCompany.id === id) {
               return {
                 ...prevCompany,
-                domain: domain ?? null,
-                rate: rate ?? null,
-                borrowingCapacity: borrowingCapacity ?? null,
-                employeeSalaryFrequency,
+                domain: domain ?? prevCompany.domain,
+                rate: rate ?? prevCompany.rate,
+                borrowingCapacity:
+                  borrowingCapacity ?? prevCompany.borrowingCapacity,
+                employeeSalaryFrequency:
+                  employeeSalaryFrequency ??
+                  prevCompany.employeeSalaryFrequency,
               }
             }
             return prevCompany

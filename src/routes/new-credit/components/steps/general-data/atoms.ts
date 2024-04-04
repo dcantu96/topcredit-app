@@ -8,6 +8,7 @@ import {
   salaryFrequencyFieldValidation,
 } from "./validations"
 import { ReadonlyFile } from "components/atoms/file-field/file-field"
+import { StateOfMexico } from "src/schema.types"
 
 export const readonlySalaryFrequencyFieldSelector = selector<string | null>({
   key: "readonlySalaryFrequencyField",
@@ -174,7 +175,7 @@ export const editableCityFieldState = atom<string>({
   }),
 })
 
-export const readonlyStateFieldSelector = selector<string | null>({
+export const readonlyStateFieldSelector = selector<StateOfMexico | null>({
   key: "readonlyStateField",
   get: ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
@@ -182,13 +183,13 @@ export const readonlyStateFieldSelector = selector<string | null>({
   },
 })
 
-export const editableStateFieldState = atom<string>({
+export const editableStateFieldState = atom<StateOfMexico | null>({
   key: "editableStateField",
-  default: selector<string>({
+  default: selector<StateOfMexico | null>({
     key: "editableStateFieldDefault",
     get: ({ get }) => {
       const readOnlyState = get(readonlyStateFieldSelector)
-      return readOnlyState ?? ""
+      return readOnlyState ?? null
     },
   }),
 })
@@ -322,7 +323,7 @@ export const readonlyProofOfAddressSelector = selector<
 // editableProofOfAddressFieldState
 // readonlyProofOfAddressSelector
 
-export const readonlyCountryFieldSelector = selector<string | null>({
+export const readonlyCountryFieldSelector = selector<"MX" | null>({
   key: "readonlyCountryField",
   get: async ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
@@ -330,9 +331,9 @@ export const readonlyCountryFieldSelector = selector<string | null>({
   },
 })
 
-export const editableCountryFieldState = atom<string>({
+export const editableCountryFieldState = atom<"MX">({
   key: "editableCountryField",
-  default: selector<string>({
+  default: selector<"MX">({
     key: "editableCountryFieldDefault",
     get: ({ get }) => {
       const readOnlyCountry = get(readonlyCountryFieldSelector)

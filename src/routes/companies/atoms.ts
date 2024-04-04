@@ -17,7 +17,7 @@ export interface NewCompany
   terms?: NewTerm[]
 }
 
-export interface EditCompany extends NewCompany {
+export interface EditCompany extends Partial<NewCompany> {
   id: string
 }
 
@@ -25,7 +25,7 @@ export const termsSelectorQuery = selector<Map<string, Term>>({
   key: "termsSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data } = await api.get<Term[]>("terms")
+    const { data } = await api.get("terms")
     const termsMap = new Map<string, Term>()
     for (const term of data) {
       termsMap.set(term.id, term)
