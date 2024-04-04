@@ -36,6 +36,7 @@ import {
   readonlyBankStatementSelector,
   readonlyPayrollReceiptSelector,
   readonlyProofOfAddressSelector,
+  editableCountryFieldState,
 } from "./atoms"
 import Select from "components/atoms/select"
 
@@ -78,7 +79,7 @@ const Step = () => {
     editablePostalCodeFieldState,
   )
   const [rfc, setRfc] = useRecoilState(editableRFCFieldState)
-  const [country, setCountry] = useRecoilState(editableCityFieldState)
+  const [country, setCountry] = useRecoilState(editableCountryFieldState)
   const [salaryFrequency, setSalaryFrequency] = useRecoilState(
     editableSalaryFrequencyFieldState,
   )
@@ -244,9 +245,9 @@ const Step = () => {
             id="state"
             label="Estado"
             disabled={isWaiting}
-            value={state}
+            value={state ?? undefined}
             required
-            onChange={(e) => setState(e.target.value)}
+            onChange={(newValue) => setState(newValue ?? null)}
             options={STATES_OF_MEXICO}
           />
         </div>
@@ -257,7 +258,7 @@ const Step = () => {
             disabled={isWaiting}
             value={country}
             required
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={(newValue) => setCountry(newValue ?? "MX")}
             options={COUNTRIES}
           />
         </div>
