@@ -47,7 +47,7 @@ const Select = <TOptions extends OptionsArray | OptionObject[]>({
       >
         {label}
       </label>
-      <div className="mt-2 mb-7">
+      <div className="relative mt-2 rounded-md shadow-sm mb-8">
         <select
           id={id}
           name={id}
