@@ -26,6 +26,7 @@ interface FileFieldProps {
   error?: boolean | string
   required?: boolean
   initialFile?: ReadonlyFile
+  disableRemove?: boolean
   onRemove?: () => void
 }
 
@@ -36,6 +37,7 @@ const FileField = ({
   description,
   error,
   required,
+  disableRemove,
   initialFile,
   onRemove,
 }: FileFieldProps) => {
@@ -148,6 +150,7 @@ const FileField = ({
           </div>
         ) : initialFile && !file ? (
           <ChosenFile
+            disableRemove={disableRemove}
             file={initialFile}
             onRemove={() => {
               onRemove?.()
@@ -156,6 +159,7 @@ const FileField = ({
           />
         ) : file ? (
           <ChosenFile
+            disableRemove={disableRemove}
             onRemove={() => {
               setFile(null)
               onRemove?.()
@@ -180,9 +184,11 @@ const FileField = ({
 const ChosenFile = ({
   file,
   onRemove,
+  disableRemove,
 }: {
   file: ReadonlyFile
   onRemove?: () => void
+  disableRemove?: boolean
 }) => {
   const navigate = () => {
     if (!file.url) return
@@ -207,6 +213,7 @@ const ChosenFile = ({
         type="button"
         size="sm"
         status="dark"
+        disabled={disableRemove}
         onClick={(e) => {
           e.stopPropagation()
           onRemove?.()
