@@ -1,6 +1,7 @@
 import NavLink from "components/atoms/nav-link"
 import { NavLink as RouterLink } from "react-router-dom"
 import logoSmall from "../../assets/logo_small.png"
+import logo from "../../assets/logo.png"
 import { useState } from "react"
 import ButtonLink from "components/atoms/button-link"
 import withAuthorizationRedirect from "components/hocs/with-authorization-redirect"
@@ -21,7 +22,7 @@ const Landing = () => {
               <img
                 className="h-8 w-auto"
                 src={logoSmall}
-                alt="topcredit-logo"
+                alt="topcredit-header-logo"
               />
             </a>
           </div>
@@ -151,7 +152,12 @@ const Landing = () => {
             }}
           ></div>
         </div>
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56 flex flex-col justify-center">
+          <img
+            className="h-24 w-auto mx-auto mb-4"
+            src={logo}
+            alt="topcredit-header-logo"
+          />
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
               Anunciando nuestro colaborador mas reciente <b>Soriana.</b>{" "}
@@ -163,11 +169,10 @@ const Landing = () => {
           </div>
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Créditos para empleados, ¡Tasas Increíbles!
+              Nunca a sido tan fácil conseguir un crédito
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Mereces crecer tu dinero 15% al año en la app y una tarjeta de
-              crédito sin anualidad
+              Créditos nominales confiables
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <ButtonLink to="register" size="md">
