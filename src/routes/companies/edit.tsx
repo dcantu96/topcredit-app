@@ -17,11 +17,15 @@ import { companyState } from "./loader"
 import { NewTermForm } from "./new-term-form"
 import AssignTermForm from "./assign-term-form"
 import { DURATION_TYPES, FREQUENCY_OPTIONS } from "../../constants"
+import { DurationType } from "src/schema.types"
+import Tooltip from "components/atoms/tooltip"
 
 const EditCompany = () => {
   const { id } = useParams()
   if (!id) throw new Error("Missing id param")
   const companyData = useRecoilValue(companyState(id))
+  const companyDurationType =
+    companyData.employeeSalaryFrequency === "biweekly" ? "two-weeks" : "months"
   const [name, setName] = useState<string>(companyData.name)
   const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(
@@ -166,11 +170,27 @@ const EditCompany = () => {
         <div className="col-span-2 md:col-span-1">
           <Label>Plazos Activos</Label>
           <div className="flex gap-2 mt-2 flex-wrap mb-8">
-            {companyData.terms.map((term) => (
-              <Chip key={term.id}>
-                {term.duration} {DURATION_TYPES.get(term.durationType)}
-              </Chip>
-            ))}
+            {companyData.terms.map((term) =>
+              term.durationType !== companyDurationType ? (
+                <Tooltip
+                  key={term.id}
+                  content={
+                    <InvalidDuration
+                      companyDuration={companyDurationType}
+                      type={term.durationType}
+                    />
+                  }
+                >
+                  <Chip status="error">
+                    {term.duration} {DURATION_TYPES.get(term.durationType)}
+                  </Chip>
+                </Tooltip>
+              ) : (
+                <Chip key={term.id}>
+                  {term.duration} {DURATION_TYPES.get(term.durationType)}
+                </Chip>
+              ),
+            )}
           </div>
         </div>
         <div className="flex gap-4 items-center col-span-2 md:col-span-1">
@@ -183,6 +203,24 @@ const EditCompany = () => {
         </div>
       </form>
     </FormContainer>
+  )
+}
+
+const InvalidDuration = ({
+  type,
+  companyDuration,
+}: {
+  type: DurationType
+  companyDuration: DurationType
+}) => {
+  return (
+    <div className="text-sm w-44">
+      <p>
+        El plazo <strong>{DURATION_TYPES.get(type)}</strong> no es compatible
+        con la frecuencia de nómina de la empresa{" "}
+        <strong>{DURATION_TYPES.get(companyDuration)}</strong>
+      </p>
+    </div>
   )
 }
 
