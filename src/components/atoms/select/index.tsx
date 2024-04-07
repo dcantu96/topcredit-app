@@ -81,7 +81,7 @@ const Select = <TOptions extends OptionsArray | OptionObject[]>({
           )}
         </select>
         {typeof error === "string" && (
-          <p className="absolute -bottom-6 left-0 text-sm text-rose-600">
+          <p className="absolute -bottom-6 left-0 text-sm text-rose-600 line-clamp-1">
             {error}
           </p>
         )}
