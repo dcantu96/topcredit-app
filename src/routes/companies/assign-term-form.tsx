@@ -20,8 +20,14 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
   const termsMap = useRecoilValue(termsState)
   const { assignTermToCompany } = useTermActions()
   const companyData = useRecoilValue(companyState(companyId))
+  const companyDurationType =
+    companyData.employeeSalaryFrequency === "biweekly" ? "two-weeks" : "months"
   const termOptions = Array.from(termsMap.values())
-    .filter(({ id }) => !companyData.terms.some((term) => term.id === id))
+    .filter(
+      ({ id, durationType }) =>
+        !companyData.terms.some((term) => term.id === id) &&
+        companyDurationType === durationType,
+    )
     .map(({ duration, durationType, id }) => ({
       label: `${duration} ${DURATION_TYPES.get(durationType)}`,
       value: id.toString(),
@@ -37,7 +43,7 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
         })
         setTermId("")
       } catch (error) {
-        handleErrors(error, new Set(["termId"]))
+        handleErrors(error, new Set(["terms"]))
       }
     }
   }
@@ -47,7 +53,7 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
       <Select
         id="termId"
         label="Asignar un plazo"
-        error={errors.termId}
+        error={errors.terms}
         options={termOptions}
         value={termId}
         onChange={(newValue) => setTermId(newValue ?? "")}
