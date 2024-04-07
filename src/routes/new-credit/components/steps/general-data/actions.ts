@@ -9,7 +9,6 @@ import {
   editablePostalCodeFieldState,
   editableCountryFieldState,
   editableRFCFieldState,
-  editableSalaryFrequencyFieldState,
   editableSalaryFieldState,
   editableIdentityDocumentFieldState,
   editableProofOfAddressFieldState,
@@ -33,7 +32,6 @@ export const useCreditScreenSubmitActions = () => {
   const country = useRecoilValue(editableCountryFieldState)
   const rfc = useRecoilValue(editableRFCFieldState)
   const postalCode = useRecoilValue(editablePostalCodeFieldState)
-  const salaryFrequency = useRecoilValue(editableSalaryFrequencyFieldState)
   const salary = useRecoilValue(editableSalaryFieldState)
   const identityDocument = useRecoilValue(editableIdentityDocumentFieldState)
   const proofOfAddress = useRecoilValue(editableProofOfAddressFieldState)
@@ -53,7 +51,6 @@ export const useCreditScreenSubmitActions = () => {
         country,
         rfc,
         postalCode,
-        salaryFrequency,
         salary,
         identityDocument,
         proofOfAddress,

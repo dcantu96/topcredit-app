@@ -172,7 +172,7 @@ const ShowScreen = () => {
               ? MXNFormat.format(credit.borrower.salary)
               : "--"}{" "}
             MXN{" "}
-            {credit.borrower.salaryFrequency === "Q"
+            {credit?.term?.durationType === "two-weeks"
               ? "Quincenales"
               : "Mensuales"}
           </p>

@@ -22,12 +22,9 @@ import {
   RFCFieldTouchedState,
   RFCFieldErrorsSelector,
   postalCodeFieldTouchedState,
-  editableSalaryFrequencyFieldState,
-  salaryFrequencyFieldTouchedState,
   editableSalaryFieldState,
   salaryFieldTouchedState,
   salaryFieldErrorsSelector,
-  salaryFrequencyFieldErrorsSelector,
   editableIdentityDocumentFieldState,
   readonlyIdentityDocumentSelector,
   editableBankStatementFieldState,
@@ -48,6 +45,7 @@ import {
 } from "../../../../../constants"
 import { userGeneralDataQuerySelector } from "../../../atoms"
 import { InformationCircleIcon } from "@heroicons/react/24/outline"
+import { companiesDataSelector } from "../../../../companies/loader"
 
 const Step = () => {
   const setBankAccountNumberTouched = useSetRecoilState(
@@ -80,18 +78,18 @@ const Step = () => {
   )
   const [rfc, setRfc] = useRecoilState(editableRFCFieldState)
   const [country, setCountry] = useRecoilState(editableCountryFieldState)
-  const [salaryFrequency, setSalaryFrequency] = useRecoilState(
-    editableSalaryFrequencyFieldState,
-  )
-  const setSalaryFrequencyTouched = useSetRecoilState(
-    salaryFrequencyFieldTouchedState,
-  )
   const salaryFieldError = useRecoilValue(salaryFieldErrorsSelector)
-  const salaryFrequencyFieldError = useRecoilValue(
-    salaryFrequencyFieldErrorsSelector,
-  )
   const refreshUser = useRecoilRefresher_UNSTABLE(userGeneralDataQuerySelector)
   const user = useRecoilValue(userGeneralDataQuerySelector)
+  const companies = useRecoilValue(
+    companiesDataSelector({
+      filter: {
+        domain: user?.email.split("@")[1],
+      },
+    }),
+  )
+  const companySalaryFrequency = companies?.[0]?.employeeSalaryFrequency
+  const mappedFreq = companySalaryFrequency === "biweekly" ? "Q" : "M"
   const storedIdentityDocument = useRecoilValue(
     readonlyIdentityDocumentSelector,
   )
@@ -144,13 +142,13 @@ const Step = () => {
           <div className="flex items-center gap-2">
             <Input
               id="salary"
-              label="¿Como percibes tu sueldo?"
+              label={`¿Cual es tu salario en ${companies?.[0]?.name}?`}
               required
               value={salary}
               prefix="$"
               type="money"
               disabled={isWaiting}
-              error={salaryFieldError || salaryFrequencyFieldError}
+              error={salaryFieldError}
               trailingDropdownLabel="MXN"
               trailingDropdownOptions={[{ value: "MXN", label: "MXN" }]}
               trailingDropdownId="salary-currency"
@@ -161,12 +159,8 @@ const Step = () => {
               <Button
                 key={value}
                 type="button"
-                disabled={isWaiting}
-                status={salaryFrequency === value ? "primary" : "secondary"}
-                onClick={() => {
-                  setSalaryFrequency(value)
-                  setSalaryFrequencyTouched(true)
-                }}
+                disabled
+                status={mappedFreq === value ? "primary" : "secondary"}
               >
                 {label}
               </Button>

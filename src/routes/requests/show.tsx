@@ -8,11 +8,20 @@ import { useRequestActions } from "./actions"
 import { MXNFormat } from "../../constants"
 import { useState } from "react"
 import Input from "components/atoms/input"
+import { companiesDataSelector } from "../companies/loader"
 
 const ShowRequest = () => {
   const { id } = useParams()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const user = useRecoilValue(basicDetailsSelector(Number(id)))
+  const companies = useRecoilValue(
+    companiesDataSelector({
+      filter: {
+        domain: user?.email.split("@")[1],
+      },
+    }),
+  )
+  const employeeSalaryFrequency = companies?.[0]?.employeeSalaryFrequency
   const { approveUser, denyUser, missingDocumentation } = useRequestActions(
     Number(id),
   )
@@ -128,7 +137,9 @@ const ShowRequest = () => {
           <label className="text-gray-500 font-medium text-sm">Ingresos</label>
           <p className="text-gray-900 font-medium">
             {user.salary ? MXNFormat.format(user.salary) : "--"} MXN{" "}
-            {user.salaryFrequency === "Q" ? "Quincenales" : "Mensuales"}
+            {employeeSalaryFrequency === "biweekly"
+              ? "Quincenales"
+              : "Mensuales"}
           </p>
         </div>
         <div className="col-span-1">

@@ -12,7 +12,6 @@ export type PreAuthorizationUsersResponse = Pick<
   | "id"
   | "lastName"
   | "salary"
-  | "salaryFrequency"
 >
 
 // 1. Employee Number
@@ -35,7 +34,7 @@ export const preAuthorizationUsersSelectorQuery = selector<
         params: {
           fields: {
             users:
-              "createdAt,email,employeeNumber,firstName,id,lastName,salary,salaryFrequency",
+              "createdAt,email,employeeNumber,firstName,id,lastName,salary",
           },
           filter: {
             status: "pre-authorization",

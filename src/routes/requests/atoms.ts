@@ -13,7 +13,6 @@ type BasicDetailsTableResponse = Pick<
   | "lastName"
   | "rfc"
   | "salary"
-  | "salaryFrequency"
   | "state"
 >
 

@@ -11,7 +11,6 @@ import List from "components/atoms/list"
 import Input from "components/atoms/input"
 import useUserActions from "hooks/useUserActions"
 import useCreditActions from "hooks/useCreditActions"
-import useCompanies from "hooks/useCompanies"
 
 import {
   PreAuthorizationUsersResponse,
@@ -20,6 +19,7 @@ import {
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 import { usePreAuthorizationActions } from "./actions"
 import { calculateAmortization } from "hooks/useCreditAmortization/utils"
+import { companiesDataSelector } from "../companies/loader"
 
 const Screen = () => {
   const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
@@ -62,12 +62,18 @@ const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
   const { updateUserStatus } = useUserActions(user.id)
   const { removeUser } = usePreAuthorizationActions()
   const { createCredit } = useCreditActions()
-  const companiesMap = useCompanies()
+  const companies = useRecoilValue(
+    companiesDataSelector({
+      filter: {
+        domain: user.email?.split("@")?.[1],
+      },
+      include: "terms",
+    }),
+  )
   const [loanAmount, setLoanAmount] = useState(0)
   const [loanTermId, setLoanTermId] = useState("")
 
-  const userDomain = user.email?.split("@")?.[1]
-  const company = companiesMap.get(userDomain)
+  const company = companies?.[0]
   const borrowerMaxCapacity =
     user.salary && company?.borrowingCapacity
       ? user.salary * company.borrowingCapacity
@@ -150,7 +156,9 @@ const PreAuthorizationUserItem = ({ user }: PreAuthorizationUserItemProps) => {
             </span>
             <span className="text-gray-400">/</span>
             <span className="whitespace-nowrap">
-              {user.salaryFrequency === "Q" ? "Quincenales" : "Mensuales"}
+              {companies?.[0].employeeSalaryFrequency === "biweekly"
+                ? "Quincenales"
+                : "Mensuales"}
             </span>
           </p>
         </div>

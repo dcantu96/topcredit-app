@@ -5,52 +5,9 @@ import {
   postalCodeFieldValidation,
   rfcFieldValidation,
   salaryFieldValidation,
-  salaryFrequencyFieldValidation,
 } from "./validations"
 import { ReadonlyFile } from "components/atoms/file-field/file-field"
 import { StateOfMexico } from "src/schema.types"
-
-export const readonlySalaryFrequencyFieldSelector = selector<string | null>({
-  key: "readonlySalaryFrequencyField",
-  get: async ({ get }) => {
-    const generalData = get(userGeneralDataQuerySelector)
-    return generalData?.salaryFrequency?.toString() ?? null
-  },
-})
-
-export const editableSalaryFrequencyFieldState = atom<string>({
-  key: "editableSalaryFrequencyField",
-  default: selector<string>({
-    key: "editableSalaryFrequencyFieldDefault",
-    get: ({ get }) => {
-      const readOnlySalaryFrequency = get(readonlySalaryFrequencyFieldSelector)
-      return readOnlySalaryFrequency ?? ""
-    },
-  }),
-})
-
-export const salaryFrequencyFieldTouchedState = atom<boolean>({
-  key: "salaryFrequencyFieldTouched",
-  default: false,
-})
-
-export const salaryFrequencyFieldErrorsSelector = selector<string | false>({
-  key: "salaryFrequencyFieldErrors",
-  get: ({ get }) => {
-    const readOnlySalaryFrequency = get(readonlySalaryFrequencyFieldSelector)
-    const touched = get(salaryFrequencyFieldTouchedState)
-    if (readOnlySalaryFrequency && !touched) {
-      const error = salaryFrequencyFieldValidation(readOnlySalaryFrequency)
-      if (error) return error
-    }
-    if (!touched && !readOnlySalaryFrequency) return false
-
-    const editableSalaryFrequency = get(editableSalaryFrequencyFieldState)
-    const error = salaryFrequencyFieldValidation(editableSalaryFrequency)
-    if (error) return error
-    return false
-  },
-})
 
 export const readonlySalaryFieldSelector = selector<string | null>({
   key: "readonlySalaryField",

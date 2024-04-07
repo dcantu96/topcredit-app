@@ -27,6 +27,13 @@ const NewCompany = () => {
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log("create", {
+      name,
+      domain,
+      employeeSalaryFrequency,
+      rate: rate / 100,
+      borrowingCapacity: borrowingCapacity / 100,
+    })
 
     if (!employeeSalaryFrequency) return
 
@@ -36,9 +43,9 @@ const NewCompany = () => {
       await createCompany({
         name,
         domain,
-        rate: rate / 100,
         employeeSalaryFrequency,
-        borrowingCapacity,
+        rate: rate / 100,
+        borrowingCapacity: borrowingCapacity / 100,
       })
       setIsLoading(false)
       to("..")
