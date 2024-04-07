@@ -3,7 +3,11 @@ import useTooltipOverflowStatus from "./hooks/use-tooltip-overflow-status"
 import { getTooltipPointerClasses, getTooltipPositionClasses } from "./utils"
 import type { TooltipProps } from "./types"
 
-const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
+const Tooltip: React.FC<TooltipProps> = ({
+  content,
+  children,
+  cond = true,
+}) => {
   const [isVisible, setIsVisible] = useState(false)
   const { overflowStatus, tooltipRef } = useTooltipOverflowStatus(isVisible)
 
@@ -20,11 +24,11 @@ const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
     <div className="relative flex items-center">
       {/* The target element for the tooltip */}
       <div
-        onMouseEnter={() => setIsVisible(true)}
-        onMouseLeave={() => setIsVisible(false)}
-        onFocus={() => setIsVisible(true)}
-        onBlur={() => setIsVisible(false)}
-        tabIndex={0} // Make it focusable
+        onMouseEnter={() => cond && setIsVisible(true)}
+        onMouseLeave={() => cond && setIsVisible(false)}
+        onFocus={() => cond && setIsVisible(true)}
+        onBlur={() => cond && setIsVisible(false)}
+        tabIndex={0}
       >
         {children}
       </div>
