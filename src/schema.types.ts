@@ -95,7 +95,6 @@ export interface User extends ObjectWithId, Timestamps {
   postalCode: string | null
   rfc: string | null
   salary: number | null
-  salaryFrequency: string | null
   state: StateOfMexico | null
   status: UserStatus | null
   identityDocumentUrl: string | null
