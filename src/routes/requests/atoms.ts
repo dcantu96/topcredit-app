@@ -28,7 +28,7 @@ export const basicDetailsListSelectorQuery = selector<
         params: {
           fields: {
             users:
-              "employeeNumber,rfc,salary,salaryFrequency,firstName,lastName,email,createdAt,state",
+              "employeeNumber,rfc,salary,firstName,lastName,email,createdAt,state",
           },
           filter: {
             byRole: "",
