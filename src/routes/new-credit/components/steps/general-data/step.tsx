@@ -112,6 +112,16 @@ const Step = () => {
   const storedBankStatement = useRecoilValue(readonlyBankStatementSelector)
   const storedPayrollReceipt = useRecoilValue(readonlyPayrollReceiptSelector)
   const storedProofOfAddress = useRecoilValue(readonlyProofOfAddressSelector)
+  const bankStatementStatus = user?.bankStatementStatus
+  const bankStatementRejectionReason = user?.bankStatementRejectionReason
+  const payrollReceiptStatus = user?.payrollReceiptStatus
+  const payrollReceiptRejectionReason = user?.payrollReceiptRejectionReason
+  const proofOfAddressStatus = user?.proofOfAddressStatus
+  const proofOfAddressRejectionReason = user?.proofOfAddressRejectionReason
+  const identityDocumentStatus = user?.identityDocumentStatus
+  const identityDocumentRejectionReason = user?.identityDocumentRejectionReason
+
+  console
   const closeModal = () => setIsModalOpen(false)
   const openModal = () => setIsModalOpen(true)
 
@@ -163,8 +173,7 @@ const Step = () => {
         ) : isInvalidDocumentation ? (
           <div className="mt-2 rounded-md border-2 border-dashed border-rose-600 p-2 inline-flex">
             <InformationCircleIcon className="h-6 w-6 text-rose-600 mr-2" />
-            Hay un problema con tus documentos: <b>{user.reason}</b> Por favor
-            vuelve a subirlos.
+            Hay un problema con tus documentos
           </div>
         ) : (
           <p className="mt-1 text-sm leading-6 text-gray-600">
@@ -314,8 +323,13 @@ const Step = () => {
               id="official-identification"
               label="Identificación oficial"
               description="Unicamente INE o Pasaporte"
-              disableRemove={isWaiting}
+              disableRemove={isWaiting || identityDocumentStatus === "approved"}
               initialFile={storedIdentityDocument}
+              error={
+                identityDocumentStatus === "rejected" && !identityDocumentId
+                  ? identityDocumentRejectionReason ?? "Documento rechazado"
+                  : undefined
+              }
               onRemove={() => setIdentityDocument(null)}
               handleFileUpload={({ signedId }) => {
                 if (!signedId) return
@@ -329,8 +343,13 @@ const Step = () => {
               id="proof-of-address"
               label="Comprobante de Domicilio"
               description="Antigüedad no mayor a 3 meses."
-              disableRemove={isWaiting}
+              disableRemove={isWaiting || proofOfAddressStatus === "approved"}
               onRemove={() => setProofOfAddress(null)}
+              error={
+                proofOfAddressStatus === "rejected" && !proofOfAddressId
+                  ? proofOfAddressRejectionReason ?? "Documento rechazado"
+                  : undefined
+              }
               initialFile={storedProofOfAddress}
               handleFileUpload={({ signedId }) => {
                 if (!signedId) return
@@ -344,8 +363,13 @@ const Step = () => {
               id="cover"
               label="Estado de Cuenta Bancario"
               description="Antigüedad no mayor a 3 meses."
-              disableRemove={isWaiting}
+              disableRemove={isWaiting || bankStatementStatus === "approved"}
               initialFile={storedBankStatement}
+              error={
+                bankStatementStatus === "rejected" && !bankStatementId
+                  ? bankStatementRejectionReason ?? "Documento rechazado"
+                  : undefined
+              }
               onRemove={() => setBankStatement(null)}
               handleFileUpload={({ signedId }) => {
                 if (!signedId) return
@@ -359,8 +383,13 @@ const Step = () => {
               id="payroll-receipt"
               label="Recibo de Nomina"
               description="Antigüedad no mayor a 1 mes."
-              disableRemove={isWaiting}
+              disableRemove={isWaiting || payrollReceiptStatus === "approved"}
               initialFile={storedPayrollReceipt}
+              error={
+                payrollReceiptStatus === "rejected" && !payrollReceiptId
+                  ? payrollReceiptRejectionReason ?? "Documento rechazado"
+                  : undefined
+              }
               onRemove={() => setPayrollReceipt(null)}
               handleFileUpload={({ signedId }) => {
                 if (!signedId) return

@@ -157,6 +157,7 @@ export const readonlyIdentityDocumentSelector = selector<
   key: "readonlyIdentityDocumentSelector",
   get: ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
+    if (generalData?.identityDocumentStatus === "rejected") return undefined
     const url = generalData?.identityDocumentUrl
     const filename = generalData?.identityDocumentFilename
     const contentType = generalData?.identityDocumentContentType
@@ -193,6 +194,7 @@ export const readonlyBankStatementSelector = selector<ReadonlyFile | undefined>(
     key: "readonlyBankStatementSelector",
     get: ({ get }) => {
       const generalData = get(userGeneralDataQuerySelector)
+      if (generalData?.bankStatementStatus === "rejected") return undefined
       const url = generalData?.bankStatementUrl
       const filename = generalData?.bankStatementFilename
       const contentType = generalData?.bankStatementContentType
@@ -226,6 +228,7 @@ export const readonlyPayrollReceiptSelector = selector<
   key: "readonlyPayrollReceiptSelector",
   get: ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
+    if (generalData?.payrollReceiptStatus === "rejected") return undefined
     const url = generalData?.payrollReceiptUrl
     const filename = generalData?.payrollReceiptFilename
     const contentType = generalData?.payrollReceiptContentType
@@ -258,6 +261,7 @@ export const readonlyProofOfAddressSelector = selector<
   key: "readonlyProofOfAddressSelector",
   get: ({ get }) => {
     const generalData = get(userGeneralDataQuerySelector)
+    if (generalData?.proofOfAddressStatus === "rejected") return undefined
     const url = generalData?.proofOfAddressUrl
     const filename = generalData?.proofOfAddressFilename
     const contentType = generalData?.proofOfAddressContentType
@@ -276,9 +280,6 @@ export const readonlyProofOfAddressSelector = selector<
     }
   },
 })
-
-// editableProofOfAddressFieldState
-// readonlyProofOfAddressSelector
 
 export const readonlyCountryFieldSelector = selector<"MX" | null>({
   key: "readonlyCountryField",

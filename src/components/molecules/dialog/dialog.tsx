@@ -1,6 +1,8 @@
 import { CheckIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline"
 import Button from "components/atoms/button"
+import Input from "components/atoms/input"
 import { motion } from "framer-motion"
+import { useState } from "react"
 
 interface BaseDialogProps {
   title: string
@@ -12,8 +14,11 @@ interface BaseDialogProps {
 interface DangerDialogProps extends BaseDialogProps {
   type: "danger"
   onCancel: () => void
+  onClose: (inputValue?: string) => void
   cancelText?: string
   confirmText?: string
+  inputLabel?: string
+  inputPlaceholder?: string
 }
 
 interface NoticeDialogProps extends BaseDialogProps {
@@ -24,8 +29,10 @@ interface NoticeDialogProps extends BaseDialogProps {
 type DialogProps = DangerDialogProps | NoticeDialogProps
 
 const Dialog = ({ message, title, ...rest }: DialogProps) => {
+  const [text, setText] = useState("")
   return (
     <motion.div
+      onClick={(e) => e.stopPropagation()}
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
       exit={{ opacity: 0 }}
     >
@@ -49,6 +56,17 @@ const Dialog = ({ message, title, ...rest }: DialogProps) => {
             <div className="mt-2">
               <p className="text-gray-500 font-normal text-sm">{message}</p>
             </div>
+            {/* input */}
+            {rest.type === "danger" && rest.inputLabel && (
+              <Input
+                id="dialog-input"
+                label={rest.inputLabel}
+                placeholder={rest.inputPlaceholder}
+                required
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              />
+            )}
           </div>
         </div>
         {/* close button */}
@@ -59,15 +77,36 @@ const Dialog = ({ message, title, ...rest }: DialogProps) => {
         >
           {rest.type === "danger" ? (
             <>
-              <Button type="button" status="secondary" onClick={rest.onCancel}>
+              <Button
+                type="button"
+                status="secondary"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  rest.onCancel()
+                }}
+              >
                 {rest.cancelText ?? "Cancelar"}
               </Button>
-              <Button type="button" variant="danger" onClick={rest.onClose}>
+              <Button
+                type="button"
+                variant="danger"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  rest.onClose(text)
+                }}
+              >
                 {rest.confirmText ?? "Aceptar"}
               </Button>
             </>
           ) : (
-            <Button type="button" status="secondary" onClick={rest.onClose}>
+            <Button
+              type="button"
+              status="secondary"
+              onClick={(e) => {
+                e.stopPropagation()
+                rest.onClose()
+              }}
+            >
               {rest.confirmText ?? "Aceptar"}
             </Button>
           )}

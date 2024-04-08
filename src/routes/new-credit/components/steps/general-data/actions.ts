@@ -56,6 +56,14 @@ export const useCreditScreenSubmitActions = () => {
         proofOfAddress,
         bankStatement,
         payrollReceipt,
+        payrollReceiptStatus: "pending",
+        payrollReceiptRejectionReason: null,
+        bankStatementStatus: "pending",
+        bankStatementRejectionReason: null,
+        proofOfAddressStatus: "pending",
+        proofOfAddressRejectionReason: null,
+        identityDocumentStatus: "pending",
+        identityDocumentRejectionReason: null,
         status: "pending",
       })
     } catch (error) {

@@ -48,6 +48,8 @@ export interface Timestamps {
   updatedAt: string
 }
 
+export type DocumentStatus = "pending" | "approved" | "rejected" | null
+
 export type StateOfMexico =
   | "AGU"
   | "BCN"
@@ -102,21 +104,29 @@ export interface User extends ObjectWithId, Timestamps {
   identityDocumentFilename: string | null
   identityDocumentSize: string | null
   identityDocumentUploadedAt: string | null
+  identityDocumentStatus: DocumentStatus
+  identityDocumentRejectionReason: string | null
   payrollReceiptUrl: string | null
   payrollReceiptContentType: string | null
   payrollReceiptFilename: string | null
   payrollReceiptSize: string | null
   payrollReceiptUploadedAt: string | null
+  payrollReceiptStatus: DocumentStatus
+  payrollReceiptRejectionReason: string | null
   proofOfAddressUrl: string | null
   proofOfAddressContentType: string | null
   proofOfAddressFilename: string | null
   proofOfAddressSize: string | null
   proofOfAddressUploadedAt: string | null
+  proofOfAddressStatus: DocumentStatus
+  proofOfAddressRejectionReason: string | null
   bankStatementUrl: string | null
   bankStatementContentType: string | null
   bankStatementFilename: string | null
   bankStatementSize: string | null
   bankStatementUploadedAt: string | null
+  bankStatementStatus: DocumentStatus
+  bankStatementRejectionReason: string | null
   reason: string | null
 }
 

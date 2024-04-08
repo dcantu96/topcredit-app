@@ -1,5 +1,9 @@
 import { TrashIcon } from "@heroicons/react/24/outline"
-import { DocumentIcon } from "@heroicons/react/24/solid"
+import { CheckIcon, DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import Button from "../button"
+import { DocumentStatus } from "src/schema.types"
+import { useState } from "react"
+import Dialog from "components/molecules/dialog"
 
 interface FileViewerProps {
   label: string
@@ -9,6 +13,7 @@ interface FileViewerProps {
   contentType?: string
   fileUrl?: string
   onDelete?: () => void
+  children?: React.ReactNode
 }
 
 const FileViewer = ({
@@ -19,6 +24,7 @@ const FileViewer = ({
   contentType,
   fileUrl,
   onDelete,
+  children,
 }: FileViewerProps) => {
   return (
     <>
@@ -36,6 +42,7 @@ const FileViewer = ({
       >
         <div className="flex justify-between w-full mb-4">
           <DocumentIcon className="h-5 w-5 text-gray-500" />
+          {children}
 
           {onDelete && (
             <TrashIcon
@@ -64,8 +71,71 @@ const FileViewer = ({
   )
 }
 
+interface StatusButtonsProps {
+  status: DocumentStatus
+  onApprove: () => void
+  onDeny: (rejectReason: string) => void
+}
+
+const StatusButtons = ({ status, onApprove, onDeny }: StatusButtonsProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
+  return (
+    <>
+      <div className="flex gap-2">
+        {!status || status === "pending" ? (
+          <>
+            <Button
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onApprove()
+              }}
+            >
+              <CheckIcon className="h-5 w-5 text-white" />
+            </Button>
+            <Button
+              size="sm"
+              status="secondary"
+              onClick={(e) => {
+                e.stopPropagation()
+                openModal()
+              }}
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </Button>
+          </>
+        ) : status === "approved" ? (
+          <CheckIcon className="h-5 w-5 text-green-600" />
+        ) : status === "rejected" ? (
+          <XMarkIcon className="h-5 w-5 text-red-600" />
+        ) : (
+          <span className="text-gray-500">Sin acción</span>
+        )}
+      </div>
+      {isModalOpen && (
+        <Dialog
+          title="Rechazar documento"
+          message="Escribe el motivo de rechazo del documento."
+          type="danger"
+          onCancel={closeModal}
+          inputLabel="Motivo de rechazo"
+          onClose={(rejectReason) => {
+            if (!rejectReason) return
+            onDeny(rejectReason)
+            closeModal()
+          }}
+        />
+      )}
+    </>
+  )
+}
+
 const bytesToMb = (bytes: number) => {
   return (bytes / (1024 * 1024)).toFixed(2) + "MB"
 }
+
+FileViewer.StatusButtons = StatusButtons
 
 export default FileViewer

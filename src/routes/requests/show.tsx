@@ -1,14 +1,24 @@
 import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { basicDetailsSelector } from "./atoms"
-import { CheckIcon, DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import {
+  bankStatementRejectionReasonState,
+  bankStatementStatusState,
+  basicDetailsSelector,
+  identityDocumentRejectionReasonState,
+  identityDocumentStatusState,
+  payrollReceiptRejectionReasonState,
+  payrollReceiptStatusState,
+  proofOfAddressRejectionReasonState,
+  proofOfAddressStatusState,
+} from "./atoms"
+import { CheckIcon, DocumentIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer/file-viewer"
 import { useRequestActions } from "./actions"
 import { MXNFormat } from "../../constants"
-import { useState } from "react"
-import Input from "components/atoms/input"
 import { companiesDataSelector } from "../companies/loader"
+import Tooltip from "components/atoms/tooltip"
+import { TrashIcon } from "@heroicons/react/24/outline"
 
 const ShowRequest = () => {
   const { id } = useParams()
@@ -22,13 +32,38 @@ const ShowRequest = () => {
     }),
   )
   const employeeSalaryFrequency = companies?.[0]?.employeeSalaryFrequency
-  const { approveUser, denyUser, missingDocumentation } = useRequestActions(
-    Number(id),
+  const {
+    approveUser,
+    denyUser,
+    missingDocumentation,
+    approveDocument,
+    denyDocument,
+  } = useRequestActions(Number(id))
+  const bankStatementStatus = useRecoilValue(
+    bankStatementStatusState(Number(id)),
   )
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [reason, setReason] = useState("")
-
-  const openModal = () => setIsModalOpen(true)
+  const proofOfAddressStatus = useRecoilValue(
+    proofOfAddressStatusState(Number(id)),
+  )
+  console.log(proofOfAddressStatus)
+  const identityDocumentStatus = useRecoilValue(
+    identityDocumentStatusState(Number(id)),
+  )
+  const payrollReceiptStatus = useRecoilValue(
+    payrollReceiptStatusState(Number(id)),
+  )
+  const proofOfAddressRejectionReason = useRecoilValue(
+    proofOfAddressRejectionReasonState(Number(id)),
+  )
+  const identityDocumentRejectionReason = useRecoilValue(
+    identityDocumentRejectionReasonState(Number(id)),
+  )
+  const payrollReceiptRejectionReason = useRecoilValue(
+    payrollReceiptRejectionReasonState(Number(id)),
+  )
+  const bankStatementRejectionReason = useRecoilValue(
+    bankStatementRejectionReasonState(Number(id)),
+  )
 
   if (!user) return null
 
@@ -85,15 +120,32 @@ const ShowRequest = () => {
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="flex gap-2">
-            <Button onClick={approveUser}>
+            <Button
+              onClick={approveUser}
+              disabled={
+                identityDocumentStatus !== "approved" ||
+                proofOfAddressStatus !== "approved" ||
+                bankStatementStatus !== "approved" ||
+                payrollReceiptStatus !== "approved"
+              }
+            >
               <CheckIcon className="h-5 w-5 text-white mr-1.5" />
               Aprobar
             </Button>
             <Button status="secondary" onClick={denyUser}>
-              <XMarkIcon className="h-5 w-5 mr-1.5" />
-              Rechazar
+              <TrashIcon className="h-5 w-5 mr-1.5" />
+              Eliminar
             </Button>
-            <Button status="secondary" onClick={openModal}>
+            <Button
+              status="secondary"
+              disabled={
+                identityDocumentStatus !== "rejected" &&
+                proofOfAddressStatus !== "rejected" &&
+                bankStatementStatus !== "rejected" &&
+                payrollReceiptStatus !== "rejected"
+              }
+              onClick={missingDocumentation}
+            >
               <DocumentIcon className="h-5 w-5 mr-1.5" />
               Doc. Inválida
             </Button>
@@ -101,28 +153,6 @@ const ShowRequest = () => {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
-        {isModalOpen && (
-          <div className="col-span-2">
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <Input
-                id="rejection-reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                label="Motivo"
-                placeholder="Escribe el motivo por el cual se rechaza la solicitud"
-              />
-              <div className="flex gap-4">
-                <Button
-                  status="secondary"
-                  onClick={() => missingDocumentation(reason)}
-                >
-                  Enviar
-                </Button>
-                <Button onClick={() => setIsModalOpen(false)}>Cerrar</Button>
-              </div>
-            </div>
-          </div>
-        )}
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">
             Numero de Nomina
@@ -191,7 +221,18 @@ const ShowRequest = () => {
             fileName={user.identityDocumentFilename ?? undefined}
             fileDate={user.identityDocumentUploadedAt ?? undefined}
             fileSize={user.identityDocumentSize ?? undefined}
-          />
+          >
+            <Tooltip
+              content={identityDocumentRejectionReason}
+              cond={identityDocumentStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={identityDocumentStatus}
+                onApprove={approveDocument("identityDocument")}
+                onDeny={denyDocument("identityDocument")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
 
         <div className="col-span-1">
@@ -201,7 +242,18 @@ const ShowRequest = () => {
             fileName={user.proofOfAddressFilename ?? undefined}
             fileDate={user.proofOfAddressUploadedAt ?? undefined}
             fileSize={user.proofOfAddressSize ?? undefined}
-          />
+          >
+            <Tooltip
+              content={proofOfAddressRejectionReason}
+              cond={proofOfAddressStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={proofOfAddressStatus}
+                onApprove={approveDocument("proofOfAddress")}
+                onDeny={denyDocument("proofOfAddress")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
 
         <div className="col-span-1">
@@ -211,7 +263,18 @@ const ShowRequest = () => {
             fileName={user.bankStatementFilename ?? undefined}
             fileDate={user.bankStatementUploadedAt ?? undefined}
             fileSize={user.bankStatementSize ?? undefined}
-          />
+          >
+            <Tooltip
+              content={bankStatementRejectionReason}
+              cond={bankStatementStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={bankStatementStatus}
+                onApprove={approveDocument("bankStatement")}
+                onDeny={denyDocument("bankStatement")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
 
         <div className="col-span-1">
@@ -221,7 +284,18 @@ const ShowRequest = () => {
             fileName={user.payrollReceiptFilename ?? undefined}
             fileDate={user.payrollReceiptUploadedAt ?? undefined}
             fileSize={user.payrollReceiptSize ?? undefined}
-          />
+          >
+            <Tooltip
+              content={payrollReceiptRejectionReason}
+              cond={payrollReceiptStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={payrollReceiptStatus}
+                onApprove={approveDocument("payrollReceipt")}
+                onDeny={denyDocument("bankStatement")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
       </div>
     </div>
