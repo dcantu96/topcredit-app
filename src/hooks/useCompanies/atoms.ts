@@ -3,9 +3,9 @@ import { selector } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { Company, Term } from "src/schema.types"
 
-type CompanyAuthResponse = Pick<
+type CompanyResponse = Pick<
   Company,
-  "borrowingCapacity" | "id" | "domain" | "rate"
+  "borrowingCapacity" | "id" | "domain" | "rate" | "name"
 > & {
   terms: {
     data: Term[]
@@ -15,30 +15,36 @@ type CompanyAuthResponse = Pick<
 export const companiesSelectorQuery = selector<
   Map<
     string,
-    { borrowingCapacity: number | null; terms: Term[]; rate: number | null }
+    Pick<
+      Company,
+      "borrowingCapacity" | "id" | "domain" | "rate" | "name" | "terms"
+    >
   >
 >({
   key: "companiesForPreAuthSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
-    const { data }: { data: CompanyAuthResponse[] } = await api.get(
-      "companies",
-      {
-        params: {
-          fields: {
-            companies: "borrowingCapacity,id,domain,terms,rate",
-          },
-          include: "terms",
+    const { data }: { data: CompanyResponse[] } = await api.get("companies", {
+      params: {
+        fields: {
+          companies: "borrowingCapacity,id,domain,terms,rate,name",
         },
+        include: "terms",
       },
-    )
+    })
 
     const map = new Map<
       string,
-      { borrowingCapacity: number | null; terms: Term[]; rate: number | null }
+      Pick<
+        Company,
+        "borrowingCapacity" | "id" | "domain" | "rate" | "name" | "terms"
+      >
     >()
     for (const company of data) {
       map.set(company.domain, {
+        id: company.id,
+        domain: company.domain,
+        name: company.name,
         borrowingCapacity: company.borrowingCapacity,
         terms: company.terms.data,
         rate: company.rate,

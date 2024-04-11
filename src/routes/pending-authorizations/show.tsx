@@ -216,7 +216,7 @@ const ShowScreen = () => {
         </div>
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">Empresa</label>
-          <p className="text-gray-900 font-medium">{credit.borrower.city}</p>
+          <p className="text-gray-900 font-medium">{company?.name}</p>
         </div>
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">Taza</label>
