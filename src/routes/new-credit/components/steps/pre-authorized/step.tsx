@@ -35,6 +35,8 @@ const Step = () => {
     credit?.status === "authorized" ||
     credit?.status === "denied"
 
+  const isWaiting = credit?.status === "pending"
+
   return (
     <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
       <h1 className="text-gray-900 font-bold text-3xl">Pre Autorización</h1>
@@ -72,6 +74,7 @@ const Step = () => {
             label="Recibo de Nómina"
             initialFile={payrollReceipt}
             onRemove={() => setPayrollReceipt(null)}
+            disableRemove={isWaiting}
             handleFileUpload={({ signedId }) => {
               if (!signedId) return
               setPayrollReceipt(signedId)
@@ -84,6 +87,7 @@ const Step = () => {
             label="Contrato"
             initialFile={contract}
             onRemove={() => setContract(null)}
+            disableRemove={isWaiting}
             handleFileUpload={({ signedId }) => {
               if (!signedId) return
               setContract(signedId)
@@ -103,6 +107,7 @@ const Step = () => {
             id="authorization-letter"
             label="Carta de Autorización"
             initialFile={authorization}
+            disableRemove={isWaiting}
             onRemove={() => setAuthorization(null)}
             handleFileUpload={({ signedId }) => {
               if (!signedId) return
