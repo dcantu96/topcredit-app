@@ -96,6 +96,8 @@ const useCreditActions = () => {
         try {
           await api.update(`credits`, {
             id: creditId,
+            dispersedAt:
+              status === "dispersed" ? new Date().toISOString() : null,
             status,
             reason,
             authorizationStatus,
