@@ -50,6 +50,11 @@ export const ROLES: { value: Role; label: string; path: string }[] = [
     path: "pending-authorizations",
   },
   { value: "dispersions" as const, label: "Disp", path: "dispersions" },
+  {
+    value: "installations" as const,
+    label: "Inst",
+    path: "installations",
+  },
 ]
 
 export const SORT_ORDER = [

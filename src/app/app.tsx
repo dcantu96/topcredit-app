@@ -28,6 +28,7 @@ import ShowDispersions from "../routes/dispersions/show"
 import Landing from "../routes/landing"
 import LatestCreditMonitor from "./latest-credit-monitor"
 import MyCredits from "../routes/my-credits/my-credits"
+import Installations from "../routes/installations/list"
 
 function App() {
   return (
@@ -91,6 +92,12 @@ function App() {
           >
             <Route index element={<Dispersions />} />
             <Route path=":id" element={<ShowDispersions />} />
+          </Route>
+          <Route
+            path="installations"
+            element={<ProtectedRoute allowedRoles={["installations"]} />}
+          >
+            <Route index path="*" element={<Installations />} />
           </Route>
         </Route>
         <Route

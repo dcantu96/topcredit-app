@@ -108,6 +108,14 @@ const NavIconByRole = ({ role, path }: { role: Role; path: string }) => {
           }`}
         />
       )
+    case "installations":
+      return (
+        <ClipboardDocumentListIcon
+          className={`h-5 w-5 group-hover:text-sky-500 ${
+            isPathActive ? "text-sky-500" : "text-sky-300"
+          }`}
+        />
+      )
     default:
       return null
   }

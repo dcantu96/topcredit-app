@@ -5,6 +5,7 @@ export type Role =
   | "pre_authorizations"
   | "authorizations"
   | "dispersions"
+  | "installations"
 
 export type UserStatus =
   | "new"
