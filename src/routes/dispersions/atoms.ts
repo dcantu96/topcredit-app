@@ -5,7 +5,10 @@ import { apiSelector } from "components/providers/api/atoms"
 
 import type { Credit } from "src/schema.types"
 
-export type DispersionsResponse = Omit<Credit, "borrower" | "term"> & {
+export type DispersionsResponse = Pick<
+  Credit,
+  "id" | "status" | "updatedAt" | "createdAt" | "loan"
+> & {
   borrower: {
     data: Credit["borrower"]
   }
@@ -14,14 +17,22 @@ export type DispersionsResponse = Omit<Credit, "borrower" | "term"> & {
   }
 }
 
-export const dispersionsSelectorQuery = selector<Map<string, Credit>>({
+export const dispersionsSelectorQuery = selector<
+  Map<
+    string,
+    Pick<
+      Credit,
+      "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+    >
+  >
+>({
   key: "dispersionsSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
     const { data }: { data: DispersionsResponse[] } = await api.get("credit", {
       params: {
         fields: {
-          credits: "id,status,borrower,updatedAt,createdAt,loan,term",
+          credits: "id,status,updatedAt,createdAt,loan",
         },
         include: "borrower,term",
         filter: {
@@ -30,7 +41,19 @@ export const dispersionsSelectorQuery = selector<Map<string, Credit>>({
       },
     })
 
-    const map = new Map<string, Credit>()
+    const map = new Map<
+      string,
+      Pick<
+        Credit,
+        | "id"
+        | "status"
+        | "updatedAt"
+        | "createdAt"
+        | "loan"
+        | "term"
+        | "borrower"
+      >
+    >()
     for (const credit of data) {
       map.set(credit.id, {
         ...credit,
@@ -42,7 +65,12 @@ export const dispersionsSelectorQuery = selector<Map<string, Credit>>({
   },
 })
 
-export const dispersionsSortedSelector = selector<Credit[]>({
+export const dispersionsSortedSelector = selector<
+  Pick<
+    Credit,
+    "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+  >[]
+>({
   key: "dispersionsSortedSelector",
   get: ({ get }) => {
     const dispersions = get(dispersionsSelectorQuery)
@@ -59,12 +87,24 @@ export const dispersionsSortedSelector = selector<Credit[]>({
   },
 })
 
-export const dispersionsState = atom<Credit[]>({
+export const dispersionsState = atom<
+  Pick<
+    Credit,
+    "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+  >[]
+>({
   key: "dispersionsState",
   default: dispersionsSortedSelector,
 })
 
-export const dispersionsSelector = selectorFamily<Credit | undefined, string>({
+export const dispersionsSelector = selectorFamily<
+  | Pick<
+      Credit,
+      "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+    >
+  | undefined,
+  string
+>({
   key: "dispersionsSelector",
   get:
     (creditId) =>

@@ -33,7 +33,7 @@ const Title = ({
  * They are usually buttons or links separated by a gap of 8px (gap-2)
  */
 const Actions = ({ children }: { children: React.ReactNode }) => {
-  return <div className="flex gap-2">{children}</div>
+  return <div className="flex gap-3">{children}</div>
 }
 
 ListHeader.Title = Title

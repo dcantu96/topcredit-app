@@ -8,17 +8,43 @@ import List from "components/atoms/list"
 
 import { dispersionsState } from "./atoms"
 import ListItem from "./list-item"
+import Button from "components/atoms/button"
+import { DocumentArrowDownIcon } from "@heroicons/react/24/solid"
 
 const Screen = () => {
   const credits = useRecoilValue(dispersionsState)
 
+  const handleExport = () => {
+    const mappedCsv = credits.map((credit) => {
+      const firstName = credit.borrower.firstName
+      const lastName = credit.borrower.lastName
+      const fullName = `${firstName} ${lastName}`
+      return [
+        fullName,
+        credit.borrower.bankAccountNumber,
+        credit.borrower.rfc,
+        credit.loan,
+      ]
+    })
+    const rows = [["Nombre", "CLABE", "RFC", "Monto"], ...mappedCsv]
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n")
+
+    const encodedUri = encodeURI(csvContent)
+    window.open(encodedUri)
+  }
+
   return (
     <>
-      {/* pending request */}
       <ListContainer>
         <ListHeader>
           <ListHeader.Title text="Dispersiones" />
           <ListHeader.Actions>
+            <Button size="sm" onClick={handleExport}>
+              Exportar
+              <DocumentArrowDownIcon className="w-4 h-4 ml-2" />
+            </Button>
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>

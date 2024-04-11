@@ -7,7 +7,14 @@ import SmallDot from "components/atoms/small-dot"
 import { Credit } from "src/schema.types"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 
-const ListItem = ({ credit }: { credit: Credit }) => {
+const ListItem = ({
+  credit,
+}: {
+  credit: Pick<
+    Credit,
+    "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+  >
+}) => {
   const navigate = useNavigate()
   const companyDomain = credit.borrower.email.split("@")[1]
 
