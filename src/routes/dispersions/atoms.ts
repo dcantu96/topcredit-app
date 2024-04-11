@@ -32,7 +32,7 @@ export const dispersionsSelectorQuery = selector<
     const { data }: { data: DispersionsResponse[] } = await api.get("credit", {
       params: {
         fields: {
-          credits: "id,status,updatedAt,createdAt,loan",
+          credits: "id,status,updatedAt,createdAt,loan,borrower,term",
         },
         include: "borrower,term",
         filter: {
