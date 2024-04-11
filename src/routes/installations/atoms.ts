@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from "recoil"
+import { atomFamily, selector, selectorFamily } from "recoil"
 
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
@@ -7,7 +7,13 @@ import type { Credit } from "src/schema.types"
 
 type InstalledCreditResponse = Pick<
   Credit,
-  "id" | "status" | "updatedAt" | "createdAt" | "loan"
+  | "id"
+  | "status"
+  | "updatedAt"
+  | "createdAt"
+  | "loan"
+  | "dispersedAt"
+  | "installationStatus"
 > & {
   borrower: {
     data: Credit["borrower"]
@@ -19,7 +25,15 @@ type InstalledCreditResponse = Pick<
 
 export type InstalledCredit = Pick<
   Credit,
-  "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+  | "id"
+  | "status"
+  | "updatedAt"
+  | "createdAt"
+  | "loan"
+  | "term"
+  | "borrower"
+  | "dispersedAt"
+  | "installationStatus"
 >
 
 export const installationsSelectorQuery = selector<
@@ -33,7 +47,8 @@ export const installationsSelectorQuery = selector<
       {
         params: {
           fields: {
-            credits: "id,status,updatedAt,createdAt,loan,borrower,term",
+            credits:
+              "id,status,updatedAt,createdAt,loan,borrower,term,dispersedAt,installationStatus",
           },
           include: "borrower,term",
           filter: {
@@ -55,24 +70,43 @@ export const installationsSelectorQuery = selector<
   },
 })
 
-export const installationsSortedSelector = selector<InstalledCredit[]>({
+type InstallationStatus = "installed" | null
+
+export const installationsSortedSelector = selectorFamily<
+  InstalledCredit[],
+  InstallationStatus
+>({
   key: "installationsSortedSelector",
-  get: ({ get }) => {
-    const installations = get(installationsSelectorQuery)
-    const sortOrder = get(listSortOrderState("pending-authorizations")) ?? "asc"
-    return Array.from(installations.values()).toSorted((a, b) => {
-      if (sortOrder === "asc") {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      }
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    })
-  },
-  set: ({ set }, newValue) => {
-    set(installationsState, newValue)
-  },
+  get:
+    (status) =>
+    ({ get }) => {
+      const installations = get(installationsSelectorQuery)
+      const sortOrder =
+        get(listSortOrderState("pending-authorizations")) ?? "asc"
+      return Array.from(installations.values())
+        .filter((i) => i.installationStatus === status)
+        .toSorted((a, b) => {
+          if (sortOrder === "asc") {
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            )
+          }
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+        })
+    },
+  set:
+    (status) =>
+    ({ set }, newValue) => {
+      set(installationsState(status), newValue)
+    },
 })
 
-export const installationsState = atom<InstalledCredit[]>({
+export const installationsState = atomFamily<
+  InstalledCredit[],
+  InstallationStatus
+>({
   key: "installationsState",
   default: installationsSortedSelector,
 })

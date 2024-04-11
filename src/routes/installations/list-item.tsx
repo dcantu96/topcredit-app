@@ -42,13 +42,15 @@ const ListItem = ({ credit }: { credit: InstalledCredit }) => {
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                CLABE
+                Fecha de dispersión
               </span>
             </a>
           </h2>
         </div>
         <span className="whitespace-nowrap">
-          {credit.borrower.bankAccountNumber}
+          {credit.dispersedAt
+            ? new Date(credit.dispersedAt).toLocaleDateString()
+            : "-"}
         </span>
       </div>
       <div className="min-w-32">

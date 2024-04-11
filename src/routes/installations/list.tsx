@@ -9,7 +9,11 @@ import { installationsState } from "./atoms"
 import ListItem from "./list-item"
 import { Route, Routes, Navigate } from "react-router-dom"
 import ButtonLink from "components/atoms/button-link"
-import { ArrowRightIcon } from "@heroicons/react/16/solid"
+import {
+  ArrowRightIcon,
+  DocumentArrowDownIcon,
+} from "@heroicons/react/16/solid"
+import Button from "components/atoms/button"
 
 const Screen = () => {
   return (
@@ -22,13 +26,43 @@ const Screen = () => {
 }
 
 const IncomingCredits = () => {
-  const credits = useRecoilValue(installationsState)
+  const credits = useRecoilValue(installationsState(null))
+
+  const handleExport = () => {
+    const mappedCsv = credits.map((credit) => {
+      const firstName = credit.borrower.firstName
+      const lastName = credit.borrower.lastName
+      const fullName = `${firstName} ${lastName}`
+      return [
+        fullName,
+        credit.borrower.employeeNumber,
+        credit.borrower.rfc,
+        credit.loan,
+        credit.dispersedAt,
+      ]
+    })
+    const rows = [
+      ["Nombre", "Nómina", "RFC", "Monto", "Fecha de Dispersión"],
+      ...mappedCsv,
+    ]
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n")
+
+    const encodedUri = encodeURI(csvContent)
+    window.open(encodedUri)
+  }
+
   return (
     <>
       <ListContainer>
         <ListHeader>
           <ListHeader.Title text="Instalaciones (Altas)" />
           <ListHeader.Actions>
+            <Button size="sm" disabled={!credits.length} onClick={handleExport}>
+              Exportar
+              <DocumentArrowDownIcon className="w-4 h-4 ml-2" />
+            </Button>
             <ButtonLink size="sm" status="secondary" to="../active">
               Ir a Bajas
               <ArrowRightIcon className="h-4 w-4 ml-1" />
@@ -57,13 +91,43 @@ const IncomingCredits = () => {
 }
 
 const ActiveCredits = () => {
-  const credits = useRecoilValue(installationsState)
+  const credits = useRecoilValue(installationsState("installed"))
+
+  const handleExport = () => {
+    const mappedCsv = credits.map((credit) => {
+      const firstName = credit.borrower.firstName
+      const lastName = credit.borrower.lastName
+      const fullName = `${firstName} ${lastName}`
+      return [
+        fullName,
+        credit.borrower.employeeNumber,
+        credit.borrower.rfc,
+        credit.loan,
+        credit.dispersedAt,
+      ]
+    })
+    const rows = [
+      ["Nombre", "Nómina", "RFC", "Monto", "Fecha de Dispersión"],
+      ...mappedCsv,
+    ]
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n")
+
+    const encodedUri = encodeURI(csvContent)
+    window.open(encodedUri)
+  }
+
   return (
     <>
       <ListContainer>
         <ListHeader>
           <ListHeader.Title text="Instalaciones (Bajas)" />
           <ListHeader.Actions>
+            <Button size="sm" disabled={!credits.length} onClick={handleExport}>
+              Exportar
+              <DocumentArrowDownIcon className="w-4 h-4 ml-2" />
+            </Button>
             <ButtonLink size="sm" status="secondary" to="../incoming">
               Ir a Altas
               <ArrowRightIcon className="h-4 w-4 ml-1" />

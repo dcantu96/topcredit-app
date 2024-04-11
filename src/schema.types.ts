@@ -134,7 +134,9 @@ export interface User extends ObjectWithId, Timestamps {
 export interface Credit extends ObjectWithId, Timestamps {
   loan: number | null
   status: CreditStatus
+  installationStatus: "installed" | null
   borrower: User
+  dispersedAt: string | null
   term: Term | null
   payrollReceiptUrl: string | null
   payrollReceiptFilename: string | null
