@@ -140,16 +140,22 @@ export interface Credit extends ObjectWithId, Timestamps {
   payrollReceiptContentType: string | null
   payrollReceiptSize: string | null
   payrollReceiptUploadedAt: string | null
+  payrollReceiptStatus: DocumentStatus
+  payrollReceiptRejectionReason: string | null
   contractUrl: string | null
   contractFilename: string | null
   contractContentType: string | null
   contractSize: string | null
   contractUploadedAt: string | null
+  contractStatus: DocumentStatus
+  contractRejectionReason: string | null
   authorizationUrl: string | null
   authorizationFilename: string | null
   authorizationContentType: string | null
   authorizationSize: string | null
   authorizationUploadedAt: string | null
+  authorizationStatus: DocumentStatus
+  authorizationRejectionReason: string | null
   reason: string | null
 }
 

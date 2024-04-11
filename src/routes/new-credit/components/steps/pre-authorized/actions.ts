@@ -27,6 +27,12 @@ export const useSubmitCredit = () => {
             contract,
             payrollReceipt,
             status: "pending",
+            contractStatus: "pending",
+            contractRejectionReason: null,
+            authorizationStatus: "pending",
+            authorizationRejectionReason: null,
+            payrollReceiptStatus: "pending",
+            payrollReceiptRejectionReason: null,
           })
           refresh(userLatestCreditSelectorQuery)
           refresh(readonlyCreditPayrollReceiptSelector)

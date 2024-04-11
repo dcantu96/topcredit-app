@@ -58,7 +58,7 @@ const Step = () => {
       ) : credit?.status === "invalid-documentation" ? (
         <div className="mt-2 rounded-md border-2 border-dashed border-rose-600 p-2 inline-flex">
           <InformationCircleIcon className="h-6 w-6 text-rose-600 mr-2" />
-          Hay un problema con tus documentos, {credit.reason}
+          Hay un problema con tus documentos
         </div>
       ) : credit?.status === "authorized" ? (
         <div className="mt-2 rounded-md border-2 border-dashed border-green-600 p-2 inline-flex">
@@ -73,6 +73,7 @@ const Step = () => {
             id="payment-receipt"
             label="Recibo de Nómina"
             initialFile={payrollReceipt}
+            error={credit?.payrollReceiptRejectionReason ?? undefined}
             onRemove={() => setPayrollReceipt(null)}
             disableRemove={isWaiting}
             handleFileUpload={({ signedId }) => {
@@ -86,6 +87,7 @@ const Step = () => {
             id="contract"
             label="Contrato"
             initialFile={contract}
+            error={credit?.contractRejectionReason ?? undefined}
             onRemove={() => setContract(null)}
             disableRemove={isWaiting}
             handleFileUpload={({ signedId }) => {
@@ -107,6 +109,7 @@ const Step = () => {
             id="authorization-letter"
             label="Carta de Autorización"
             initialFile={authorization}
+            error={credit?.authorizationRejectionReason ?? undefined}
             disableRemove={isWaiting}
             onRemove={() => setAuthorization(null)}
             handleFileUpload={({ signedId }) => {

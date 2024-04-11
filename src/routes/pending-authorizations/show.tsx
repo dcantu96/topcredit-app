@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { CheckIcon, DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid"
@@ -9,24 +8,44 @@ import useCreditActions from "hooks/useCreditActions"
 import useCompanies from "hooks/useCompanies"
 import useCreditAmortization from "hooks/useCreditAmortization"
 
-import { creditSelector } from "./atoms"
+import {
+  authorizationRejectionReasonCreditState,
+  authorizationStatusCreditState,
+  contractRejectionReasonCreditState,
+  contractStatusCreditState,
+  creditSelector,
+  payrollReceiptRejectionReasonCreditState,
+  payrollReceiptStatusCreditState,
+} from "./atoms"
 import { usePendingAuthorizationsActions } from "./actions"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import Input from "components/atoms/input"
+import Tooltip from "components/atoms/tooltip"
 
 const ShowScreen = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const credit = useRecoilValue(creditSelector(id))
+  const contractStatus = useRecoilValue(contractStatusCreditState(id))
+  const contractRejectionReason = useRecoilValue(
+    contractRejectionReasonCreditState(id),
+  )
+  const payrollReceiptStatus = useRecoilValue(
+    payrollReceiptStatusCreditState(id),
+  )
+  const payrollReceiptRejectionReason = useRecoilValue(
+    payrollReceiptRejectionReasonCreditState(id),
+  )
+  const authorizationStatus = useRecoilValue(authorizationStatusCreditState(id))
+  const authorizationRejectionReason = useRecoilValue(
+    authorizationRejectionReasonCreditState(id),
+  )
+
   if (!credit) throw new Error("Credit not found")
   const { removeCredit } = usePendingAuthorizationsActions()
-  const { updateCreditStatus } = useCreditActions()
+  const { updateCreditStatus, approveDocument, denyDocument } =
+    useCreditActions()
   const companiesMap = useCompanies()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [reason, setReason] = useState("")
-
-  const openModal = () => setIsModalOpen(true)
 
   const companyDomain = credit?.borrower.email.split("@")[1]
   const company = companyDomain ? companiesMap.get(companyDomain) : undefined
@@ -56,11 +75,21 @@ const ShowScreen = () => {
     navigate("..")
   }
 
-  const handleInvalidDocumentation = async (reason: string) => {
-    await updateCreditStatus(credit.id, "invalid-documentation", reason)
+  const handleInvalidDocumentation = async () => {
+    await updateCreditStatus(credit.id, "invalid-documentation")
     await removeCredit(credit.id)
     navigate("..")
   }
+
+  const isApprovedDisabled =
+    contractStatus !== "approved" ||
+    authorizationStatus !== "approved" ||
+    payrollReceiptStatus !== "approved"
+
+  const isDocumentInvalidDisabled =
+    contractStatus !== "rejected" ||
+    authorizationStatus !== "rejected" ||
+    payrollReceiptStatus !== "rejected"
 
   return (
     <div className="flex flex-col container lg:w-2/3 mx-auto px-4 py-4">
@@ -115,7 +144,7 @@ const ShowScreen = () => {
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="flex gap-2">
-            <Button onClick={handleApproveCredit}>
+            <Button onClick={handleApproveCredit} disabled={isApprovedDisabled}>
               <CheckIcon className="h-5 w-5 text-white mr-1.5" />
               Aprobar
             </Button>
@@ -123,7 +152,11 @@ const ShowScreen = () => {
               <XMarkIcon className="h-5 w-5 mr-1.5" />
               Rechazar
             </Button>
-            <Button status="secondary" onClick={openModal}>
+            <Button
+              status="secondary"
+              disabled={isDocumentInvalidDisabled}
+              onClick={handleInvalidDocumentation}
+            >
               <DocumentIcon className="h-5 w-5 mr-1.5" />
               Doc. Inválida
             </Button>
@@ -131,28 +164,6 @@ const ShowScreen = () => {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
-        {isModalOpen && (
-          <div className="col-span-2">
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <Input
-                id="rejection-reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                label="Motivo"
-                placeholder="Escribe el motivo por el cual se rechaza la solicitud"
-              />
-              <div className="flex gap-4">
-                <Button
-                  status="secondary"
-                  onClick={() => handleInvalidDocumentation(reason)}
-                >
-                  Enviar
-                </Button>
-                <Button onClick={() => setIsModalOpen(false)}>Cerrar</Button>
-              </div>
-            </div>
-          </div>
-        )}
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">
             Numero de Nomina
@@ -232,7 +243,18 @@ const ShowScreen = () => {
             fileDate={credit.payrollReceiptUploadedAt ?? undefined}
             fileSize={credit.payrollReceiptSize ?? undefined}
             contentType={credit.payrollReceiptContentType ?? undefined}
-          />
+          >
+            <Tooltip
+              content={payrollReceiptRejectionReason}
+              cond={payrollReceiptStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={payrollReceiptStatus}
+                onApprove={approveDocument(id, "payrollReceipt")}
+                onDeny={denyDocument(id, "payrollReceipt")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
 
         <div className="col-span-1">
@@ -243,7 +265,18 @@ const ShowScreen = () => {
             fileDate={credit.contractUploadedAt ?? undefined}
             fileSize={credit.contractSize ?? undefined}
             contentType={credit.contractContentType ?? undefined}
-          />
+          >
+            <Tooltip
+              content={contractRejectionReason}
+              cond={contractStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={contractStatus}
+                onApprove={approveDocument(id, "contract")}
+                onDeny={denyDocument(id, "contract")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
 
         <div className="col-span-1">
@@ -254,7 +287,18 @@ const ShowScreen = () => {
             fileDate={credit.authorizationUploadedAt ?? undefined}
             fileSize={credit.authorizationSize ?? undefined}
             contentType={credit.authorizationContentType ?? undefined}
-          />
+          >
+            <Tooltip
+              content={authorizationRejectionReason}
+              cond={authorizationStatus === "rejected"}
+            >
+              <FileViewer.StatusButtons
+                status={authorizationStatus}
+                onApprove={approveDocument(id, "authorization")}
+                onDeny={denyDocument(id, "authorization")}
+              />
+            </Tooltip>
+          </FileViewer>
         </div>
       </div>
     </div>

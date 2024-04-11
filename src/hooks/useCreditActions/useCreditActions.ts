@@ -3,6 +3,14 @@ import { useRecoilCallback } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { CreditStatus } from "src/schema.types"
 import useToast from "components/providers/toaster/useToast"
+import {
+  authorizationRejectionReasonCreditState,
+  authorizationStatusCreditState,
+  contractRejectionReasonCreditState,
+  contractStatusCreditState,
+  payrollReceiptRejectionReasonCreditState,
+  payrollReceiptStatusCreditState,
+} from "../../routes/pending-authorizations/atoms"
 
 export interface CreateCreditProps {
   userId: string
@@ -30,6 +38,8 @@ const ERROR_MESSAGES = new Map([
   ["denied", "Ocurrió un error al denegar el usuario"],
   ["dispersed", "Ocurrió un error al dispersar el crédito"],
 ])
+
+type CreditDocumentKind = "authorization" | "contract" | "payrollReceipt"
 
 const useCreditActions = () => {
   const toast = useToast()
@@ -65,8 +75,36 @@ const useCreditActions = () => {
     ({ snapshot }) =>
       async (creditId: string, status: CreditStatus, reason?: string) => {
         const api = await snapshot.getPromise(apiSelector)
+        const authorizationStatus = await snapshot.getPromise(
+          authorizationStatusCreditState(creditId),
+        )
+        const authorizationRejectionReason = await snapshot.getPromise(
+          authorizationRejectionReasonCreditState(creditId),
+        )
+        const contractStatus = await snapshot.getPromise(
+          contractStatusCreditState(creditId),
+        )
+        const contractRejectionReason = await snapshot.getPromise(
+          contractRejectionReasonCreditState(creditId),
+        )
+        const payrollReceiptStatus = await snapshot.getPromise(
+          payrollReceiptStatusCreditState(creditId),
+        )
+        const payrollReceiptRejectionReason = await snapshot.getPromise(
+          payrollReceiptRejectionReasonCreditState(creditId),
+        )
         try {
-          await api.update(`credits`, { id: creditId, status, reason })
+          await api.update(`credits`, {
+            id: creditId,
+            status,
+            reason,
+            authorizationStatus,
+            authorizationRejectionReason,
+            contractStatus,
+            contractRejectionReason,
+            payrollReceiptStatus,
+            payrollReceiptRejectionReason,
+          })
           const message = SUCCESS_MESSAGES.get(status)
           const defaultMessage = "Usuario actualizado"
           toast.success({
@@ -83,7 +121,46 @@ const useCreditActions = () => {
         }
       },
   )
-  return { createCredit, updateCreditStatus }
+
+  const approveDocument = useRecoilCallback(
+    ({ set }) =>
+      (creditId: string, documentKind: CreditDocumentKind) =>
+      () => {
+        if (documentKind === "authorization") {
+          set(authorizationStatusCreditState(creditId), "approved")
+        } else if (documentKind === "contract") {
+          set(contractStatusCreditState(creditId), "approved")
+        } else {
+          set(payrollReceiptStatusCreditState(creditId), "approved")
+        }
+      },
+  )
+
+  const denyDocument = useRecoilCallback(
+    ({ set }) =>
+      (creditId: string, documentKind: CreditDocumentKind) =>
+      (reason: string) => {
+        if (documentKind === "authorization") {
+          set(authorizationStatusCreditState(creditId), "approved")
+        } else if (documentKind === "contract") {
+          set(contractStatusCreditState(creditId), "approved")
+        } else {
+          set(payrollReceiptStatusCreditState(creditId), "approved")
+        }
+        if (documentKind === "authorization") {
+          set(authorizationStatusCreditState(creditId), "rejected")
+          set(authorizationRejectionReasonCreditState(creditId), reason)
+        } else if (documentKind === "contract") {
+          set(contractStatusCreditState(creditId), "rejected")
+          set(contractRejectionReasonCreditState(creditId), reason)
+        } else {
+          set(payrollReceiptStatusCreditState(creditId), "rejected")
+          set(payrollReceiptRejectionReasonCreditState(creditId), reason)
+        }
+      },
+  )
+
+  return { createCredit, updateCreditStatus, approveDocument, denyDocument }
 }
 
 export default useCreditActions
