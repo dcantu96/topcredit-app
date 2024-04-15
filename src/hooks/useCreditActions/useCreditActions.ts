@@ -130,10 +130,13 @@ const useCreditActions = () => {
       () => {
         if (documentKind === "authorization") {
           set(authorizationStatusCreditState(creditId), "approved")
+          set(authorizationRejectionReasonCreditState(creditId), null)
         } else if (documentKind === "contract") {
           set(contractStatusCreditState(creditId), "approved")
+          set(contractRejectionReasonCreditState(creditId), null)
         } else {
           set(payrollReceiptStatusCreditState(creditId), "approved")
+          set(payrollReceiptRejectionReasonCreditState(creditId), null)
         }
       },
   )

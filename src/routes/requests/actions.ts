@@ -127,12 +127,16 @@ export const useRequestActions = (id: number) => {
     () => {
       if (documentKind === "identityDocument") {
         setIdentityDocumentStatus("approved")
+        setIdentityDocumentRejectionReason(null)
       } else if (documentKind === "proofOfAddress") {
         setProofOfAddressStatus("approved")
+        setProofOfAddressRejectionReason(null)
       } else if (documentKind === "payrollReceipt") {
         setPayrollReceiptStatus("approved")
+        setPayrollReceiptRejectionReason(null)
       } else if (documentKind === "bankStatement") {
         setBankStatementStatus("approved")
+        setBankStatementRejectionReason(null)
       }
     }
 
