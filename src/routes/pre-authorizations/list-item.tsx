@@ -3,7 +3,11 @@ import { useRecoilValue } from "recoil"
 
 import useCreditActions from "hooks/useCreditActions"
 import useUserActions from "hooks/useUserActions"
-import { calculateAmortization } from "hooks/useCreditAmortization/utils"
+import {
+  calculateAmortization,
+  calculateMaxLoanAmount,
+  calculateTotalPaymentsInMonths,
+} from "hooks/useCreditAmortization/utils"
 import { companiesDataSelector } from "../companies/loader"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 
@@ -37,12 +41,6 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
   const company = companies?.[0]
   const termOfferings = company?.termOfferings
 
-  console.log({ company })
-  const borrowerMaxCapacity =
-    user.salary && company?.borrowingCapacity
-      ? user.salary * company.borrowingCapacity
-      : undefined
-
   const termOptions = useMemo(
     () =>
       termOfferings?.map((termOffering) => ({
@@ -51,33 +49,59 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
       })),
     [termOfferings],
   )
+
   const termOffering = company?.termOfferings?.find(
     (termOffering) => termOffering.id === termOfferingId,
   )
   const term = termOffering?.term
+  const termDuration = term?.duration
+  const termDurationType = term?.durationType
+
+  const totalPayments = useMemo(() => {
+    if (!termDuration || !termDurationType) return undefined
+    return calculateTotalPaymentsInMonths({
+      duration: termDuration,
+      durationType: termDurationType,
+    })
+  }, [termDuration, termDurationType])
 
   const amortization = useMemo(() => {
-    if (!term) return undefined
     if (!loanAmount || !company?.rate) return undefined
-
+    if (!totalPayments) return undefined
     return calculateAmortization({
-      duration: term.duration,
-      durationType: term.durationType,
+      totalPayments,
       loanAmount,
       rate: company?.rate,
     })
-  }, [term, loanAmount, company?.rate])
+  }, [loanAmount, company?.rate, totalPayments])
+
+  const borrowerMaxCapacity =
+    user.salary && company?.borrowingCapacity
+      ? user.salary * company.borrowingCapacity
+      : undefined
+
+  const maxLoanAmount = useMemo(() => {
+    if (borrowerMaxCapacity && totalPayments && company?.rate) {
+      return calculateMaxLoanAmount({
+        borrowerMaxCapacity,
+        totalPayments,
+        annualRate: company.rate,
+      })
+    }
+    return undefined
+  }, [totalPayments, borrowerMaxCapacity, company?.rate])
 
   const loanAmountErrorMsg = useMemo(() => {
     if (
       borrowerMaxCapacity &&
       amortization &&
+      maxLoanAmount &&
       borrowerMaxCapacity < amortization
     ) {
-      return `El monto es mayor a ${MXNFormat.format(borrowerMaxCapacity)}`
+      return `Monto no puede ser mayor a ${MXNFormat.format(maxLoanAmount)}`
     }
     return undefined
-  }, [borrowerMaxCapacity, amortization])
+  }, [borrowerMaxCapacity, amortization, maxLoanAmount])
 
   const formattedBorrowingCapacity = company?.borrowingCapacity
     ? `${company.borrowingCapacity * 100} %`
