@@ -143,13 +143,6 @@ const useCreditActions = () => {
       (creditId: string, documentKind: CreditDocumentKind) =>
       (reason: string) => {
         if (documentKind === "authorization") {
-          set(authorizationStatusCreditState(creditId), "approved")
-        } else if (documentKind === "contract") {
-          set(contractStatusCreditState(creditId), "approved")
-        } else {
-          set(payrollReceiptStatusCreditState(creditId), "approved")
-        }
-        if (documentKind === "authorization") {
           set(authorizationStatusCreditState(creditId), "rejected")
           set(authorizationRejectionReasonCreditState(creditId), reason)
         } else if (documentKind === "contract") {

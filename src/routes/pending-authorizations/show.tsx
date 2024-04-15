@@ -81,15 +81,24 @@ const ShowScreen = () => {
     navigate("..")
   }
 
-  const isApprovedDisabled =
+  const documentationPending =
+    contractStatus === "pending" ||
+    authorizationStatus === "pending" ||
+    payrollReceiptStatus === "pending"
+
+  const isAnyDocNotApproved =
     contractStatus !== "approved" ||
     authorizationStatus !== "approved" ||
     payrollReceiptStatus !== "approved"
 
-  const isDocumentInvalidDisabled =
-    contractStatus !== "rejected" ||
-    authorizationStatus !== "rejected" ||
-    payrollReceiptStatus !== "rejected"
+  const areAllDocsApproved =
+    contractStatus === "approved" &&
+    authorizationStatus === "approved" &&
+    payrollReceiptStatus === "approved"
+
+  const isApprovedDisabled = isAnyDocNotApproved
+
+  const isDocumentInvalidDisabled = documentationPending || areAllDocsApproved
 
   return (
     <div className="flex flex-col container lg:w-2/3 mx-auto px-4 py-4">
