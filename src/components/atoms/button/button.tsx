@@ -27,8 +27,8 @@ export type ButtonProps =
 
 const Button = forwardRef<
   HTMLButtonElement,
-  Omit<ComponentProps<"button">, "className"> & ButtonProps
->(({ children, fullWidth, status, size, variant, ...rest }, ref) => {
+  ComponentProps<"button"> & ButtonProps
+>(({ children, fullWidth, status, size, variant, className, ...rest }, ref) => {
   const statusClass =
     status === "dark"
       ? "btn-dark"
@@ -44,7 +44,7 @@ const Button = forwardRef<
   return (
     <button
       ref={ref}
-      className={`btn ${statusClass} ${sizeClass} ${fullWidth ? "w-full" : ""}`}
+      className={`btn ${statusClass} ${sizeClass} ${fullWidth ? "w-full" : ""} ${className}`}
       {...rest}
     >
       {children}
