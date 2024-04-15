@@ -11,12 +11,15 @@ import {
 import { companiesDataSelector } from "../companies/loader"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 
+import { isUserAdminSelector } from "components/providers/auth/atoms"
 import Button from "components/atoms/button"
 import List from "components/atoms/list"
 import SmallDot from "components/atoms/small-dot"
 import Input from "components/atoms/input"
+import Tooltip from "components/atoms/tooltip"
 
 import { usePreAuthorizationActions } from "./actions"
+
 import type { PreAuthorizationUsersResponse } from "./atoms"
 
 interface PreAuthorizationListItemProps {
@@ -24,6 +27,7 @@ interface PreAuthorizationListItemProps {
 }
 
 const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
+  const isAdmin = useRecoilValue(isUserAdminSelector)
   const { updateUserStatus } = useUserActions(user.id)
   const { removeUser } = usePreAuthorizationActions()
   const { createCredit } = useCreditActions()
@@ -184,13 +188,24 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
           />
         </div>
         <div className="flex items-center gap-4">
-          <Button
-            status="primary"
-            onClick={handlePreAuthorize}
-            disabled={!!loanAmountErrorMsg || !loanAmount || !termOfferingId}
+          <Tooltip
+            content="Administradores pueden autorizar"
+            cond={!!loanAmountErrorMsg && isAdmin}
           >
-            Pre-Autorizar
-          </Button>
+            <Button
+              status="primary"
+              className={
+                loanAmountErrorMsg && isAdmin ? "bg-red-500" : undefined
+              }
+              onClick={handlePreAuthorize}
+              disabled={
+                (!!loanAmountErrorMsg || !loanAmount || !termOfferingId) &&
+                !isAdmin
+              }
+            >
+              Pre-Autorizar
+            </Button>
+          </Tooltip>
           <Button onClick={handleDeny} status="secondary">
             Rechazar
           </Button>
