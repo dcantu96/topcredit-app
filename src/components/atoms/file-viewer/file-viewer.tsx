@@ -88,13 +88,27 @@ const StatusButtons = ({ status, onApprove, onDeny }: StatusButtonsProps) => {
           <>
             <Button
               size="sm"
+              status="secondary"
+              onClick={(e) => {
+                e.stopPropagation()
+                openModal()
+              }}
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </Button>
+            <Button
+              size="sm"
+              status="secondary"
               onClick={(e) => {
                 e.stopPropagation()
                 onApprove()
               }}
             >
-              <CheckIcon className="h-5 w-5 text-white" />
+              <CheckIcon className="h-5 w-5" />
             </Button>
+          </>
+        ) : status === "approved" ? (
+          <>
             <Button
               size="sm"
               status="secondary"
@@ -105,11 +119,26 @@ const StatusButtons = ({ status, onApprove, onDeny }: StatusButtonsProps) => {
             >
               <XMarkIcon className="h-5 w-5" />
             </Button>
+            <Button size="sm" status="dark">
+              <CheckIcon className="h-5 w-5 text-white" />
+            </Button>
           </>
-        ) : status === "approved" ? (
-          <CheckIcon className="h-5 w-5 text-green-600" />
         ) : status === "rejected" ? (
-          <XMarkIcon className="h-5 w-5 text-red-600" />
+          <>
+            <Button size="sm" status="dark">
+              <XMarkIcon className="h-5 w-5 text-white" />
+            </Button>
+            <Button
+              size="sm"
+              status="secondary"
+              onClick={(e) => {
+                e.stopPropagation()
+                onApprove()
+              }}
+            >
+              <CheckIcon className="h-5 w-5" />
+            </Button>
+          </>
         ) : (
           <span className="text-gray-500">Sin acción</span>
         )}
