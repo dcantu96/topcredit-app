@@ -2,29 +2,54 @@ import { Term } from "src/schema.types"
 
 interface CalculateAmortizationProps {
   loanAmount: number
+  totalPayments: number
+  rate: number
+}
+
+interface CalculateTotalPaymentsInMonthsProps {
   duration: number
   durationType: Term["durationType"]
-  rate: number
+}
+
+export function calculateTotalPaymentsInMonths({
+  duration,
+  durationType,
+}: CalculateTotalPaymentsInMonthsProps) {
+  switch (durationType) {
+    case "years":
+      return duration * 12
+    case "months":
+      return duration
+    default:
+      return duration / 2
+  }
+}
+
+export function calculateMaxLoanAmount({
+  borrowerMaxCapacity,
+  totalPayments,
+  annualRate,
+}: {
+  borrowerMaxCapacity: number
+  totalPayments: number
+  annualRate: number
+}) {
+  const monthlyRate = annualRate / 12 // Convert annual rate percentage to a monthly decimal
+
+  // Rearranging the amortization formula to solve for principal P
+  const maxLoanAmount =
+    borrowerMaxCapacity *
+    ((Math.pow(1 + monthlyRate, totalPayments) - 1) /
+      (monthlyRate * Math.pow(1 + monthlyRate, totalPayments)))
+
+  return maxLoanAmount
 }
 
 export function calculateAmortization({
   loanAmount,
-  duration,
-  durationType,
+  totalPayments,
   rate,
 }: CalculateAmortizationProps) {
-  // payments should be monthly always, we need to calculate the total payment times
-  const totalPayments =
-    durationType === "years"
-      ? duration * 12
-      : durationType === "months"
-        ? duration
-        : durationType === "two-weeks"
-          ? duration / 2
-          : undefined
-
-  if (!totalPayments) return undefined
-
   // Calculate total interest
   const monthlyInterestRate = rate / 12
 
