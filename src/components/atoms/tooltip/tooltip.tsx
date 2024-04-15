@@ -34,7 +34,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       </div>
 
       {/* The tooltip itself */}
-      {isVisible && (
+      {isVisible && cond && (
         <div
           ref={tooltipRef}
           className={`absolute bottom-full z-20 mb-2 px-3 py-1 border border-gray-300 text-sm text-gray-900 bg-white rounded-md shadow-md ${tooltipPositionClasses}`}
