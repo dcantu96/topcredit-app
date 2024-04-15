@@ -1,6 +1,7 @@
 import { useMemo } from "react"
-import { calculateAmortization } from "./utils"
-import { DurationType } from "src/schema.types"
+import { calculateAmortization, calculateTotalPaymentsInMonths } from "./utils"
+
+import type { DurationType } from "src/schema.types"
 
 interface CreditAmortizationProps {
   loan?: number
@@ -17,11 +18,13 @@ const useCreditAmortization = ({
 }: CreditAmortizationProps) => {
   const amortization = useMemo(() => {
     if (!loan || !duration || !durationType || !rate) return undefined
-
-    return calculateAmortization({
-      loanAmount: loan,
+    const totalPayments = calculateTotalPaymentsInMonths({
       duration,
       durationType,
+    })
+    return calculateAmortization({
+      loanAmount: loan,
+      totalPayments,
       rate,
     })
   }, [loan, duration, durationType, rate])
