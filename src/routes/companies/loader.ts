@@ -1,14 +1,52 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { atom, atomFamily, selector, selectorFamily } from "recoil"
-import { Company, Term } from "src/schema.types"
+import { Company, Term, TermOffering } from "src/schema.types"
 
-export interface CompanyWithTermsResponse extends Omit<Company, "terms"> {
-  terms?: {
-    data?: Term[]
+type CompanyWithTermOfferings = Pick<
+  Company,
+  | "id"
+  | "name"
+  | "updatedAt"
+  | "createdAt"
+  | "borrowingCapacity"
+  | "domain"
+  | "rate"
+  | "employeeSalaryFrequency"
+> & {
+  termOfferings: Pick<TermOffering, "term" | "id" | "createdAt" | "updatedAt">[]
+}
+
+type CompanyWithTerms = Pick<
+  Company,
+  | "id"
+  | "name"
+  | "updatedAt"
+  | "createdAt"
+  | "borrowingCapacity"
+  | "terms"
+  | "domain"
+  | "rate"
+  | "employeeSalaryFrequency"
+>
+export interface CompanyWithTermOfferingsResponse
+  extends Omit<CompanyWithTermOfferings, "termOfferings"> {
+  termOfferings?: {
+    data?: (TermOffering & {
+      term: {
+        data: Term
+      }
+    })[]
   }
 }
 
-export const companiesSelectorQuery = selector<Company[]>({
+export interface CompanyWithTermsResponse
+  extends Omit<CompanyWithTerms, "terms"> {
+  terms?: {
+    data: Term[]
+  }
+}
+
+export const companiesSelectorQuery = selector<CompanyWithTerms[]>({
   key: "companiesSelectorQuery",
   get: async ({ get }) => {
     const api = get(apiSelector)
@@ -22,10 +60,7 @@ export const companiesSelectorQuery = selector<Company[]>({
     )
     return data.map((company) => ({
       ...company,
-      terms:
-        company.terms?.data?.map((term) => ({
-          ...term,
-        })) ?? [],
+      terms: company.terms?.data ?? [],
     }))
   },
 })
@@ -35,25 +70,27 @@ export const companiesState = atom({
   default: companiesSelectorQuery,
 })
 
-export const companySelectorQuery = selectorFamily<Company, string>({
+export const companySelectorQuery = selectorFamily<
+  CompanyWithTermOfferings,
+  string
+>({
   key: "companySelectorQuery",
   get:
     (id) =>
     async ({ get }) => {
       const api = get(apiSelector)
-      const { data }: { data: CompanyWithTermsResponse } = await api.get(
-        `company/${id}`,
-        {
+      const { data }: { data: CompanyWithTermOfferingsResponse } =
+        await api.get(`company/${id}`, {
           params: {
-            include: "terms",
+            include: "termOfferings.term",
           },
-        },
-      )
+        })
       return {
         ...data,
-        terms:
-          data.terms?.data?.map((term) => ({
-            ...term,
+        termOfferings:
+          data.termOfferings?.data?.map((termOffering) => ({
+            ...termOffering,
+            term: termOffering.term.data,
           })) ?? [],
       }
     },
@@ -79,7 +116,7 @@ type CompanyDataParams = {
 }
 
 export const companiesDataSelector = selectorFamily<
-  Company[],
+  CompanyWithTermOfferings[],
   CompanyDataParams
 >({
   key: "companyDataSelector",
@@ -87,16 +124,14 @@ export const companiesDataSelector = selectorFamily<
     (params) =>
     async ({ get }) => {
       const api = get(apiSelector)
-      const { data }: { data: CompanyWithTermsResponse[] } = await api.get(
-        `companies`,
-        { params },
-      )
-      console.log(data)
+      const { data }: { data: CompanyWithTermOfferingsResponse[] } =
+        await api.get("companies", { params })
       return data.map((company) => ({
         ...company,
-        terms:
-          company.terms?.data?.map((term) => ({
-            ...term,
+        termOfferings:
+          company.termOfferings?.data?.map((termOffering) => ({
+            ...termOffering,
+            term: termOffering.term.data,
           })) ?? [],
       }))
     },

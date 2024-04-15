@@ -10,7 +10,9 @@ import { DURATION_TYPES } from "../../constants"
 const ShowCompany = () => {
   const { id } = useParams()
   if (!id) throw new Error("Missing id param")
-  const { name, domain, rate, terms } = useRecoilValue(companySelectorQuery(id))
+  const { name, domain, rate, termOfferings } = useRecoilValue(
+    companySelectorQuery(id),
+  )
 
   return (
     <>
@@ -166,9 +168,10 @@ const ShowCompany = () => {
       </div>
       <div>
         Plazos
-        {terms.map((term) => (
-          <Chip key={term.id}>
-            {term.duration} {DURATION_TYPES.get(term.durationType)}
+        {termOfferings?.map((termOffering) => (
+          <Chip key={termOffering.id}>
+            {termOffering.term.duration}{" "}
+            {DURATION_TYPES.get(termOffering.term.durationType)}
           </Chip>
         ))}
       </div>

@@ -25,8 +25,8 @@ const ShowScreen = () => {
   const userDomain = credit?.borrower.email.split("@")[1]
   const company = userDomain ? companiesMap.get(userDomain) : undefined
   const rate = company?.rate
-  const duration = credit?.term?.duration
-  const durationType = credit?.term?.durationType
+  const duration = credit?.termOffering?.term?.duration
+  const durationType = credit?.termOffering?.term?.durationType
   const loan = credit?.loan
 
   const amortization = useCreditAmortization({
@@ -134,7 +134,7 @@ const ShowScreen = () => {
               ? MXNFormat.format(credit.borrower.salary)
               : "--"}{" "}
             MXN{" "}
-            {credit?.term?.durationType === "two-weeks"
+            {credit?.termOffering?.term.durationType === "two-weeks"
               ? "Quincenales"
               : "Mensuales"}
           </p>
@@ -158,9 +158,9 @@ const ShowScreen = () => {
         </div>
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">Plazo</label>
-          {credit.term && (
+          {credit.termOffering?.term && (
             <p className="text-gray-900 font-medium">
-              {DURATION_TYPES.get(credit.term.durationType)}
+              {DURATION_TYPES.get(credit.termOffering.term.durationType)}
             </p>
           )}
         </div>

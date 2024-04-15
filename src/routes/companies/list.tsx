@@ -96,7 +96,7 @@ const CompaniesList = () => {
                   </h2>
                 </div>
                 <div className="mt-3 flex items-center gap-[0.625rem] text-xs leading-5 text-gray-400 flex-wrap">
-                  {company.terms.map((term) => (
+                  {company.terms?.map((term) => (
                     <Chip key={term.id}>
                       {term.duration} {DURATION_TYPES.get(term.durationType)}
                     </Chip>

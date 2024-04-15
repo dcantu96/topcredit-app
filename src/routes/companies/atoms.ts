@@ -13,7 +13,10 @@ export interface EditTerm extends NewTerm {
   id: string
 }
 export interface NewCompany
-  extends Omit<Company, "id" | "terms" | "createdAt" | "updatedAt"> {
+  extends Omit<
+    Company,
+    "id" | "terms" | "createdAt" | "updatedAt" | "credits" | "termOfferings"
+  > {
   terms?: NewTerm[]
 }
 

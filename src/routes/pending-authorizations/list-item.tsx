@@ -52,7 +52,7 @@ const ListItem = ({ credit }: { credit: Credit }) => {
           {credit.loan ? MXNFormat.format(credit.loan) : 0}
         </span>
       </div>
-      {credit.term && (
+      {credit.termOffering?.term && (
         <div className="min-w-32">
           <div className="flex items-center gap-x-3">
             <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
@@ -64,8 +64,8 @@ const ListItem = ({ credit }: { credit: Credit }) => {
             </h2>
           </div>
           <span className="whitespace-nowrap">
-            {credit.term.duration}{" "}
-            {DURATION_TYPES.get(credit.term.durationType)}
+            {credit.termOffering.term.duration}{" "}
+            {DURATION_TYPES.get(credit.termOffering.term.durationType)}
           </span>
         </div>
       )}

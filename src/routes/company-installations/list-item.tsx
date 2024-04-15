@@ -1,70 +1,42 @@
-import { useNavigate } from "react-router-dom"
-import { ChevronRightIcon } from "@heroicons/react/24/outline"
-
 import List from "components/atoms/list"
-import SmallDot from "components/atoms/small-dot"
+import { type CompanyCredits } from "./atoms"
+import { useNavigate } from "react-router-dom"
+import { ChevronRightIcon } from "@heroicons/react/16/solid"
 
-import { Credit } from "src/schema.types"
-import { DURATION_TYPES, MXNFormat } from "../../constants"
-
-const ListItem = ({
-  credit,
-}: {
-  credit: Pick<
-    Credit,
-    | "id"
-    | "status"
-    | "updatedAt"
-    | "createdAt"
-    | "loan"
-    | "termOffering"
-    | "borrower"
-  >
-}) => {
+const ListItem = ({ company }: { company: CompanyCredits }) => {
   const navigate = useNavigate()
-  const companyDomain = credit.borrower.email.split("@")[1]
-
   return (
     <List.Item>
       <div className="flex-1 min-w-56">
         <div className="flex items-center gap-x-3">
-          <div className="bg-gray-100 p-1 rounded-full flex-none shadow-sm">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                {credit.borrower.firstName} {credit.borrower.lastName}
+                {company.name}
               </span>
               <span className="text-gray-400">/</span>
-              <span className="whitespace-nowrap">{companyDomain}</span>
+              <span className="whitespace-nowrap">{company.domain}</span>
             </a>
           </h2>
         </div>
         <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
           <p className="whitespace-nowrap">
-            {new Date(credit.createdAt).toLocaleDateString()}
-          </p>
-          <SmallDot />
-          <p className="whitespace-nowrap">Monto</p>
-          <SmallDot />
-          <p className="whitespace-nowrap font-semibold">
-            {credit.loan ? MXNFormat.format(credit.loan) : 0}
+            {new Date(company.createdAt).toLocaleDateString()}
           </p>
         </div>
       </div>
-      <div className="min-w-48">
+      <div className="min-w-32">
         <div className="flex items-center gap-x-3">
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                CLABE
+                Altas pendientes
               </span>
             </a>
           </h2>
         </div>
         <span className="whitespace-nowrap">
-          {credit.borrower.bankAccountNumber}
+          {company.credits.length} Créditos
         </span>
       </div>
       <div className="min-w-32">
@@ -72,20 +44,17 @@ const ListItem = ({
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Plazo
+                Bajas pendientes
               </span>
             </a>
           </h2>
         </div>
-        {credit.termOffering && (
-          <span className="whitespace-nowrap">
-            {credit.termOffering.term.duration}{" "}
-            {DURATION_TYPES.get(credit.termOffering.term.durationType)}
-          </span>
-        )}
+        <span className="whitespace-nowrap">
+          {company.credits.length} Créditos
+        </span>
       </div>
       <button
-        onClick={() => navigate("/dashboard/dispersions/" + credit.id)}
+        onClick={() => navigate("/dashboard/installations/" + company.id)}
         className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
       >
         <ChevronRightIcon className="w-6 h-6 text-gray-400" />

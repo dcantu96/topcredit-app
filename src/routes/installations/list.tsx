@@ -5,7 +5,7 @@ import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 
-import { installationsState } from "./atoms"
+import { installationsState, selectedInstalledCreditIdsState } from "./atoms"
 import ListItem from "./list-item"
 import { Route, Routes, Navigate } from "react-router-dom"
 import ButtonLink from "components/atoms/button-link"
@@ -23,6 +23,19 @@ const Screen = () => {
       <Route path="*" element={<Navigate to="incoming" />} />
     </Routes>
   )
+}
+
+interface BulkActionsButtonProps {
+  installationStatus: "installed" | null
+}
+
+const BulkActionsButton = ({ installationStatus }: BulkActionsButtonProps) => {
+  const selectedCredits = useRecoilValue(
+    selectedInstalledCreditIdsState(installationStatus),
+  )
+
+  if (!selectedCredits.length) return null
+  return <Button size="sm">Instalar ({selectedCredits.length})</Button>
 }
 
 const IncomingCredits = () => {
@@ -59,6 +72,7 @@ const IncomingCredits = () => {
         <ListHeader>
           <ListHeader.Title text="Instalaciones (Altas)" />
           <ListHeader.Actions>
+            <BulkActionsButton installationStatus={null} />
             <Button size="sm" disabled={!credits.length} onClick={handleExport}>
               Exportar
               <DocumentArrowDownIcon className="w-4 h-4 ml-2" />

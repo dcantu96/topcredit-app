@@ -131,13 +131,19 @@ export interface User extends ObjectWithId, Timestamps {
   reason: string | null
 }
 
+export interface TermOffering extends ObjectWithId, Timestamps {
+  term: Term
+  company: Company
+  credits: Credit[] | null
+}
+
 export interface Credit extends ObjectWithId, Timestamps {
   loan: number | null
   status: CreditStatus
   installationStatus: "installed" | null
   borrower: User
   dispersedAt: string | null
-  term: Term | null
+  termOffering: TermOffering | null
   payrollReceiptUrl: string | null
   payrollReceiptFilename: string | null
   payrollReceiptContentType: string | null
@@ -174,5 +180,7 @@ export interface Company extends ObjectWithId, Timestamps {
   rate: number
   borrowingCapacity: number | null
   employeeSalaryFrequency: "biweekly" | "monthly"
-  terms: Term[]
+  terms: Term[] | null
+  termOfferings: TermOffering[] | null
+  credits: Credit[] | null
 }

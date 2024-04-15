@@ -28,7 +28,8 @@ import ShowDispersions from "../routes/dispersions/show"
 import Landing from "../routes/landing"
 import LatestCreditMonitor from "./latest-credit-monitor"
 import MyCredits from "../routes/my-credits/my-credits"
-import Installations from "../routes/installations/list"
+import CompanyInstallations from "../routes/company-installations/list"
+import CompanyInstallation from "../routes/company-installations/show"
 
 function App() {
   return (
@@ -97,7 +98,8 @@ function App() {
             path="installations"
             element={<ProtectedRoute allowedRoles={["installations"]} />}
           >
-            <Route index path="*" element={<Installations />} />
+            <Route index element={<CompanyInstallations />} />
+            <Route path=":companyId" element={<CompanyInstallation />} />
           </Route>
         </Route>
         <Route

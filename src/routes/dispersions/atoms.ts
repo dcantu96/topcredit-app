@@ -3,7 +3,7 @@ import { atom, selector, selectorFamily } from "recoil"
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
 
-import type { Credit } from "src/schema.types"
+import type { Credit, Term } from "src/schema.types"
 
 export type DispersionsResponse = Pick<
   Credit,
@@ -12,8 +12,12 @@ export type DispersionsResponse = Pick<
   borrower: {
     data: Credit["borrower"]
   }
-  term: {
-    data: Credit["term"]
+  termOffering: {
+    data: Credit["termOffering"] & {
+      term: {
+        data: Term
+      }
+    }
   }
 }
 
@@ -22,7 +26,13 @@ export const dispersionsSelectorQuery = selector<
     string,
     Pick<
       Credit,
-      "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+      | "id"
+      | "status"
+      | "updatedAt"
+      | "createdAt"
+      | "loan"
+      | "termOffering"
+      | "borrower"
     >
   >
 >({
@@ -32,9 +42,9 @@ export const dispersionsSelectorQuery = selector<
     const { data }: { data: DispersionsResponse[] } = await api.get("credit", {
       params: {
         fields: {
-          credits: "id,status,updatedAt,createdAt,loan,borrower,term",
+          credits: "id,status,updatedAt,createdAt,loan,borrower,termOffering",
         },
-        include: "borrower,term",
+        include: "borrower,termOffering.term",
         filter: {
           status: "authorized",
         },
@@ -50,7 +60,7 @@ export const dispersionsSelectorQuery = selector<
         | "updatedAt"
         | "createdAt"
         | "loan"
-        | "term"
+        | "termOffering"
         | "borrower"
       >
     >()
@@ -58,7 +68,10 @@ export const dispersionsSelectorQuery = selector<
       map.set(credit.id, {
         ...credit,
         borrower: credit.borrower.data,
-        term: credit.term.data,
+        termOffering: {
+          ...(credit.termOffering.data || {}),
+          term: credit.termOffering.data?.term.data,
+        },
       })
     }
     return map
@@ -68,7 +81,13 @@ export const dispersionsSelectorQuery = selector<
 export const dispersionsSortedSelector = selector<
   Pick<
     Credit,
-    "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+    | "id"
+    | "status"
+    | "updatedAt"
+    | "createdAt"
+    | "loan"
+    | "termOffering"
+    | "borrower"
   >[]
 >({
   key: "dispersionsSortedSelector",
@@ -90,7 +109,13 @@ export const dispersionsSortedSelector = selector<
 export const dispersionsState = atom<
   Pick<
     Credit,
-    "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+    | "id"
+    | "status"
+    | "updatedAt"
+    | "createdAt"
+    | "loan"
+    | "termOffering"
+    | "borrower"
   >[]
 >({
   key: "dispersionsState",
@@ -100,7 +125,13 @@ export const dispersionsState = atom<
 export const dispersionsSelector = selectorFamily<
   | Pick<
       Credit,
-      "id" | "status" | "updatedAt" | "createdAt" | "loan" | "term" | "borrower"
+      | "id"
+      | "status"
+      | "updatedAt"
+      | "createdAt"
+      | "loan"
+      | "termOffering"
+      | "borrower"
     >
   | undefined,
   string

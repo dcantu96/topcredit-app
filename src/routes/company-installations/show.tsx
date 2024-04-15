@@ -1,29 +1,33 @@
 import { useRecoilValue } from "recoil"
+import { useParams } from "react-router-dom"
 
 import NavLink from "components/atoms/nav-link"
-import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 
-import { preAuthorizationUsersState } from "./atoms"
-import PreAuthorizationListItem from "./list-item"
+import { companyCreditsDetailedSelector } from "./atoms"
+import CreditListItem from "./credit-list-item"
 
 const Screen = () => {
-  const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
+  const { companyId } = useParams()
+  const company = useRecoilValue(companyCreditsDetailedSelector(companyId))
+
+  if (!company) {
+    return null
+  }
+
   return (
     <>
-      {/* pending request */}
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text="Solicitudes Pre-Aprobadas" />
-          <ListHeader.Actions>
-            <ListSortOrderHandler listName="pre-authorizations" />
-          </ListHeader.Actions>
+          <ListHeader.Title text="Instalaciones" to={".."}>
+            / <ListHeader.Title text={company.name} />
+          </ListHeader.Title>
         </ListHeader>
         <List>
-          {preAuthorizationUsers.map((user) => (
-            <PreAuthorizationListItem key={user.id} user={user} />
+          {company.credits.map((credit) => (
+            <CreditListItem key={credit.id} credit={credit} />
           ))}
         </List>
       </ListContainer>

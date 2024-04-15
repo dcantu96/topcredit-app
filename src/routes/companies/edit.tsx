@@ -170,24 +170,26 @@ const EditCompany = () => {
         <div className="col-span-2 md:col-span-1">
           <Label>Plazos Activos</Label>
           <div className="flex gap-2 mt-2 flex-wrap mb-8">
-            {companyData.terms.map((term) =>
-              term.durationType !== companyDurationType ? (
+            {companyData.termOfferings?.map((termOfferings) =>
+              termOfferings.term.durationType !== companyDurationType ? (
                 <Tooltip
-                  key={term.id}
+                  key={termOfferings.id}
                   content={
                     <InvalidDuration
                       companyDuration={companyDurationType}
-                      type={term.durationType}
+                      type={termOfferings.term.durationType}
                     />
                   }
                 >
                   <Chip status="error">
-                    {term.duration} {DURATION_TYPES.get(term.durationType)}
+                    {termOfferings.term.duration}{" "}
+                    {DURATION_TYPES.get(termOfferings.term.durationType)}
                   </Chip>
                 </Tooltip>
               ) : (
-                <Chip key={term.id}>
-                  {term.duration} {DURATION_TYPES.get(term.durationType)}
+                <Chip key={termOfferings.id}>
+                  {termOfferings.term.duration}{" "}
+                  {DURATION_TYPES.get(termOfferings.term.durationType)}
                 </Chip>
               ),
             )}

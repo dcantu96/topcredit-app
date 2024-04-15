@@ -25,8 +25,9 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
   const termOptions = Array.from(termsMap.values())
     .filter(
       ({ id, durationType }) =>
-        !companyData.terms.some((term) => term.id === id) &&
-        companyDurationType === durationType,
+        !companyData.termOfferings?.some(
+          (termOffering) => termOffering.term.id === id,
+        ) && companyDurationType === durationType,
     )
     .map(({ duration, durationType, id }) => ({
       label: `${duration} ${DURATION_TYPES.get(durationType)}`,

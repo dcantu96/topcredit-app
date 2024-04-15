@@ -3,17 +3,21 @@ import { atom, atomFamily, selector, selectorFamily } from "recoil"
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
 
-import type { Credit, DocumentStatus } from "src/schema.types"
+import type { Credit, DocumentStatus, Term } from "src/schema.types"
 
 export type PendingAuthorizationsResponse = Omit<
   Credit,
-  "borrower" | "term"
+  "borrower" | "termOffering"
 > & {
   borrower: {
     data: Credit["borrower"]
   }
-  term: {
-    data: Credit["term"]
+  termOffering: {
+    data: Credit["termOffering"] & {
+      term: {
+        data: Term
+      }
+    }
   }
 }
 
@@ -27,9 +31,10 @@ export const pendingAuthorizationsSelectorQuery = selector<Map<string, Credit>>(
         {
           params: {
             fields: {
-              credits: "id,status,borrower,updatedAt,createdAt,loan,term",
+              credits:
+                "id,status,borrower,updatedAt,createdAt,loan,termOffering",
             },
-            include: "borrower,term",
+            include: "borrower,termOffering.term",
             filter: {
               status: "pending",
             },
@@ -42,7 +47,10 @@ export const pendingAuthorizationsSelectorQuery = selector<Map<string, Credit>>(
         map.set(credit.id, {
           ...credit,
           borrower: credit.borrower.data,
-          term: credit.term?.data,
+          termOffering: {
+            ...credit.termOffering.data,
+            term: credit.termOffering.data.term.data,
+          },
         })
       }
       return map
@@ -82,7 +90,7 @@ export const creditSelector = selectorFamily<Credit | undefined, string>({
         "credits/" + creditId,
         {
           params: {
-            include: "borrower,term",
+            include: "borrower,termOffering.term",
           },
         },
       )
@@ -90,7 +98,10 @@ export const creditSelector = selectorFamily<Credit | undefined, string>({
       return {
         ...data,
         borrower: data.borrower.data,
-        term: data.term.data,
+        termOffering: {
+          ...data.termOffering.data,
+          term: data.termOffering.data.term.data,
+        },
       }
     },
 })

@@ -18,8 +18,8 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
   const companyData = useRecoilValue(companyState(companyId))
   const companyDurationType =
     companyData.employeeSalaryFrequency === "biweekly" ? "two-weeks" : "months"
-  const invalidTerms = companyData.terms.filter(
-    (term) => term.durationType !== companyDurationType,
+  const invalidTerms = companyData.termOfferings?.filter(
+    (termOffering) => termOffering.term.durationType !== companyDurationType,
   )
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const { assignTermToCompany, createTerm } = useTermActions()
@@ -47,7 +47,7 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
   return (
     <>
       <Tooltip
-        cond={invalidTerms.length > 0}
+        cond={!!invalidTerms?.length}
         content="No es posible crear plazos nuevos en este momento dado que existen plazos inválidos activos."
       >
         <Input
@@ -55,7 +55,7 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
           label="Crear un nuevo plazo"
           type="number"
           error={errors.durationType || errors.duration}
-          disabled={invalidTerms.length > 0}
+          disabled={!!invalidTerms?.length}
           value={duration.toString()}
           placeholder="10"
           onChange={({ target }) => setDuration(Number(target.value))}
@@ -72,7 +72,7 @@ export const NewTermForm = ({ companyId }: NewTermFormProps) => {
       <Button
         type="button"
         onClick={handleSubmit}
-        disabled={!duration || !companyDurationType || invalidTerms.length > 0}
+        disabled={!duration || !companyDurationType || !!invalidTerms?.length}
       >
         Agregar
       </Button>

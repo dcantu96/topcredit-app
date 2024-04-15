@@ -15,7 +15,7 @@ import {
 export interface CreateCreditProps {
   userId: string
   loan: number
-  termId: string
+  termOfferingId: string
 }
 
 const SUCCESS_MESSAGES = new Map<CreditStatus, string>([
@@ -46,7 +46,7 @@ const useCreditActions = () => {
 
   const createCredit = useRecoilCallback(
     ({ snapshot }) =>
-      async ({ loan, termId, userId }: CreateCreditProps) => {
+      async ({ loan, termOfferingId, userId }: CreateCreditProps) => {
         const api = await snapshot.getPromise(apiSelector)
         try {
           await api.create("credits", {
@@ -58,10 +58,10 @@ const useCreditActions = () => {
                 type: "users",
               },
             },
-            term: {
+            termOffering: {
               data: {
-                id: termId,
-                type: "terms",
+                id: termOfferingId,
+                type: "termOfferings",
               },
             },
           })

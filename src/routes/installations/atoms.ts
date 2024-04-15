@@ -3,7 +3,7 @@ import { atomFamily, selector, selectorFamily } from "recoil"
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
 
-import type { Credit } from "src/schema.types"
+import type { Credit, Term, TermOffering } from "src/schema.types"
 
 type InstalledCreditResponse = Pick<
   Credit,
@@ -18,8 +18,15 @@ type InstalledCreditResponse = Pick<
   borrower: {
     data: Credit["borrower"]
   }
-  term: {
-    data: Credit["term"]
+  termOffering: {
+    data: {
+      id: TermOffering["id"]
+      createdAt: TermOffering["createdAt"]
+      updatedAt: TermOffering["updatedAt"]
+      term: {
+        data: Term
+      }
+    }
   }
 }
 
@@ -30,11 +37,17 @@ export type InstalledCredit = Pick<
   | "updatedAt"
   | "createdAt"
   | "loan"
-  | "term"
   | "borrower"
   | "dispersedAt"
   | "installationStatus"
->
+> & {
+  termOffering: {
+    id: TermOffering["id"]
+    createdAt: TermOffering["createdAt"]
+    updatedAt: TermOffering["updatedAt"]
+    term: Term
+  }
+}
 
 export const installationsSelectorQuery = selector<
   Map<string, InstalledCredit>
@@ -48,9 +61,9 @@ export const installationsSelectorQuery = selector<
         params: {
           fields: {
             credits:
-              "id,status,updatedAt,createdAt,loan,borrower,term,dispersedAt,installationStatus",
+              "id,status,updatedAt,createdAt,loan,borrower,termOffering,dispersedAt,installationStatus",
           },
-          include: "borrower,term",
+          include: "borrower,termOffering,termOffering.term",
           filter: {
             status: "dispersed",
           },
@@ -58,12 +71,17 @@ export const installationsSelectorQuery = selector<
       },
     )
 
+    console.log("data", { data })
+
     const map = new Map<string, InstalledCredit>()
     for (const credit of data) {
       map.set(credit.id, {
         ...credit,
         borrower: credit.borrower.data,
-        term: credit.term.data,
+        termOffering: {
+          ...credit.termOffering.data,
+          term: credit.termOffering.data.term.data,
+        },
       })
     }
     return map
@@ -121,5 +139,25 @@ export const installationsSelector = selectorFamily<
     ({ get }) => {
       const credits = get(installationsSelectorQuery)
       return credits.get(creditId)
+    },
+})
+
+export const installedCreditSelectedState = atomFamily<boolean, string>({
+  key: "installedCreditSelectedState",
+  default: false,
+})
+
+export const selectedInstalledCreditIdsState = selectorFamily<
+  string[],
+  InstallationStatus
+>({
+  key: "selectedInstalledCreditIdsState",
+  get:
+    (status) =>
+    ({ get }) => {
+      const credits = get(installationsState(status))
+      return credits
+        .filter((credit) => get(installedCreditSelectedState(credit.id)))
+        .map((credit) => credit.id)
     },
 })

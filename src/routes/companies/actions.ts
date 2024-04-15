@@ -36,12 +36,14 @@ export const useCompanyActions = () => {
             id: data.id,
             domain,
             name,
-            terms: [],
+            terms: null,
             rate: rate ?? null,
             borrowingCapacity: borrowingCapacity ?? null,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
-            employeeSalaryFrequency: employeeSalaryFrequency,
+            employeeSalaryFrequency,
+            credits: null,
+            termOfferings: null,
           },
         ])
       },
@@ -129,37 +131,44 @@ export const useTermActions = () => {
     ({ snapshot, set }) =>
       async ({ termId, companyId }: AssignTermForCompany) => {
         const api = snapshot.getLoadable(apiSelector).getValue()
-        const company = snapshot.getLoadable(companyState(companyId)).getValue()
-        const termMap = snapshot.getLoadable(termsState).getValue()
-        const termToAssign = termMap.get(termId)
-        if (!termToAssign) throw new Error("Term not found")
-        const currentTerms = company.terms.map((term) => ({
-          id: term.id,
-          type: "terms",
-        }))
-        await api.update("company", {
-          id: companyId,
-          terms: {
-            data: [
-              ...currentTerms,
-              {
-                id: termId,
-                type: "terms",
-              },
-            ],
+        const { data } = await api.create("termOffering", {
+          term: {
+            data: {
+              id: termId,
+              type: "terms",
+            },
+          },
+          company: {
+            data: {
+              id: companyId,
+              type: "companies",
+            },
           },
         })
+
+        const termMap = snapshot.getLoadable(termsState).getValue()
+        const termToAssign = termMap.get(termId)
+        console.log(data.id)
+        if (!termToAssign) return
         set(companyState(companyId), (prev) => ({
           ...prev,
-          terms: [...prev.terms, termToAssign],
+          termOfferings: [
+            ...(prev.termOfferings || []),
+            {
+              id: data.id,
+              createdAt: data.createdAt,
+              updatedAt: data.updatedAt,
+              term: termToAssign!,
+            },
+          ],
         }))
         if (!isCompaniesListActive()) return
         set(companiesState, (prev) =>
           prev.map((prevCompany) => {
-            if (prevCompany.id === companyId) {
+            if (prevCompany.id === companyId && termToAssign) {
               return {
                 ...prevCompany,
-                terms: [...prevCompany.terms, termToAssign],
+                terms: [...(prevCompany.terms || []), termToAssign],
               }
             }
             return prevCompany
