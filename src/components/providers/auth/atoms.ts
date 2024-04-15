@@ -197,6 +197,14 @@ export const userRolesState = selector({
   },
 })
 
+export const isUserAdminSelector = selector({
+  key: "isUserAdminSelector",
+  get: ({ get }) => {
+    const profile = get(myProfileState)
+    return profile?.roles.includes("admin") || false
+  },
+})
+
 export const hasNoRolesState = selector({
   key: "hasNoRolesState",
   get: ({ get }) => {
