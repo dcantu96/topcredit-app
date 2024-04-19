@@ -10,7 +10,7 @@ export type CompanyCreditsResponse = Pick<
   "id" | "name" | "domain" | "createdAt"
 > & {
   credits: {
-    data: Pick<Credit, "id" | "borrower" | "loan">[]
+    data: Pick<Credit, "id" | "status" | "installationStatus" | "dispersedAt">[]
   }
 }
 
@@ -18,7 +18,10 @@ export type CompanyCredits = Pick<
   Company,
   "id" | "name" | "domain" | "createdAt"
 > & {
-  credits: Pick<Credit, "id" | "borrower" | "loan">[]
+  credits: Pick<
+    Credit,
+    "id" | "status" | "installationStatus" | "dispersedAt"
+  >[]
 }
 
 export type CompanyCreditsDetailedResponse = Pick<
@@ -61,6 +64,7 @@ export const companyCreditsSelectorQuery = selector<
         params: {
           fields: {
             companies: "id,name,domain,createdAt,credits",
+            credits: "id,status,installationStatus,dispersedAt",
           },
           include: "credits",
         },

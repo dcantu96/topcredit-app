@@ -7,15 +7,20 @@ import List from "components/atoms/list"
 
 import { companyCreditsState } from "./atoms"
 import ListItem from "./list-item"
+import { fetchNextInstallationDueDate } from "./utils"
 
 const Screen = () => {
   const companies = useRecoilValue(companyCreditsState)
-
+  const nextInstallationDueDate =
+    fetchNextInstallationDueDate().toLocaleDateString()
   return (
     <>
       <ListContainer>
         <ListHeader>
           <ListHeader.Title text="Instalaciones" />
+          <h3 className="text-sm">
+            Proxima Instalación <b>{nextInstallationDueDate}</b>
+          </h3>
         </ListHeader>
         <List>
           {companies.map((company) => (
