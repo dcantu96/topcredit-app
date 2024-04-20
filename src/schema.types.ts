@@ -138,34 +138,35 @@ export interface TermOffering extends ObjectWithId, Timestamps {
 }
 
 export interface Credit extends ObjectWithId, Timestamps {
-  loan: number | null
-  status: CreditStatus
-  installationStatus: "installed" | null
-  borrower: User
-  dispersedAt: string | null
-  termOffering: TermOffering | null
-  payrollReceiptUrl: string | null
-  payrollReceiptFilename: string | null
-  payrollReceiptContentType: string | null
-  payrollReceiptSize: string | null
-  payrollReceiptUploadedAt: string | null
-  payrollReceiptStatus: DocumentStatus
-  payrollReceiptRejectionReason: string | null
-  contractUrl: string | null
-  contractFilename: string | null
-  contractContentType: string | null
-  contractSize: string | null
-  contractUploadedAt: string | null
-  contractStatus: DocumentStatus
-  contractRejectionReason: string | null
-  authorizationUrl: string | null
-  authorizationFilename: string | null
   authorizationContentType: string | null
-  authorizationSize: string | null
-  authorizationUploadedAt: string | null
-  authorizationStatus: DocumentStatus
+  authorizationFilename: string | null
   authorizationRejectionReason: string | null
+  authorizationSize: string | null
+  authorizationStatus: DocumentStatus
+  authorizationUploadedAt: string | null
+  authorizationUrl: string | null
+  borrower: User
+  contractContentType: string | null
+  contractFilename: string | null
+  contractRejectionReason: string | null
+  contractSize: string | null
+  contractStatus: DocumentStatus
+  contractUploadedAt: string | null
+  contractUrl: string | null
+  dispersedAt: string | null
+  installationStatus: "installed" | null
+  installationDate: string | null
+  loan: number | null
+  payrollReceiptContentType: string | null
+  payrollReceiptFilename: string | null
+  payrollReceiptRejectionReason: string | null
+  payrollReceiptSize: string | null
+  payrollReceiptStatus: DocumentStatus
+  payrollReceiptUploadedAt: string | null
+  payrollReceiptUrl: string | null
   reason: string | null
+  status: CreditStatus
+  termOffering: TermOffering | null
 }
 
 export interface Term extends ObjectWithId, Timestamps {
