@@ -12,7 +12,7 @@ const List = ({ children }: ListProps) => {
 
 const Item = ({ children }: ListProps) => {
   return (
-    <li className="py-4 px-4 sm:px-6 lg:px-8 items-center flex relative border-b border-gray-900/10 flex-wrap gap-4">
+    <li className="py-4 px-4 sm:px-6 lg:px-8 items-start flex relative border-b border-gray-900/10 flex-wrap gap-4">
       {children}
     </li>
   )
