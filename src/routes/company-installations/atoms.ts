@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from "recoil"
+import { atom, atomFamily, selector, selectorFamily } from "recoil"
 
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
@@ -10,7 +10,15 @@ export type CompanyCreditsResponse = Pick<
   "id" | "name" | "domain" | "createdAt"
 > & {
   credits: {
-    data: Pick<Credit, "id" | "status" | "installationStatus" | "dispersedAt">[]
+    data: Pick<
+      Credit,
+      | "id"
+      | "status"
+      | "installationStatus"
+      | "dispersedAt"
+      | "loan"
+      | "installationDate"
+    >[]
   }
 }
 
@@ -20,36 +28,34 @@ export type CompanyCredits = Pick<
 > & {
   credits: Pick<
     Credit,
-    "id" | "status" | "installationStatus" | "dispersedAt"
+    | "id"
+    | "status"
+    | "installationStatus"
+    | "dispersedAt"
+    | "loan"
+    | "installationDate"
   >[]
 }
 
-export type CompanyCreditsDetailedResponse = Pick<
-  Company,
-  "id" | "name" | "domain" | "createdAt"
+export type CompanyCreditDetailedResponse = Pick<
+  Credit,
+  | "id"
+  | "status"
+  | "installationStatus"
+  | "dispersedAt"
+  | "loan"
+  | "installationDate"
 > & {
-  credits: {
-    data: (Pick<
-      Credit,
-      "id" | "loan" | "dispersedAt" | "installationStatus"
-    > & {
-      borrower: {
-        data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
-      }
-    })[]
+  borrower: {
+    data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
   }
 }
 
-export type CompanyCreditsDetailed = Pick<
-  Company,
-  "id" | "name" | "domain" | "createdAt"
+export type CompanyCreditDetailed = Pick<
+  Credit,
+  "id" | "loan" | "dispersedAt" | "installationStatus" | "installationDate"
 > & {
-  credits: (Pick<
-    Credit,
-    "id" | "loan" | "dispersedAt" | "installationStatus"
-  > & {
-    borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
-  })[]
+  borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
 }
 
 export const companyCreditsSelectorQuery = selector<
@@ -62,11 +68,12 @@ export const companyCreditsSelectorQuery = selector<
       "companies",
       {
         params: {
+          include: "credits",
           fields: {
             companies: "id,name,domain,createdAt,credits",
-            credits: "id,status,installationStatus,dispersedAt",
+            credits:
+              "id,status,installationStatus,dispersedAt,loan,installationDate",
           },
-          include: "credits",
         },
       },
     )
@@ -105,39 +112,71 @@ export const companyCreditsState = atom<CompanyCredits[]>({
 })
 
 export const companyCreditsDetailedSelector = selectorFamily<
-  CompanyCreditsDetailed | undefined,
+  CompanyCreditDetailed[] | undefined,
   string | undefined
 >({
   key: "companyCreditsDetailedSelector",
   get:
     (id) =>
     async ({ get }) => {
-      if (!id) {
-        return undefined
-      }
+      if (!id) return undefined
+
       const api = get(apiSelector)
-      const { data }: { data: CompanyCreditsDetailedResponse } = await api.get(
-        "companies/" + id,
+      const { data }: { data: CompanyCreditDetailedResponse[] } = await api.get(
+        "credits",
         {
           params: {
             fields: {
-              companies: "id,name,domain,createdAt,credits",
-              credits: "id,borrower,loan,dispersedAt,installationStatus,status",
-              user: "id,firstName,lastName,email",
+              users: "id,firstName,lastName,email",
+              credits:
+                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower",
             },
-            include: "credits,credits.borrower",
+            include: "borrower",
+            filter: {
+              company: id,
+              status: "dispersed",
+            },
           },
         },
       )
 
-      console.log(data)
-
-      return {
-        ...data,
-        credits: data.credits.data.map((credit) => ({
+      return data
+        .filter((credit) => !credit.installationStatus)
+        .sort((a, b) => {
+          return (
+            new Date(a.dispersedAt!).getTime() -
+            new Date(b.dispersedAt!).getTime()
+          )
+        })
+        .map((credit) => ({
           ...credit,
           borrower: credit.borrower.data,
-        })),
-      }
+        }))
     },
 })
+
+export const companyCreditsDetailedState = atomFamily({
+  key: "companyCreditsDetailedState",
+  default: companyCreditsDetailedSelector,
+})
+
+export const installedCreditSelectedState = atomFamily<boolean, string>({
+  key: "installedCreditSelectedState",
+  default: false,
+})
+
+export const selectedInstalledCreditIdsState = selectorFamily<string[], string>(
+  {
+    key: "selectedInstalledCreditIdsState",
+    get:
+      (companyId) =>
+      ({ get }) => {
+        const credits = get(companyCreditsDetailedSelector(companyId))
+        return (
+          credits
+            ?.filter((credit) => get(installedCreditSelectedState(credit.id)))
+            .map((credit) => credit.id) ?? []
+        )
+      },
+  },
+)

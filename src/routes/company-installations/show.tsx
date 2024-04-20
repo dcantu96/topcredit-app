@@ -1,32 +1,129 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilCallback, useRecoilValue } from "recoil"
 import { useParams } from "react-router-dom"
 
 import NavLink from "components/atoms/nav-link"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
+import Button from "components/atoms/button"
+import { apiSelector } from "components/providers/api/atoms"
+import useToast from "components/providers/toaster/useToast"
 
-import { companyCreditsDetailedSelector } from "./atoms"
+import { companySelectorQuery } from "../companies/loader"
 import CreditListItem from "./credit-list-item"
+import {
+  companyCreditsDetailedState,
+  installedCreditSelectedState,
+  selectedInstalledCreditIdsState,
+} from "./atoms"
+import { fetchNextInstallationDueDate } from "./utils"
+import { useState } from "react"
+import Dialog from "components/molecules/dialog"
+
+interface BulkActionsButtonProps {
+  companyId: string
+}
+
+const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
+  const toast = useToast()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const selectedCredits = useRecoilValue(
+    selectedInstalledCreditIdsState(companyId),
+  )
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
+
+  const handleInstallCredits = useRecoilCallback(
+    ({ snapshot, set, reset }) =>
+      async () => {
+        const api = await snapshot.getPromise(apiSelector)
+        const selectedCredits = await snapshot.getPromise(
+          selectedInstalledCreditIdsState(companyId),
+        )
+
+        for (const creditId of selectedCredits) {
+          await api.update(
+            "credits",
+            {
+              id: creditId,
+              installationStatus: "installed",
+              installationDate: new Date().toISOString(),
+            },
+            {
+              params: {
+                fields: {
+                  credits:
+                    "id,loan,dispersedAt,installationStatus,installationDate",
+                },
+              },
+            },
+          )
+          reset(installedCreditSelectedState(creditId))
+        }
+
+        set(companyCreditsDetailedState(companyId), (oldCredits) => {
+          return oldCredits?.filter(
+            (credit) => !selectedCredits.includes(credit.id),
+          )
+        })
+
+        toast.success({
+          title: "Créditos instalados",
+          message: "se han instalado los créditos seleccionados",
+        })
+        closeModal()
+      },
+    [companyId],
+  )
+
+  const modalMessage = `Esto instalará ${selectedCredits.length} créditos. ¿Estás seguro? Una vez instalados no podrás deshacer esta acción.`
+
+  if (!selectedCredits.length) return null
+  return (
+    <>
+      <Button size="sm" onClick={openModal}>
+        Instalar ({selectedCredits.length})
+      </Button>
+      {isModalOpen ? (
+        <Dialog
+          message={modalMessage}
+          onCancel={closeModal}
+          onClose={handleInstallCredits}
+          title="Instalar créditos"
+          inputLabel="Escribe 'instalar' para confirmar"
+          type="danger"
+        />
+      ) : null}
+    </>
+  )
+}
 
 const Screen = () => {
   const { companyId } = useParams()
-  const company = useRecoilValue(companyCreditsDetailedSelector(companyId))
+  const company = useRecoilValue(companySelectorQuery(companyId!))
+  const credits = useRecoilValue(companyCreditsDetailedState(companyId))
+  const nextInstallationDueDate =
+    fetchNextInstallationDueDate().toLocaleDateString()
 
-  if (!company) {
-    return null
-  }
+  if (!credits) return null
 
   return (
     <>
       <ListContainer>
         <ListHeader>
           <ListHeader.Title text="Instalaciones" to={".."}>
-            / <ListHeader.Title text={company.name} />
+            / <ListHeader.Title text={company.name} />/{" "}
+            <ListHeader.Title text="Altas" />
           </ListHeader.Title>
+          <ListHeader.Actions>
+            <h3 className="text-sm">
+              Proxima Instalación <b>{nextInstallationDueDate}</b>
+            </h3>
+            <BulkActionsButton companyId={companyId!} />
+          </ListHeader.Actions>
         </ListHeader>
         <List>
-          {company.credits.map((credit) => (
+          {credits.map((credit) => (
             <CreditListItem key={credit.id} credit={credit} />
           ))}
         </List>
