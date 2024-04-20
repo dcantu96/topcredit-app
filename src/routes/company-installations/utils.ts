@@ -1,3 +1,5 @@
+import type { Credit, CreditStatus } from "src/schema.types"
+
 // Helper function to find the last day of a given month
 function getLastDayOfMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
@@ -39,4 +41,32 @@ export function expectedInstallationDate(dispersedAt: string) {
     // If today is between 1st and 5th (inclusive), the due date is the 15th of the current month
     return new Date(year, month, 15)
   }
+}
+
+export const installationStatusIs =
+  (status: "installed" | null) =>
+  (credit: Pick<Credit, "id" | "status" | "installationStatus">) =>
+    credit.installationStatus === status
+
+export const creditStatusIs =
+  (status: CreditStatus) =>
+  (credit: Pick<Credit, "id" | "status" | "installationStatus">) =>
+    credit.status === status
+
+export const hasDelayedInstallation = (
+  credit: Pick<
+    Credit,
+    "id" | "loan" | "dispersedAt" | "installationStatus" | "installationDate"
+  >,
+) => {
+  return expectedInstallationDate(credit.dispersedAt!) < new Date()
+}
+
+export const installationOnTime = (
+  credit: Pick<
+    Credit,
+    "id" | "loan" | "dispersedAt" | "installationStatus" | "installationDate"
+  >,
+) => {
+  return expectedInstallationDate(credit.dispersedAt!) >= new Date()
 }
