@@ -6,6 +6,7 @@ export type Role =
   | "authorizations"
   | "dispersions"
   | "installations"
+  | "payments"
 
 export type UserStatus =
   | "new"
@@ -167,6 +168,7 @@ export interface Credit extends ObjectWithId, Timestamps {
   reason: string | null
   status: CreditStatus
   termOffering: TermOffering | null
+  payments: Payment[] | null
 }
 
 export interface Term extends ObjectWithId, Timestamps {
@@ -184,4 +186,10 @@ export interface Company extends ObjectWithId, Timestamps {
   terms: Term[] | null
   termOfferings: TermOffering[] | null
   credits: Credit[] | null
+}
+
+export interface Payment extends ObjectWithId, Timestamps {
+  paidAt: string
+  amount: number
+  credit: Credit
 }

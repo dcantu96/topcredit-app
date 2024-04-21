@@ -55,6 +55,7 @@ export const ROLES: { value: Role; label: string; path: string }[] = [
     label: "Inst",
     path: "installations",
   },
+  { value: "payments" as const, label: "Cobranza", path: "payments" },
 ]
 
 export const SORT_ORDER = [
