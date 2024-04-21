@@ -7,7 +7,7 @@ import type { Company, Credit } from "src/schema.types"
 
 export type CompanyCreditsResponse = Pick<
   Company,
-  "id" | "name" | "domain" | "createdAt"
+  "id" | "name" | "domain" | "createdAt" | "employeeSalaryFrequency"
 > & {
   credits: {
     data: Pick<
@@ -24,7 +24,7 @@ export type CompanyCreditsResponse = Pick<
 
 export type CompanyCredits = Pick<
   Company,
-  "id" | "name" | "domain" | "createdAt"
+  "id" | "name" | "domain" | "createdAt" | "employeeSalaryFrequency"
 > & {
   credits: Pick<
     Credit,
@@ -70,7 +70,8 @@ export const companyCreditsSelectorQuery = selector<
         params: {
           include: "credits",
           fields: {
-            companies: "id,name,domain,createdAt,credits",
+            companies:
+              "id,name,domain,createdAt,credits,employeeSalaryFrequency",
             credits:
               "id,status,installationStatus,dispersedAt,loan,installationDate",
           },

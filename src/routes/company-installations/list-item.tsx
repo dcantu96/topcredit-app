@@ -7,8 +7,10 @@ import {
   creditStatusIs,
   hasDelayedInstallation,
   installationOnTime,
+  fetchNextPayrollDate,
 } from "./utils"
 import Chip from "components/atoms/chip"
+import SmallDot from "components/atoms/small-dot"
 
 const ListItem = ({ company }: { company: CompanyCredits }) => {
   const navigate = useNavigate()
@@ -38,6 +40,25 @@ const ListItem = ({ company }: { company: CompanyCredits }) => {
               <span className="whitespace-nowrap">{company.domain}</span>
             </a>
           </h2>
+        </div>
+        <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
+          <p className="whitespace-nowrap">
+            Nómina{" "}
+            <b>
+              {company.employeeSalaryFrequency === "biweekly"
+                ? "Quincenal"
+                : "Mensual"}
+            </b>
+          </p>
+          <SmallDot />
+          <p className="whitespace-nowrap">
+            Proxima Nómina{" "}
+            <b>
+              {fetchNextPayrollDate(
+                company.employeeSalaryFrequency,
+              ).toLocaleDateString()}
+            </b>
+          </p>
         </div>
       </div>
       {delayedInstallations.length || onTimeInstallations.length ? (

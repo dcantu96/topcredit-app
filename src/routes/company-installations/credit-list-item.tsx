@@ -66,19 +66,17 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
                 : ""}
             </b>
           </p>
-          {status === "delayed" ? (
-            <>
-              <SmallDot />
-              <p className="whitespace-nowrap text-red-600">
-                Fecha de instalación esperada{" "}
-                <b>
-                  {expectedInstallationDate(
-                    credit.dispersedAt!,
-                  ).toLocaleDateString()}
-                </b>
-              </p>
-            </>
-          ) : null}
+          <SmallDot />
+          <p
+            className={`whitespace-nowrap ${status === "pending" ? "" : "text-red-600"}`}
+          >
+            Fecha de instalación esperada{" "}
+            <b>
+              {expectedInstallationDate(
+                credit.dispersedAt!,
+              ).toLocaleDateString()}
+            </b>
+          </p>
         </div>
       </div>
       <div className="min-w-32">
@@ -92,7 +90,7 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
           </h2>
         </div>
         <Chip status={status === "delayed" ? "error" : "info"}>
-          {status === "delayed" ? "Demorado" : "A tiempo"}
+          {status === "delayed" ? "Demorado" : "Pendiente"}
         </Chip>
       </div>
     </List.Item>

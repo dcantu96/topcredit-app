@@ -16,7 +16,7 @@ import {
   installedCreditSelectedState,
   selectedInstalledCreditIdsState,
 } from "./atoms"
-import { fetchNextInstallationDueDate } from "./utils"
+import { fetchNextPayrollDate } from "./utils"
 import { useState } from "react"
 import Dialog from "components/molecules/dialog"
 
@@ -102,8 +102,9 @@ const Screen = () => {
   const { companyId } = useParams()
   const company = useRecoilValue(companySelectorQuery(companyId!))
   const credits = useRecoilValue(companyCreditsDetailedState(companyId))
-  const nextInstallationDueDate =
-    fetchNextInstallationDueDate().toLocaleDateString()
+  const nextPayroll = fetchNextPayrollDate(
+    company.employeeSalaryFrequency,
+  ).toLocaleDateString()
 
   if (!credits) return null
 
@@ -117,7 +118,7 @@ const Screen = () => {
           </ListHeader.Title>
           <ListHeader.Actions>
             <h3 className="text-sm">
-              Proxima Instalación <b>{nextInstallationDueDate}</b>
+              Proxima Nomina <b>{nextPayroll}</b>
             </h3>
             <BulkActionsButton companyId={companyId!} />
           </ListHeader.Actions>
