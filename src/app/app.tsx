@@ -30,6 +30,8 @@ import LatestCreditMonitor from "./latest-credit-monitor"
 import MyCredits from "../routes/my-credits/my-credits"
 import CompanyInstallations from "../routes/company-installations/list"
 import CompanyInstallation from "../routes/company-installations/show"
+import CompanyPayments from "../routes/company-payments/list"
+import CompanyPayment from "../routes/company-payments/show"
 
 function App() {
   return (
@@ -100,6 +102,13 @@ function App() {
           >
             <Route index element={<CompanyInstallations />} />
             <Route path=":companyId" element={<CompanyInstallation />} />
+          </Route>
+          <Route
+            path="payments"
+            element={<ProtectedRoute allowedRoles={["payments"]} />}
+          >
+            <Route index element={<CompanyPayments />} />
+            <Route path=":companyId" element={<CompanyPayment />} />
           </Route>
         </Route>
         <Route
