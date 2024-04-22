@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { calculateAmortization, calculateTotalPaymentsInMonths } from "./utils"
 
 import type { DurationType } from "src/schema.types"
@@ -31,5 +31,27 @@ const useCreditAmortization = ({
 
   return amortization
 }
+
+const useGetCreditAmortization = () => {
+  const amortization = useCallback(
+    ({ loan, duration, durationType, rate }: CreditAmortizationProps) => {
+      if (!loan || !duration || !durationType || !rate) return undefined
+      const totalPayments = calculateTotalPaymentsInMonths({
+        duration,
+        durationType,
+      })
+      return calculateAmortization({
+        loanAmount: loan,
+        totalPayments,
+        rate,
+      })
+    },
+    [],
+  )
+
+  return amortization
+}
+
+export { useGetCreditAmortization }
 
 export default useCreditAmortization

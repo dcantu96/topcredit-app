@@ -21,11 +21,13 @@ const ListItem = ({ company }: { company: CompanyCredits }) => {
     installationStatusIs(null),
   )
 
-  const delayedInstallations = pendingInstallations.filter(
-    hasDelayedInstallation,
+  const delayedInstallations = pendingInstallations.filter((credit) =>
+    hasDelayedInstallation(credit, company.employeeSalaryFrequency),
   )
 
-  const onTimeInstallations = pendingInstallations.filter(installationOnTime)
+  const onTimeInstallations = pendingInstallations.filter(
+    (credit) => !installationOnTime(credit, company.employeeSalaryFrequency),
+  )
 
   return (
     <List.Item>
