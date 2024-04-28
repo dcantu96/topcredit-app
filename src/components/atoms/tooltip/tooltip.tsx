@@ -21,7 +21,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   )
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative">
       {/* The target element for the tooltip */}
       <div
         onMouseEnter={() => cond && setIsVisible(true)}
