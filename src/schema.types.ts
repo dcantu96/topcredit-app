@@ -192,4 +192,5 @@ export interface Payment extends ObjectWithId, Timestamps {
   paidAt: string
   amount: number
   credit: Credit
+  number: number
 }
