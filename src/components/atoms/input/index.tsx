@@ -9,6 +9,8 @@ interface InputBaseProps {
   placeholder?: string
   required?: boolean
   maxLength?: number
+  min?: React.InputHTMLAttributes<HTMLInputElement>["min"]
+  max?: React.InputHTMLAttributes<HTMLInputElement>["max"]
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   value: string
   prefix?: string
@@ -52,6 +54,8 @@ const Input = ({
   type = "text",
   prefix,
   onBlur,
+  min,
+  max,
   ...trailingProps
 }: InputProps) => {
   const passwordPaddingRight = type === "password" ? "pr-14" : undefined
@@ -79,6 +83,8 @@ const Input = ({
           type={inputType}
           name={id}
           id={id}
+          min={min}
+          max={max}
           disabled={disabled}
           required={required}
           maxLength={maxLength}
