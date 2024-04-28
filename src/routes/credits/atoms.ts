@@ -1,0 +1,107 @@
+import { atomFamily, selectorFamily } from "recoil"
+
+import { apiSelector } from "components/providers/api/atoms"
+
+import type {
+  Company,
+  Credit,
+  Payment,
+  Term,
+  TermOffering,
+} from "src/schema.types"
+
+export type CreditDetailedResponse = Pick<
+  Credit,
+  | "id"
+  | "status"
+  | "installationStatus"
+  | "dispersedAt"
+  | "loan"
+  | "installationDate"
+> & {
+  borrower: {
+    data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
+  }
+  payments: {
+    data: Pick<Payment, "id" | "paidAt" | "amount" | "number">[] | null
+  }
+  termOffering: {
+    data: Pick<TermOffering, "id"> & {
+      term: {
+        data: Pick<Term, "id" | "durationType" | "duration">
+      }
+      company: {
+        data: Pick<Company, "rate" | "employeeSalaryFrequency" | "name" | "id">
+      }
+    }
+  }
+}
+
+export type CreditDetailed = Pick<
+  Credit,
+  "id" | "loan" | "dispersedAt" | "installationStatus" | "installationDate"
+> & {
+  borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
+  payments: Pick<Payment, "id" | "paidAt" | "amount" | "number">[]
+  termOffering: Pick<TermOffering, "id"> & {
+    term: Pick<Term, "id" | "durationType" | "duration">
+    company: Pick<Company, "rate" | "employeeSalaryFrequency" | "name" | "id">
+  }
+}
+
+export const creditDetailedWithPaymentsSelector = selectorFamily<
+  CreditDetailed,
+  string
+>({
+  key: "creditDetailedWithPaymentsSelector",
+  get:
+    (id) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const { data }: { data: CreditDetailedResponse } = await api.get(
+        "credits/" + id,
+        {
+          params: {
+            fields: {
+              terms: "id,durationType,duration",
+              companies: "rate,employeeSalaryFrequency,name,id",
+              termOfferings: "id,term,company",
+              users: "id,firstName,lastName,email",
+              credits:
+                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower,payments,termOffering",
+            },
+            include:
+              "borrower,payments,termOffering,termOffering.term,termOffering.company",
+            filter: {
+              company: id,
+              status: "dispersed",
+            },
+          },
+        },
+      )
+
+      const isInstalled = data.installationStatus === "installed"
+      if (!isInstalled) {
+        throw new Error("Credit is not installed")
+      }
+
+      return {
+        ...data,
+        borrower: data.borrower.data,
+        termOffering: {
+          ...data.termOffering.data,
+          term: data.termOffering.data.term.data,
+          company: data.termOffering.data.company.data,
+        },
+        payments:
+          data.payments.data?.sort((a, b) => {
+            return new Date(a.paidAt).getTime() - new Date(b.paidAt).getTime()
+          }) ?? [],
+      }
+    },
+})
+
+export const creditDetailedWithPaymentsState = atomFamily({
+  key: "creditDetailedWithPaymentsState",
+  default: creditDetailedWithPaymentsSelector,
+})

@@ -3,6 +3,7 @@ import {
   expectedPaymentsByDate,
   fetchNextPayrollDate,
   getNextPaymentDate,
+  paymentOnTime,
 } from "./utils"
 
 describe("fetchNextPayrollDate function", () => {
@@ -123,5 +124,79 @@ describe("expectedPaymentsByDate function", () => {
         45,
       ),
     ).toBe(7)
+  })
+})
+
+describe("paymentOnTime function", () => {
+  it("should return true if the payment was made on time", () => {
+    expect(
+      paymentOnTime({
+        paymentNumber: 1,
+        installationDate: "2022-11-01T12:00:00.000Z",
+        employeeSalaryFrequency: "biweekly",
+        paidAt: "2022-11-12T12:00:00.000Z",
+      }),
+    ).toStrictEqual({
+      onTime: true,
+      expectedPaymentDate: new Date("2022-11-15T06:00:00.000Z"),
+    })
+    expect(
+      paymentOnTime({
+        paymentNumber: 1,
+        installationDate: "2022-11-01T12:00:00.000Z",
+        employeeSalaryFrequency: "monthly",
+        paidAt: "2022-11-24T12:00:00.000Z",
+      }),
+    ).toStrictEqual({
+      onTime: true,
+      expectedPaymentDate: new Date("2022-11-30T06:00:00.000Z"),
+    })
+    expect(
+      paymentOnTime({
+        paymentNumber: 4,
+        installationDate: "2023-02-04T12:00:00.000Z",
+        employeeSalaryFrequency: "biweekly",
+        paidAt: "2023-03-19T12:00:00.000Z",
+      }),
+    ).toStrictEqual({
+      onTime: true,
+      expectedPaymentDate: new Date("2023-03-31T06:00:00.000Z"),
+    })
+  })
+
+  it("should return false if the payment was made after the expected date", () => {
+    expect(
+      paymentOnTime({
+        paymentNumber: 1,
+        installationDate: "2022-11-01T12:00:00.000Z",
+        employeeSalaryFrequency: "biweekly",
+        paidAt: "2022-11-16T12:00:00.000Z",
+      }),
+    ).toStrictEqual({
+      onTime: false,
+      expectedPaymentDate: new Date("2022-11-15T06:00:00.000Z"),
+    })
+    expect(
+      paymentOnTime({
+        paymentNumber: 1,
+        installationDate: "2022-11-01T12:00:00.000Z",
+        employeeSalaryFrequency: "monthly",
+        paidAt: "2022-12-01T12:00:00.000Z",
+      }),
+    ).toStrictEqual({
+      onTime: false,
+      expectedPaymentDate: new Date("2022-11-30T06:00:00.000Z"),
+    })
+    expect(
+      paymentOnTime({
+        paymentNumber: 3,
+        installationDate: "2023-02-04T12:00:00.000Z",
+        employeeSalaryFrequency: "biweekly",
+        paidAt: "2023-05-19T12:00:00.000Z",
+      }),
+    ).toStrictEqual({
+      onTime: false,
+      expectedPaymentDate: new Date("2023-03-15T06:00:00.000Z"),
+    })
   })
 })

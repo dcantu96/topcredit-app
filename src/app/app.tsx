@@ -32,6 +32,7 @@ import CompanyInstallations from "../routes/company-installations/list"
 import CompanyInstallation from "../routes/company-installations/show"
 import CompanyPayments from "../routes/company-payments/list"
 import CompanyPayment from "../routes/company-payments/show"
+import Credit from "../routes/credits/show"
 
 function App() {
   return (
@@ -109,6 +110,12 @@ function App() {
           >
             <Route index element={<CompanyPayments />} />
             <Route path=":companyId" element={<CompanyPayment />} />
+          </Route>
+          <Route
+            path="credits"
+            element={<ProtectedRoute allowedRoles={["payments"]} />}
+          >
+            <Route path=":id" element={<Credit />} />
           </Route>
         </Route>
         <Route

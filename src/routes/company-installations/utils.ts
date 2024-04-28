@@ -187,3 +187,43 @@ export const installationOnTime = (
     new Date()
   )
 }
+
+interface PaymentOnTimeProps {
+  paymentNumber: number
+  employeeSalaryFrequency: "biweekly" | "monthly"
+  installationDate: string
+  paidAt?: string
+}
+
+export const paymentOnTime = ({
+  paymentNumber,
+  employeeSalaryFrequency,
+  installationDate,
+  paidAt,
+}: PaymentOnTimeProps) => {
+  // initialize the expectedPaymentDate with the expectedInstallationPaymentDate
+  let expectedPaymentDate = fetchNextPayrollDate(
+    employeeSalaryFrequency,
+    installationDate,
+  )
+  // now using the expectedInstallationPaymentDate as the starting point, calculate the expected payment date for the given payment number
+  // first we need to calculate the expected payment date for the payment number so we use the expectedInstallationPaymentDate
+  for (let i = 1; i < paymentNumber; i++) {
+    expectedPaymentDate = getNextPaymentDate(
+      expectedPaymentDate,
+      employeeSalaryFrequency,
+    )
+  }
+
+  if (paidAt) {
+    return {
+      onTime: new Date(paidAt) <= expectedPaymentDate,
+      expectedPaymentDate,
+    }
+  } else {
+    return {
+      onTime: new Date() <= expectedPaymentDate,
+      expectedPaymentDate,
+    }
+  }
+}
