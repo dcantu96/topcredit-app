@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from "recoil"
+import { atom, atomFamily, selector, selectorFamily } from "recoil"
 
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
@@ -143,4 +143,12 @@ export const dispersionsSelector = selectorFamily<
       const credits = get(dispersionsSelectorQuery)
       return credits.get(creditId)
     },
+})
+
+export const editableDispersionReceiptFieldState = atomFamily<
+  string | null,
+  string
+>({
+  key: "editableDispersionReceiptFieldState",
+  default: null,
 })

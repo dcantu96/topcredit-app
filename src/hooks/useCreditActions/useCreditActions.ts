@@ -11,6 +11,7 @@ import {
   payrollReceiptRejectionReasonCreditState,
   payrollReceiptStatusCreditState,
 } from "../../routes/pending-authorizations/atoms"
+import { editableDispersionReceiptFieldState } from "../../routes/dispersions/atoms"
 
 export interface CreateCreditProps {
   userId: string
@@ -93,6 +94,9 @@ const useCreditActions = () => {
         const payrollReceiptRejectionReason = await snapshot.getPromise(
           payrollReceiptRejectionReasonCreditState(creditId),
         )
+        const dispersionReceipt = snapshot
+          .getLoadable(editableDispersionReceiptFieldState(creditId))
+          .getValue()
         try {
           await api.update(`credits`, {
             id: creditId,
@@ -106,6 +110,7 @@ const useCreditActions = () => {
             contractRejectionReason,
             payrollReceiptStatus,
             payrollReceiptRejectionReason,
+            dispersionReceipt,
           })
           const message = SUCCESS_MESSAGES.get(status)
           const defaultMessage = "Usuario actualizado"
