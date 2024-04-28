@@ -35,7 +35,7 @@ const FixedSidebar = () => {
           {roles
             .filter((r) => r.value !== "admin")
             .map(({ label, value, path }) => (
-              <li key={value}>
+              <li key={path}>
                 <NavLink
                   className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
                   to={path}

@@ -125,7 +125,11 @@ const Screen = () => {
         </ListHeader>
         <List>
           {credits.map((credit) => (
-            <CreditListItem key={credit.id} credit={credit} />
+            <CreditListItem
+              key={credit.id}
+              credit={credit}
+              employeeSalaryFrequency={company.employeeSalaryFrequency}
+            />
           ))}
         </List>
       </ListContainer>

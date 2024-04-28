@@ -8,16 +8,22 @@ import { installedCreditSelectedState } from "./atoms"
 import { MXNFormat } from "../../constants"
 import SmallDot from "components/atoms/small-dot"
 
-const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
+const ListItem = ({
+  credit,
+  employeeSalaryFrequency,
+}: {
+  credit: CompanyCreditDetailed
+  employeeSalaryFrequency: "biweekly" | "monthly"
+}) => {
   const [pressed, setPressed] = useRecoilState(
     installedCreditSelectedState(credit.id),
   )
   const status = useMemo(() => {
-    if (hasDelayedInstallation(credit)) {
+    if (hasDelayedInstallation(credit, employeeSalaryFrequency)) {
       return "delayed"
     }
     return "pending"
-  }, [credit])
+  }, [credit, employeeSalaryFrequency])
   return (
     <List.Item>
       <div className="flex-1 min-w-56">
@@ -74,6 +80,7 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
             <b>
               {expectedInstallationDate(
                 credit.dispersedAt!,
+                employeeSalaryFrequency,
               ).toLocaleDateString()}
             </b>
           </p>

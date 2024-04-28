@@ -12,7 +12,6 @@ import useToast from "components/providers/toaster/useToast"
 import { companySelectorQuery } from "../companies/loader"
 import CreditListItem from "./credit-list-item"
 import {
-  companyCreditsDetailedWithPaymentsState,
   installedCreditWithPaymentSelectedState,
   selectedInstalledCreditWithPaymentsIdsState,
 } from "./atoms"
@@ -20,6 +19,7 @@ import { useState } from "react"
 import Dialog from "components/molecules/dialog"
 import { fetchNextPayrollDate } from "../company-installations/utils"
 import { useGetCreditAmortization } from "hooks/useCreditAmortization/useCreditAmortization"
+import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
 
 interface BulkActionsButtonProps {
   companyId: string
@@ -55,6 +55,10 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
             duration: credit.termOffering.term.duration,
             durationType: credit.termOffering.term.durationType,
           })
+          const paymentNumbers = credit.payments
+            .map((payment) => payment.number)
+            .sort()
+          const lastPaymentNumber = paymentNumbers[paymentNumbers.length - 1]
           if (!amortization) continue
           const resp = await api.create("payments", {
             credit: {
@@ -65,6 +69,7 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
             },
             amount: amortization,
             paidAt: new Date().toISOString(),
+            number: lastPaymentNumber + 1,
           })
           reset(installedCreditWithPaymentSelectedState(creditId))
           set(
@@ -81,6 +86,7 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
                           id: resp.data.id,
                           amount: resp.data.amount,
                           paidAt: resp.data.paidAt,
+                          number: resp.data.number,
                         },
                       ],
                     }
@@ -131,7 +137,14 @@ const Screen = () => {
   const company = useRecoilValue(companySelectorQuery(companyId!))
   const credits = useRecoilValue(
     companyCreditsDetailedWithPaymentsState(companyId),
-  )
+  )?.filter((credit) => {
+    const isInstalled = credit.installationStatus === "installed"
+    // check if at least one payment is missing compared to the term duration
+    // ! Todo: this should also consider the amortization schedule not just the number of payments
+    const isMissingPayments =
+      credit.payments?.length !== credit.termOffering.term.duration
+    return isInstalled && isMissingPayments
+  })
   const nextPayrollDate = fetchNextPayrollDate(
     company.employeeSalaryFrequency,
   ).toLocaleDateString()

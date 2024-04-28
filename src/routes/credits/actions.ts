@@ -7,7 +7,7 @@ import {
   companyCreditsDetailedWithPaymentsState,
   companyCreditsWithPaymentsSelectorQuery,
   companyCreditsWithPaymentsState,
-} from "../company-payments/atoms"
+} from "../../services/companies/atoms"
 
 interface NewPaymentResponse {
   id: string

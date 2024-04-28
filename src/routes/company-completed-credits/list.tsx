@@ -6,22 +6,16 @@ import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 import { companyCreditsWithPaymentsState } from "../../services/companies/atoms"
 
-import { fetchNextPayrollDate } from "../company-installations/utils"
-
 import ListItem from "./list-item"
 
 const Screen = () => {
   const companies = useRecoilValue(companyCreditsWithPaymentsState)
-  const nextInstallationDueDate =
-    fetchNextPayrollDate("biweekly").toLocaleDateString()
+
   return (
     <>
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text="Cobranza" />
-          <h3 className="text-sm">
-            Proxima Instalación <b>{nextInstallationDueDate}</b>
-          </h3>
+          <ListHeader.Title text="Bajas" />
         </ListHeader>
         <List>
           {companies.map((company) => (

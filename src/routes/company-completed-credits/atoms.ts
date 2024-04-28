@@ -1,28 +1,23 @@
 import { atomFamily, selectorFamily } from "recoil"
 import { companyCreditsDetailedWithPaymentsSelector } from "../../services/companies/atoms"
 
-export const installedCreditWithPaymentSelectedState = atomFamily<
-  boolean,
-  string
->({
-  key: "installedWithPaymentCreditSelectedState",
+export const completedCreditSelectedState = atomFamily<boolean, string>({
+  key: "completedCreditSelectedState",
   default: false,
 })
 
-export const selectedInstalledCreditWithPaymentsIdsState = selectorFamily<
+export const selectedCompletedCreditsIdsState = selectorFamily<
   string[],
   string
 >({
-  key: "selectedInstalledCreditWithPaymentsIdsState",
+  key: "selectedCompletedCreditsIdsState",
   get:
     (companyId) =>
     ({ get }) => {
       const credits = get(companyCreditsDetailedWithPaymentsSelector(companyId))
       return (
         credits
-          ?.filter((credit) =>
-            get(installedCreditWithPaymentSelectedState(credit.id)),
-          )
+          ?.filter((credit) => get(completedCreditSelectedState(credit.id)))
           .map((credit) => credit.id) ?? []
       )
     },

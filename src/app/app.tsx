@@ -33,6 +33,8 @@ import CompanyInstallation from "../routes/company-installations/show"
 import CompanyPayments from "../routes/company-payments/list"
 import CompanyPayment from "../routes/company-payments/show"
 import Credit from "../routes/credits/show"
+import CompanyCompletedCreditsList from "../routes/company-completed-credits/list"
+import CompanyCompletedCredits from "../routes/company-completed-credits/show"
 
 function App() {
   return (
@@ -103,6 +105,13 @@ function App() {
           >
             <Route index element={<CompanyInstallations />} />
             <Route path=":companyId" element={<CompanyInstallation />} />
+          </Route>
+          <Route
+            path="completed-credits"
+            element={<ProtectedRoute allowedRoles={["installations"]} />}
+          >
+            <Route index element={<CompanyCompletedCreditsList />} />
+            <Route path=":companyId" element={<CompanyCompletedCredits />} />
           </Route>
           <Route
             path="payments"

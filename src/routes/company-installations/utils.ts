@@ -132,12 +132,6 @@ export const hasDelayedPayment = (
     termDuration,
   )
 
-  console.log("expectedPaymentsToDate", {
-    expectedPaymentsToDate,
-    payments: credit.payments,
-    termDuration,
-  })
-
   if (credit.payments.length < expectedPaymentsToDate) {
     return true
   }

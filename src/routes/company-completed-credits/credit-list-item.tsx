@@ -1,36 +1,20 @@
-import List from "components/atoms/list"
-import { useMemo } from "react"
-import Chip from "components/atoms/chip"
-import { useRecoilState } from "recoil"
-import { installedCreditWithPaymentSelectedState } from "./atoms"
-import { MXNFormat } from "../../constants"
-import SmallDot from "components/atoms/small-dot"
-import { hasDelayedPayment } from "../company-installations/utils"
-import useCreditAmortization from "hooks/useCreditAmortization"
-import { ChevronRightIcon } from "@heroicons/react/16/solid"
 import { useNavigate } from "react-router-dom"
-import { CompanyCreditDetailed } from "../../services/companies/atoms"
+import { useRecoilState } from "recoil"
+import { ChevronRightIcon } from "@heroicons/react/16/solid"
 
-const ListItem = ({
-  credit,
-  employeeSalaryFrequency,
-  termDuration,
-}: {
-  credit: CompanyCreditDetailed
-  employeeSalaryFrequency: "biweekly" | "monthly"
-  termDuration: number
-}) => {
+import List from "components/atoms/list"
+import useCreditAmortization from "hooks/useCreditAmortization"
+import { MXNFormat } from "../../constants"
+
+import { completedCreditSelectedState } from "./atoms"
+import { CompanyCreditDetailed } from "../../services/companies/atoms"
+import { Payment } from "src/schema.types"
+
+const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
   const navigate = useNavigate()
   const [pressed, setPressed] = useRecoilState(
-    installedCreditWithPaymentSelectedState(credit.id),
+    completedCreditSelectedState(credit.id),
   )
-  const status = useMemo(() => {
-    if (hasDelayedPayment(credit, employeeSalaryFrequency, termDuration)) {
-      return "delayed"
-    }
-    return "pending"
-  }, [credit, employeeSalaryFrequency, termDuration])
-
   const amortization = useCreditAmortization({
     duration: credit.termOffering.term.duration,
     durationType: credit.termOffering.term.durationType,
@@ -39,6 +23,22 @@ const ListItem = ({
   })
 
   const lastPayment = credit.payments.at(-1)?.paidAt
+
+  const termDuration = credit.termOffering.term.duration
+  const creditPayments: (
+    | Pick<Payment, "number" | "id" | "paidAt" | "amount">
+    | undefined
+  )[] = []
+
+  for (let i = 0; i < termDuration; i++) {
+    const payment = credit.payments.find((payment) => payment.number === i + 1)
+    creditPayments.push(payment)
+  }
+
+  const totalPaid = credit.payments.reduce(
+    (acc, payment) => acc + payment.amount,
+    0,
+  )
 
   return (
     <List.Item>
@@ -53,7 +53,6 @@ const ListItem = ({
                 checked={pressed}
                 onChange={() => setPressed(!pressed)}
                 onKeyDown={(e) => {
-                  console.log(e.key)
                   if (e.key === "Enter") {
                     setPressed(!pressed)
                   }
@@ -82,57 +81,51 @@ const ListItem = ({
         </div>
         <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
           <p className="whitespace-nowrap">
-            Instalado el{" "}
-            <b>
-              {credit.installationDate
-                ? new Date(credit.installationDate).toLocaleDateString()
-                : ""}
-            </b>
-          </p>
-          <SmallDot />
-          <p
-            className={`whitespace-nowrap ${status === "pending" ? "" : "text-red-600"}`}
-          >
-            {lastPayment ? (
-              <>
-                Ultimo pago <b>{new Date(lastPayment).toLocaleDateString()}</b>
-              </>
-            ) : (
-              "Sin pagos"
-            )}
+            Ultimo pago <b>{new Date(lastPayment!).toLocaleDateString()}</b>
           </p>
         </div>
       </div>
       <div className="min-w-32">
         <div className="flex items-center gap-x-3">
-          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+          <h2 className="text-gray-600 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Descuento{" "}
-                {employeeSalaryFrequency === "biweekly"
-                  ? "Quincenal"
-                  : "Mensual"}
+                Crédito
               </span>
             </a>
           </h2>
         </div>
-        <p className="whitespace-nowrap text-sm mt-3">
-          {amortization ? MXNFormat.format(amortization) : 0} MXN
+        <p className="whitespace-nowrap mt-2 font-semibold text-sm">
+          {MXNFormat.format(credit.loan!)} MXN
         </p>
       </div>
       <div className="min-w-32">
         <div className="flex items-center gap-x-3">
-          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+          <h2 className="text-gray-600 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Estatus
+                Total Pagado
               </span>
             </a>
           </h2>
         </div>
-        <Chip status={status === "delayed" ? "error" : "info"}>
-          {status === "delayed" ? "Demorado" : "Activo"}
-        </Chip>
+        <p className="whitespace-nowrap mt-2 font-semibold text-sm">
+          {MXNFormat.format(totalPaid)} MXN
+        </p>
+      </div>
+      <div className="min-w-32">
+        <div className="flex items-center gap-x-3">
+          <h2 className="text-gray-600 leading-6 font-semibold text-sm min-w-0">
+            <a className="flex text-inherit decoration-inherit gap-x-2">
+              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                Total a Pagar
+              </span>
+            </a>
+          </h2>
+        </div>
+        <p className="whitespace-nowrap mt-2 font-semibold text-sm">
+          {MXNFormat.format((amortization ?? 0) * termDuration)} MXN
+        </p>
       </div>
       <button
         onClick={() => navigate("/dashboard/credits/" + credit.id)}
