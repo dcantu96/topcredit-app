@@ -1,9 +1,13 @@
 import { atom, selector } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
-import { Credit, Term, User } from "src/schema.types"
+import { Credit, Term, TermOffering, User } from "src/schema.types"
 
-type CreditWithoutBorrower = Omit<Credit, "borrower">
+type CreditWithoutBorrower = Omit<Credit, "borrower" | "termOffering"> & {
+  termOffering: Pick<TermOffering, "id"> & {
+    term: Pick<Term, "id" | "name" | "durationType" | "duration">
+  }
+}
 
 /**
  * This query should return null if no credit is found
@@ -74,13 +78,21 @@ export const userLatestCreditSelectorQuery = selector<
 })
 
 type CreditWithTerm = CreditWithoutBorrower & {
-  term: Term
+  termOffering: Pick<TermOffering, "id"> & {
+    term: Pick<Term, "id" | "name" | "durationType" | "duration">
+  }
 }
 
 type CreditWithTermResponse = CreditWithoutBorrower & {
-  term: {
-    data: Term | null
-  } | null
+  termOffering: {
+    data:
+      | (Pick<TermOffering, "id"> & {
+          term: {
+            data: Pick<Term, "id" | "name" | "durationType" | "duration"> | null
+          }
+        })
+      | null
+  }
 }
 
 export const userLatestAuthorizedCreditSelectorQuery = selector<
@@ -91,29 +103,38 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
     const api = get(apiSelector)
     const profile = get(myProfileState)
     if (!profile) return undefined
-    const { data }: { data: (CreditWithTermResponse | undefined)[] } =
-      await api.get(`users/${profile.id}/credits`, {
+    const { data }: { data: CreditWithTermResponse[] } = await api.get(
+      `users/${profile.id}/credits`,
+      {
         params: {
           sort: "-id",
+          fields: {
+            termOfferings: "id,term",
+            terms: "id,name,durationType,duration",
+          },
           filter: {
             status: "authorized,dispersed",
           },
-          include: "term",
+          include: "termOffering.term",
           page: {
             limit: 1,
             offset: 0,
           },
         },
-      })
+      },
+    )
 
     const credit = data?.[0]
-    const term = credit?.term?.data
+    const termOffering = credit?.termOffering.data
 
-    if (!term || !credit) return undefined
+    if (!credit || !termOffering || !termOffering.term.data) return undefined
 
     return {
       ...credit,
-      term,
+      termOffering: {
+        ...termOffering,
+        term: termOffering.term.data,
+      },
     }
   },
 })
