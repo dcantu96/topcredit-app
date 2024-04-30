@@ -6,6 +6,7 @@ import FixedSidebar from "../fixed-sidebar"
 import { showDashboardSidebarSelector } from "components/providers/auth/atoms"
 
 import DashboardHeader from "../dashboard-header"
+import { Suspense } from "react"
 
 const DashboardLayout = () => {
   const showSidebar = useRecoilValue(showDashboardSidebarSelector)
@@ -17,7 +18,9 @@ const DashboardLayout = () => {
       <div className="flex">
         {showSidebar && <FixedSidebar />}
         <div className="flex flex-wrap h-[calc(100vh-4rem)] overflow-y-auto w-full">
-          <Outlet />
+          <Suspense fallback={<>loading page</>}>
+            <Outlet />
+          </Suspense>
         </div>
       </div>
     </div>

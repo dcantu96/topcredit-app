@@ -6,6 +6,7 @@ interface BaseToast {
   title: string
   message: string
   duration?: number
+  onClose?: () => void
 }
 
 interface SuccessToast extends BaseToast {}
@@ -16,18 +17,23 @@ const useToast = () => {
   const [toast, setToast] = useRecoilState(toastState)
   const clearTimerRef = useRef<NodeJS.Timeout>()
 
-  const success = ({ title, message, duration = 3000 }: SuccessToast) => {
+  const success = ({
+    title,
+    message,
+    duration = 3000,
+    onClose,
+  }: SuccessToast) => {
     clearTimeout(clearTimerRef.current)
     setToast({ status: "success", title, message })
 
-    clearToast(duration)
+    clearToast(duration, onClose)
   }
 
-  const error = ({ title, message, duration = 5000 }: ErrorToast) => {
+  const error = ({ title, message, duration = 5000, onClose }: ErrorToast) => {
     clearTimeout(clearTimerRef.current)
     setToast({ status: "error", title, message })
 
-    clearToast(duration)
+    clearToast(duration, onClose)
   }
 
   const dismiss = () => {
@@ -35,9 +41,10 @@ const useToast = () => {
     clearTimeout(clearTimerRef.current)
   }
 
-  const clearToast = (duration: number) => {
+  const clearToast = (duration: number, onClose?: () => void) => {
     clearTimerRef.current = setTimeout(() => {
       setToast(undefined)
+      onClose?.()
     }, duration)
   }
 

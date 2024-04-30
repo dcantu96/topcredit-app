@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { Route, Routes } from "react-router-dom"
 
 /* Layouts */
@@ -7,34 +7,51 @@ import DashboardLayout from "components/organisms/dashboard-layout"
 
 /* Utility */
 import ProtectedRoute from "components/providers/auth/ProtectedRoute"
+import Toaster from "components/providers/toaster/toaster"
 
 /* Routes */
-import Dashboard from "../routes/dashboards"
-import Login from "../routes/login"
-import Register from "../routes/register"
-import CompaniesList from "../routes/companies/list"
-import NewCompany from "../routes/companies/new"
-import EditCompany from "../routes/companies/edit"
-import ShowCompany from "../routes/companies/show"
-import RequestsList from "../routes/requests/list"
-import ShowRequest from "../routes/requests/show"
-import Toaster from "components/providers/toaster/toaster"
-import CreditScreen from "../routes/new-credit"
-import PreAuthorizationsList from "../routes/pre-authorizations/list"
-import PendingAuthorizations from "../routes/pending-authorizations/list"
-import ShowPendingAuthorization from "../routes/pending-authorizations/show"
-import Dispersions from "../routes/dispersions/list"
-import ShowDispersions from "../routes/dispersions/show"
-import Landing from "../routes/landing"
-import LatestCreditMonitor from "./latest-credit-monitor"
-import MyCredits from "../routes/my-credits/my-credits"
-import CompanyInstallations from "../routes/company-installations/list"
-import CompanyInstallation from "../routes/company-installations/show"
-import CompanyPayments from "../routes/company-payments/list"
-import CompanyPayment from "../routes/company-payments/show"
-import Credit from "../routes/credits/show"
-import CompanyCompletedCreditsList from "../routes/company-completed-credits/list"
-import CompanyCompletedCredits from "../routes/company-completed-credits/show"
+const Dashboard = lazy(() => import("../routes/dashboards"))
+const Login = lazy(() => import("../routes/login"))
+const Register = lazy(() => import("../routes/register"))
+const CompaniesList = lazy(() => import("../routes/companies/list"))
+const NewCompany = lazy(() => import("../routes/companies/new"))
+const EditCompany = lazy(() => import("../routes/companies/edit"))
+const ShowCompany = lazy(() => import("../routes/companies/show"))
+const RequestsList = lazy(() => import("../routes/requests/list"))
+const ShowRequest = lazy(() => import("../routes/requests/show"))
+const CreditScreen = lazy(() => import("../routes/new-credit"))
+const PreAuthorizationsList = lazy(
+  () => import("../routes/pre-authorizations/list"),
+)
+const PendingAuthorizations = lazy(
+  () => import("../routes/pending-authorizations/list"),
+)
+const ShowPendingAuthorization = lazy(
+  () => import("../routes/pending-authorizations/show"),
+)
+const Dispersions = lazy(() => import("../routes/dispersions/list"))
+const ShowDispersions = lazy(() => import("../routes/dispersions/show"))
+const Landing = lazy(() => import("../routes/landing"))
+const LatestCreditMonitor = lazy(() => import("./latest-credit-monitor"))
+const MyCredits = lazy(() => import("../routes/my-credits/my-credits"))
+const CompanyInstallations = lazy(
+  () => import("../routes/company-installations/list"),
+)
+const CompanyInstallation = lazy(
+  () => import("../routes/company-installations/show"),
+)
+const CompanyPayments = lazy(() => import("../routes/company-payments/list"))
+const CompanyPayment = lazy(() => import("../routes/company-payments/show"))
+const Credit = lazy(() => import("../routes/credits/show"))
+const CompanyCompletedCreditsList = lazy(
+  () => import("../routes/company-completed-credits/list"),
+)
+const CompanyCompletedCredits = lazy(
+  () => import("../routes/company-completed-credits/show"),
+)
+const ConfirmationSuccess = lazy(() => import("../routes/confirmation-success"))
+const ConfirmationFailure = lazy(() => import("../routes/confirmation-failure"))
+const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 
 function App() {
   return (
@@ -42,6 +59,9 @@ function App() {
       <Toaster />
       <Routes>
         <Route index element={<Landing />} />
+        <Route path="confirmation-success" element={<ConfirmationSuccess />} />
+        <Route path="confirmation-failure" element={<ConfirmationFailure />} />
+        <Route path="send-confirmation" element={<SendConfirmation />} />
         <Route element={<LoginLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />

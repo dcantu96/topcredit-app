@@ -1,13 +1,12 @@
 import { useState } from "react"
-import { useRecoilValue } from "recoil"
 import { Switch } from "@headlessui/react"
 
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
 import ButtonLink from "components/atoms/button-link"
+import useToast from "components/providers/toaster/useToast"
 import { withoutAuth } from "components/providers/auth/withoutAuth"
 import { useApi } from "components/providers/api/useApi"
-import { authActions } from "components/providers/auth/atoms"
 import { useFormErrors } from "hooks/useFormErrors"
 
 import logo from "../../assets/logo.png"
@@ -25,7 +24,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [agreed, setAgreed] = useState(false)
   const { errors, handleErrors, clearErrors } = useFormErrors()
-  const { login } = useRecoilValue(authActions)
+  const toast = useToast()
 
   const api = useApi()
 
@@ -41,7 +40,10 @@ const Register = () => {
         password,
         status: "new",
       })
-      await login(email, password)
+      toast.success({
+        title: "¡Registro exitoso!",
+        message: "Revisa tu correo para confirmar tu cuenta",
+      })
     } catch (error) {
       handleErrors(
         error,
