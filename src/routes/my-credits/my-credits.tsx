@@ -23,8 +23,8 @@ const MyCredits = () => {
   const credit = useRecoilValue(userLatestAuthorizedCreditSelectorQuery)
   const user = useRecoilValue(userGeneralDataQuerySelector)
   const amortization = useCreditAmortization({
-    duration: credit?.term.duration,
-    durationType: credit?.term.durationType,
+    duration: credit?.termOffering.term.duration,
+    durationType: credit?.termOffering.term.durationType,
     loan: credit?.loan ?? undefined,
     rate: 0.1,
   })
@@ -72,9 +72,9 @@ const MyCredits = () => {
         <div className="shadow bg-white rounded p-4 ring-1 ring-inset">
           <h4 className="text-base font-semibold">Plazo</h4>
           <p className="text-gray-500">
-            {credit?.term.duration}{" "}
-            {credit?.term.durationType
-              ? DURATION_TYPES.get(credit?.term.durationType)
+            {credit?.termOffering.term.duration}{" "}
+            {credit?.termOffering.term.durationType
+              ? DURATION_TYPES.get(credit?.termOffering.term.durationType)
               : ""}
           </p>
         </div>
