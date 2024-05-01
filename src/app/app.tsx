@@ -55,7 +55,7 @@ const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 
 function App() {
   return (
-    <Suspense fallback={<>loading</>}>
+    <Suspense fallback={null}>
       <Toaster />
       <Routes>
         <Route index element={<Landing />} />
