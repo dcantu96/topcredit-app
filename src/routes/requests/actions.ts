@@ -12,6 +12,7 @@ import {
   proofOfAddressRejectionReasonState,
   proofOfAddressStatusState,
 } from "./atoms"
+import { notificationsSelector } from "components/organisms/activity-container/atoms"
 import { useRecoilRefresher_UNSTABLE, useRecoilState } from "recoil"
 import { isJsonApiError } from "components/providers/api/utils"
 
@@ -38,6 +39,9 @@ export const useRequestActions = (id: number) => {
     useRecoilState(payrollReceiptRejectionReasonState(Number(id)))
   const navigate = useNavigate()
   const refresh = useRecoilRefresher_UNSTABLE(basicDetailsSortedSelector)
+  const refreshNotifications = useRecoilRefresher_UNSTABLE(
+    notificationsSelector("UserStatusChangeNotifier::Notification"),
+  )
   const toast = useToast()
   const api = useApi()
 
@@ -56,6 +60,7 @@ export const useRequestActions = (id: number) => {
         message: "El usuario ha sido aprobado",
       })
       refresh()
+      refreshNotifications()
       navigate("/dashboard/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
@@ -75,6 +80,7 @@ export const useRequestActions = (id: number) => {
         message: "El usuario ha sido denegado",
       })
       refresh()
+      refreshNotifications()
       navigate("/dashboard/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
@@ -105,6 +111,7 @@ export const useRequestActions = (id: number) => {
         message: "El usuario ha sido marcado como falta de documentación",
       })
       refresh()
+      refreshNotifications()
       navigate("/dashboard/requests")
     } catch (error) {
       let message = "Ocurrió un error al actualizar el usuario"
