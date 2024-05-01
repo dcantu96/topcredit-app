@@ -9,6 +9,7 @@ import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
+import StatusIndicator from "components/atoms/status-indicator"
 
 import { companiesState } from "./loader"
 import { DURATION_TYPES } from "../../constants"
@@ -35,9 +36,7 @@ const CompaniesList = () => {
           <List.Item key={company.id}>
             <div className="flex-1 min-w-60">
               <div className="flex items-center gap-x-3">
-                <div className="bg-gray-100 p-1 rounded-full flex-none shadow-sm">
-                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                </div>
+                <StatusIndicator color="info" />
                 <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0 flex">
                   <a className="flex text-inherit decoration-inherit gap-x-2 mr-2">
                     <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">

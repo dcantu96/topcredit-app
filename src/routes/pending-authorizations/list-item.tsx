@@ -3,6 +3,7 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline"
 
 import List from "components/atoms/list"
 import SmallDot from "components/atoms/small-dot"
+import StatusIndicator from "components/atoms/status-indicator"
 
 import { Credit } from "src/schema.types"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
@@ -15,9 +16,7 @@ const ListItem = ({ credit }: { credit: Credit }) => {
     <List.Item>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-x-3">
-          <div className="bg-gray-100 p-1 rounded-full flex-none shadow-sm">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
+          <StatusIndicator color="info" />
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
