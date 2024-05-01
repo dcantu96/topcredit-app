@@ -2,7 +2,7 @@ import { lazy } from "react"
 import { myProfileState } from "components/providers/auth/atoms"
 import { useRecoilValue } from "recoil"
 const Admin = lazy(() => import("./admin"))
-const StaffRequests = lazy(() => import("../../routes/requests/list"))
+const StaffRequests = lazy(() => import("../requests/list"))
 const PreAuthorizations = lazy(
   () => import("../../routes/pre-authorizations/list"),
 )
