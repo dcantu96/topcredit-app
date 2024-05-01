@@ -17,7 +17,7 @@ const CompaniesList = lazy(() => import("../routes/companies/list"))
 const NewCompany = lazy(() => import("../routes/companies/new"))
 const EditCompany = lazy(() => import("../routes/companies/edit"))
 const ShowCompany = lazy(() => import("../routes/companies/show"))
-const RequestsList = lazy(() => import("../routes/requests/list"))
+const RequestsList = lazy(() => import("../routes/requests/list/list"))
 const ShowRequest = lazy(() => import("../routes/requests/show"))
 const CreditScreen = lazy(() => import("../routes/new-credit"))
 const PreAuthorizationsList = lazy(

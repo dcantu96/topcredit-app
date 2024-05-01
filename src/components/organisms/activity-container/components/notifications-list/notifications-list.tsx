@@ -1,8 +1,12 @@
-import dayjs from "dayjs"
 import { useRecoilValue } from "recoil"
-import { notificationsSelector } from "../../atoms"
-import type { NotificationType } from "../../activity-container.types"
 import StatusIndicator from "components/atoms/status-indicator"
+import { notificationsSelector } from "../../atoms"
+import type { NotificationType } from "../../../../../schema.types"
+import dayjs from "dayjs"
+import "dayjs/locale/es"
+import relativeTime from "dayjs/plugin/relativeTime"
+
+dayjs.extend(relativeTime)
 
 const NotificationList = ({ type }: { type: NotificationType }) => {
   const notifications = useRecoilValue(notificationsSelector(type))

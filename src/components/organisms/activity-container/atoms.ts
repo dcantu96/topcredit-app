@@ -1,8 +1,7 @@
 import { selectorFamily } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
-import type { Notification } from "src/schema.types"
-import type { NotificationType } from "./activity-container.types"
+import type { Notification, NotificationType } from "../../../schema.types"
 
 export const notificationsSelector = selectorFamily<
   Pick<Notification, "id" | "message" | "createdAt">[],
@@ -19,7 +18,7 @@ export const notificationsSelector = selectorFamily<
         {
           params: {
             filter: {
-              type,
+              type: `${type}::Notification`,
             },
             fields: {
               notifications: "id,message,createdAt",

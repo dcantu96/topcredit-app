@@ -1,12 +1,14 @@
+export type NotificationType = "RequestsNotifier"
+
 export type Role =
-  | "admin"
   | "requests"
-  | "companies"
   | "pre_authorizations"
   | "authorizations"
   | "dispersions"
   | "installations"
   | "payments"
+  | "admin"
+  | "companies"
 
 export type UserStatus =
   | "new"

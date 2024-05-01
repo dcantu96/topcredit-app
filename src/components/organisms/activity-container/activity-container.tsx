@@ -1,13 +1,8 @@
 import { Suspense } from "react"
 import { NavLink } from "react-router-dom"
-import dayjs from "dayjs"
-import "dayjs/locale/es"
-import relativeTime from "dayjs/plugin/relativeTime"
 
 import NotificationList from "./components/notifications-list"
 import type { ActivityContainerProps } from "./activity-container.types"
-
-dayjs.extend(relativeTime)
 
 const ActivityContainer = ({
   notificationType,

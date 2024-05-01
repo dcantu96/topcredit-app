@@ -18,7 +18,7 @@ const Screen = () => {
         <RequestsList />
       </ListContainer>
       <ActivityContainer
-        notificationType="UserStatusChangeNotifier::Notification"
+        notificationType="RequestsNotifier"
         to="/dashboard/requests"
       />
     </>
