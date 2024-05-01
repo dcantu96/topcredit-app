@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import {
   bankStatementRejectionReasonState,
@@ -11,16 +11,16 @@ import {
   proofOfAddressRejectionReasonState,
   proofOfAddressStatusState,
 } from "./atoms"
-import { CheckIcon, DocumentIcon } from "@heroicons/react/24/solid"
+import { CheckIcon, DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid"
 import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer/file-viewer"
 import { useRequestActions } from "./actions"
 import { MXNFormat } from "../../constants"
 import { companiesDataSelector } from "../companies/loader"
 import Tooltip from "components/atoms/tooltip"
-import { TrashIcon } from "@heroicons/react/24/outline"
 
 const ShowRequest = () => {
+  const to = useNavigate()
   const { id } = useParams()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const user = useRecoilValue(basicDetailsSelector(Number(id)))
@@ -68,13 +68,16 @@ const ShowRequest = () => {
 
   return (
     <div className="flex flex-col container lg:w-2/3 mx-auto px-4 py-4">
-      <div className="lg:flex lg:items-center lg:justify-between mb-4">
+      <div className="lg:flex lg:items-start lg:justify-between mb-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-            {user.firstName} {user.lastName}
+          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:tracking-tight">
+            <span className="text-indigo-500" onClick={() => to("..")}>
+              Solicitudes
+            </span>{" "}
+            / {user.firstName} {user.lastName}
           </h2>
-          <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
-            <div className="mt-2 flex items-center text-sm text-gray-500">
+          <div className="mt-1 flex sm:mt-0 flex-row sm:flex-wrap gap-x-4">
+            <div className="mt-1 flex items-center text-sm text-gray-500">
               <svg
                 className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                 viewBox="0 0 24 24"
@@ -100,7 +103,7 @@ const ShowRequest = () => {
               </svg>
               soriana.com
             </div>
-            <div className="mt-2 flex items-center text-sm text-gray-500">
+            <div className="mt-1 flex items-center text-sm text-gray-500">
               <svg
                 className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                 viewBox="0 0 20 20"
@@ -117,7 +120,7 @@ const ShowRequest = () => {
             </div>
           </div>
         </div>
-        <div className="mt-5 flex lg:ml-4 lg:mt-0">
+        <div className="mt-2 flex lg:ml-4 lg:mt-0">
           <span className="flex gap-2">
             <Button
               onClick={approveUser}
@@ -130,10 +133,6 @@ const ShowRequest = () => {
             >
               <CheckIcon className="h-5 w-5 text-white mr-1.5" />
               Aprobar
-            </Button>
-            <Button status="secondary" onClick={denyUser}>
-              <TrashIcon className="h-5 w-5 mr-1.5" />
-              Eliminar
             </Button>
             <Button
               status="secondary"
@@ -148,10 +147,14 @@ const ShowRequest = () => {
               <DocumentIcon className="h-5 w-5 mr-1.5" />
               Doc. Inválida
             </Button>
+            <Button status="secondary" onClick={denyUser}>
+              <XMarkIcon className=" h-5 w-5 sm:mr-1.5" />
+              <span className="hidden sm:inline-block">Rechazar</span>
+            </Button>
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-8">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:gap-y-8">
         <div className="col-span-1">
           <label className="text-gray-500 font-medium text-sm">
             Numero de Nomina
