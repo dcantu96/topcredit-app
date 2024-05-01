@@ -194,3 +194,7 @@ export interface Payment extends ObjectWithId, Timestamps {
   credit: Credit
   number: number
 }
+
+export interface Notification extends ObjectWithId, Timestamps {
+  message: string
+}
