@@ -37,7 +37,7 @@ const FixedSidebar = () => {
             .map(({ label, value, path }) => (
               <li key={path}>
                 <NavLink
-                  className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
+                  className="group flex flex-col text-center justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
                   to={path}
                 >
                   <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
