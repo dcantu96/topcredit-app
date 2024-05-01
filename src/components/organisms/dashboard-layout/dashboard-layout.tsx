@@ -7,6 +7,7 @@ import { showDashboardSidebarSelector } from "components/providers/auth/atoms"
 
 import DashboardHeader from "../dashboard-header"
 import { Suspense } from "react"
+import LoadingList from "components/atoms/loading-list"
 
 const DashboardLayout = () => {
   const showSidebar = useRecoilValue(showDashboardSidebarSelector)
@@ -18,7 +19,7 @@ const DashboardLayout = () => {
       <div className="flex">
         {showSidebar && <FixedSidebar />}
         <div className="flex flex-wrap h-[calc(100vh-4rem)] overflow-y-auto w-full">
-          <Suspense fallback={<>loading page</>}>
+          <Suspense fallback={<LoadingList />}>
             <Outlet />
           </Suspense>
         </div>
