@@ -15,7 +15,7 @@ const FixedSidebar = () => {
   const isPathActive = useMatch(`/dashboard/companies`)
   return (
     <div className="w-16 bg-slate-50 border-gray-900/10 border-r overflow-y-auto inline-block h-[calc(100vh-4rem)]">
-      <nav className="lg:text-sm lg:leading-6 relative py-4">
+      <nav className="lg:text-sm lg:leading-6 relative py-4 overflow-hidden">
         <ul>
           <li>
             <NavLink
