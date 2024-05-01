@@ -17,9 +17,13 @@ export const notificationsSelector = selectorFamily<
         `users/${user?.id}/notifications`,
         {
           params: {
-            filter: {
-              type: `${type}::Notification`,
-            },
+            ...(type
+              ? {
+                  filter: {
+                    type: `${type}Notifier::Notification`,
+                  },
+                }
+              : {}),
             fields: {
               notifications: "id,message,createdAt",
             },
@@ -31,6 +35,8 @@ export const notificationsSelector = selectorFamily<
           },
         },
       )
+
+      console.log(data)
 
       return data
     },

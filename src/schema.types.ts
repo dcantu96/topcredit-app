@@ -1,4 +1,4 @@
-export type NotificationType = "RequestsNotifier"
+export type NotificationType = "Requests" | "PreAuthorizations" | ""
 
 export type Role =
   | "requests"
