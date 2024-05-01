@@ -47,7 +47,6 @@ const FileViewer = ({
           {onDelete && (
             <TrashIcon
               onClick={(e) => {
-                console.log("click")
                 e.stopPropagation()
                 onDelete()
               }}

@@ -148,7 +148,6 @@ export const useTermActions = () => {
 
         const termMap = snapshot.getLoadable(termsState).getValue()
         const termToAssign = termMap.get(termId)
-        console.log(data.id)
         if (!termToAssign) return
         set(companyState(companyId), (prev) => ({
           ...prev,

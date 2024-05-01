@@ -27,14 +27,6 @@ const NewCompany = () => {
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("create", {
-      name,
-      domain,
-      employeeSalaryFrequency,
-      rate: rate / 100,
-      borrowingCapacity: borrowingCapacity / 100,
-    })
-
     if (!employeeSalaryFrequency) return
 
     try {

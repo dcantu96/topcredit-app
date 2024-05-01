@@ -37,7 +37,6 @@ const ListItem = ({
                 checked={pressed}
                 onChange={() => setPressed(!pressed)}
                 onKeyDown={(e) => {
-                  console.log(e.key)
                   if (e.key === "Enter") {
                     setPressed(!pressed)
                   }

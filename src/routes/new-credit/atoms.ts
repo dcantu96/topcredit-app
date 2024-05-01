@@ -162,7 +162,6 @@ export const initialActiveStep = selector<
       default:
         break
     }
-    console.log(credit)
     switch (credit?.status) {
       case "new":
       case "pending":

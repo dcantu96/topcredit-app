@@ -45,7 +45,6 @@ const ShowRequest = () => {
   const proofOfAddressStatus = useRecoilValue(
     proofOfAddressStatusState(Number(id)),
   )
-  console.log(proofOfAddressStatus)
   const identityDocumentStatus = useRecoilValue(
     identityDocumentStatusState(Number(id)),
   )
