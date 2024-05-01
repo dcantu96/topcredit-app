@@ -31,17 +31,15 @@ const FileViewer = ({
       <label className="text-gray-900 font-medium leading-6 text-sm">
         {label}
       </label>
-      <div
-        className={`ring-1 ring-gray-300 rounded-md w-full p-4 mt-2 ${
-          fileUrl ? "cursor-pointer" : ""
-        }`}
-        onClick={() => {
-          if (!fileUrl) return
-          window.open(fileUrl, "_blank")
-        }}
-      >
+      <div className={`ring-1 ring-gray-300 rounded-md w-full p-4 mt-2`}>
         <div className="flex justify-between w-full mb-4">
-          <DocumentIcon className="h-5 w-5 text-gray-500" />
+          <DocumentIcon
+            className="h-5 w-5 text-gray-500"
+            onClick={() => {
+              if (!fileUrl) return
+              window.open(fileUrl, "_blank")
+            }}
+          />
           {children}
 
           {onDelete && (
@@ -55,6 +53,10 @@ const FileViewer = ({
           )}
         </div>
         <p
+          onClick={() => {
+            if (!fileUrl) return
+            window.open(fileUrl, "_blank")
+          }}
           className={`${
             fileUrl ? "text-indigo-600" : "text-gray-900"
           } font-medium mb-2 inline-flex`}
