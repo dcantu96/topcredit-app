@@ -6,7 +6,7 @@ interface FormHeaderProps {
 
 const ListHeader = ({ children }: FormHeaderProps) => {
   return (
-    <header className="py-4 px-4 sm:px-6 lg:px-8 border-gray-900/10 border-b flex items-center justify-between">
+    <header className="py-2 sm:py-4 px-4 sm:px-6 lg:px-8 border-gray-900/10 border-b flex items-center justify-between">
       {children}
     </header>
   )
@@ -25,7 +25,7 @@ const Title = ({
   return (
     <div className="flex gap-2 group group-last:text-gray-500 text-gray-900">
       <h2
-        className={` leading-7 font-semibold text-base ${to ? "cursor-pointer hover:text-gray-700" : ""}`}
+        className={`leading-7 font-semibold text-base ${to ? "cursor-pointer hover:text-gray-700" : ""}`}
         onClick={() => (to ? navigate(to) : null)}
       >
         {text}
