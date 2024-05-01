@@ -213,7 +213,7 @@ const ShowRequest = () => {
         <div className="col-span-2">
           <h1 className="text-gray-900 font-bold text-xl">Documentos</h1>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2 sm:col-span-1">
           <FileViewer
             label="Identificación Oficial"
             fileUrl={user.identityDocumentUrl ?? undefined}
@@ -234,7 +234,7 @@ const ShowRequest = () => {
           </FileViewer>
         </div>
 
-        <div className="col-span-1">
+        <div className="col-span-2 sm:col-span-1">
           <FileViewer
             label="Comprobante de Domicilio"
             fileUrl={user.proofOfAddressUrl ?? undefined}
@@ -255,7 +255,7 @@ const ShowRequest = () => {
           </FileViewer>
         </div>
 
-        <div className="col-span-1">
+        <div className="col-span-2 sm:col-span-1">
           <FileViewer
             label="Estado de Cuenta"
             fileUrl={user.bankStatementUrl ?? undefined}
@@ -276,7 +276,7 @@ const ShowRequest = () => {
           </FileViewer>
         </div>
 
-        <div className="col-span-1">
+        <div className="col-span-2 sm:col-span-1">
           <FileViewer
             label="Recibo de Nómina"
             fileUrl={user.payrollReceiptUrl ?? undefined}
