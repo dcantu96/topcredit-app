@@ -63,6 +63,13 @@ const Input = ({
     ? "pr-28"
     : "pr-3"
 
+  const inputRingClasses = error
+    ? "ring-rose-400 focus:ring-rose-600"
+    : "ring-gray-300 focus:ring-indigo-600"
+
+  const inputBaseClasses =
+    "min-w-52 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+
   const prefixPaddingLeft = prefix ? "pl-7" : "pl-3"
 
   const [passwordHidden, setPasswordHidden] = useState(true)
@@ -91,13 +98,9 @@ const Input = ({
           onBlur={onBlur}
           value={value || ""}
           onChange={onChange}
-          className={`block w-full rounded-md border-0 py-1.5 ${
-            error
-              ? "ring-rose-400 focus:ring-rose-600"
-              : "ring-gray-300 focus:ring-indigo-600"
-          } ${prefixPaddingLeft} ${
+          className={`${inputBaseClasses} ${inputRingClasses} ${prefixPaddingLeft} ${
             passwordPaddingRight || trailingDropdownPaddingRight
-          } text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed`}
+          }`}
           placeholder={placeholder}
         />
         {type === "password" && (
@@ -135,7 +138,7 @@ const Input = ({
           </div>
         )}
         {typeof error === "string" && (
-          <p className="absolute -bottom-6 left-0 text-sm text-rose-600">
+          <p className="absolute -bottom-6 left-0 text-sm text-rose-600 line-clamp-1">
             {error}
           </p>
         )}
