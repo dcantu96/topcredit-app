@@ -1,7 +1,9 @@
+import { atomFamily, selector, selectorFamily } from "recoil"
+
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
-import { atomFamily, selector, selectorFamily } from "recoil"
-import { DocumentStatus, User } from "src/schema.types"
+
+import type { DocumentStatus, User } from "src/schema.types"
 
 type BasicDetailsTableResponse = Pick<
   User,
