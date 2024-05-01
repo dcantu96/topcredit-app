@@ -198,8 +198,9 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
               }
               onClick={handlePreAuthorize}
               disabled={
-                (!!loanAmountErrorMsg || !loanAmount || !termOfferingId) &&
-                !isAdmin
+                ((!!loanAmountErrorMsg || !loanAmount || !termOfferingId) &&
+                  !isAdmin) ||
+                (isAdmin && (!loanAmount || !termOfferingId))
               }
             >
               Pre-Autorizar
