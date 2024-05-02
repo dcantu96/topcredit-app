@@ -1,4 +1,15 @@
-export type NotificationType = "Requests" | "PreAuthorizations" | ""
+export type NotificationType =
+  | "PendingUser"
+  | "PreAuthorizationUser"
+  | "DeniedUser"
+  | "InvalidDocumentationUser"
+  | "PreAuthorizedUser"
+  | "PendingCredit"
+  | "InvalidDocumentationCredit"
+  | "AuthorizedCredit"
+  | "DeniedCredit"
+  | "DispersedCredit"
+  | "InstalledCredit"
 
 export type Role =
   | "requests"
