@@ -8,6 +8,7 @@ import List from "components/atoms/list"
 import { preAuthorizationUsersState } from "./atoms"
 import PreAuthorizationListItem from "./list-item"
 import ActivityContainer from "components/organisms/activity-container"
+import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const preAuthorizationUsers = useRecoilValue(preAuthorizationUsersState)
@@ -21,13 +22,14 @@ const Screen = () => {
           </ListHeader.Actions>
         </ListHeader>
         <List>
+          {preAuthorizationUsers.length === 0 && <EmptyList />}
           {preAuthorizationUsers.map((user) => (
             <PreAuthorizationListItem key={user.id} user={user} />
           ))}
         </List>
       </ListContainer>
       <ActivityContainer
-        notificationTypes={["PreAuthorizations"]}
+        notificationTypes={["PreAuthorizationUser", "PreAuthorizedUser"]}
         to={"/dashboard/pre-authorizations"}
       />
     </>
