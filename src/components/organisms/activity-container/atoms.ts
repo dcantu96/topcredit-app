@@ -5,11 +5,11 @@ import type { Notification, NotificationType } from "../../../schema.types"
 
 export const notificationsSelector = selectorFamily<
   Pick<Notification, "id" | "message" | "createdAt">[],
-  NotificationType
+  NotificationType[]
 >({
   key: "notificationsSelector",
   get:
-    (type) =>
+    (types) =>
     async ({ get }) => {
       const user = get(myProfileState)
       const api = get(apiSelector)
@@ -17,10 +17,12 @@ export const notificationsSelector = selectorFamily<
         `users/${user?.id}/notifications`,
         {
           params: {
-            ...(type
+            ...(types
               ? {
                   filter: {
-                    type: `${type}Notifier::Notification`,
+                    type: types
+                      .map((type) => `${type}Notifier::Notification`)
+                      .join(","),
                   },
                 }
               : {}),

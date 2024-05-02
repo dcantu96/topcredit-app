@@ -40,7 +40,7 @@ export const useRequestActions = (id: number) => {
   const navigate = useNavigate()
   const refresh = useRecoilRefresher_UNSTABLE(basicDetailsSortedSelector)
   const refreshNotifications = useRecoilRefresher_UNSTABLE(
-    notificationsSelector("RequestsNotifier"),
+    notificationsSelector(["Requests"]),
   )
   const toast = useToast()
   const api = useApi()

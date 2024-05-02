@@ -5,7 +5,7 @@ import NotificationList from "./components/notifications-list"
 import type { ActivityContainerProps } from "./activity-container.types"
 
 const ActivityContainer = ({
-  notificationType,
+  notificationTypes,
   to,
 }: ActivityContainerProps) => {
   return (
@@ -19,7 +19,7 @@ const ActivityContainer = ({
         </div>
       </header>
       <Suspense fallback={<div>Loading...</div>}>
-        <NotificationList type={notificationType} />
+        <NotificationList types={notificationTypes} />
       </Suspense>
     </aside>
   )

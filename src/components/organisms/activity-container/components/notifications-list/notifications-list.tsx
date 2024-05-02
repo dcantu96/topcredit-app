@@ -8,8 +8,8 @@ import relativeTime from "dayjs/plugin/relativeTime"
 
 dayjs.extend(relativeTime)
 
-const NotificationList = ({ type }: { type: NotificationType }) => {
-  const notifications = useRecoilValue(notificationsSelector(type))
+const NotificationList = ({ types }: { types: NotificationType[] }) => {
+  const notifications = useRecoilValue(notificationsSelector(types))
 
   return (
     <>

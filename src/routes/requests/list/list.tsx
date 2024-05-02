@@ -17,7 +17,10 @@ const Screen = () => {
         </ListHeader>
         <RequestsList />
       </ListContainer>
-      <ActivityContainer notificationType="Requests" to="/dashboard/requests" />
+      <ActivityContainer
+        notificationTypes={["Requests"]}
+        to="/dashboard/requests"
+      />
     </>
   )
 }
