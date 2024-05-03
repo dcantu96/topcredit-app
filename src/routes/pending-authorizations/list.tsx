@@ -29,7 +29,7 @@ const Screen = () => {
         </List>
       </ListContainer>
       <ActivityContainer
-        notificationTypes={["PreAuthorizations"]}
+        notificationTypes={["PreAuthorizedUser"]}
         to={"/dashboard/pre-authorizations"}
       />
     </>
