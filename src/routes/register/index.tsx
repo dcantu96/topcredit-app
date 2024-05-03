@@ -4,18 +4,19 @@ import { Switch } from "@headlessui/react"
 import Input from "components/atoms/input"
 import Button from "components/atoms/button"
 import ButtonLink from "components/atoms/button-link"
-import useToast from "components/providers/toaster/useToast"
 import { withoutAuth } from "components/providers/auth/withoutAuth"
 import { useApi } from "components/providers/api/useApi"
 import { useFormErrors } from "hooks/useFormErrors"
 
 import logo from "../../assets/logo.png"
+import { useNavigate } from "react-router-dom"
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ")
 }
 
 const Register = () => {
+  const navigate = useNavigate()
   const [email, setEmail] = useState<string>("")
   const [firstName, setFirstName] = useState<string>("")
   const [lastName, setLastName] = useState<string>("")
@@ -24,8 +25,6 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [agreed, setAgreed] = useState(false)
   const { errors, handleErrors, clearErrors } = useFormErrors()
-  const toast = useToast()
-
   const api = useApi()
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,10 +39,7 @@ const Register = () => {
         password,
         status: "new",
       })
-      toast.success({
-        title: "¡Registro exitoso!",
-        message: "Revisa tu correo para confirmar tu cuenta",
-      })
+      navigate("/register/success")
     } catch (error) {
       handleErrors(
         error,

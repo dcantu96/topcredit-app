@@ -13,6 +13,7 @@ import Toaster from "components/providers/toaster/toaster"
 const Dashboard = lazy(() => import("../routes/dashboards"))
 const Login = lazy(() => import("../routes/login"))
 const Register = lazy(() => import("../routes/register"))
+const RegisterSuccess = lazy(() => import("../routes/register/success"))
 const CompaniesList = lazy(() => import("../routes/companies/list"))
 const NewCompany = lazy(() => import("../routes/companies/new"))
 const EditCompany = lazy(() => import("../routes/companies/edit"))
@@ -65,6 +66,7 @@ function App() {
         <Route element={<LoginLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="register/success" element={<RegisterSuccess />} />
         </Route>
         <Route element={<LatestCreditMonitor />}>
           <Route path="new-credit" element={<CreditScreen />} />
