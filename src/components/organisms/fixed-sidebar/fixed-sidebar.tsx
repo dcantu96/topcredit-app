@@ -64,6 +64,21 @@ const FixedSidebar = () => {
                   Clientes
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
+                  to="staff"
+                >
+                  <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
+                    <ClipboardDocumentListIcon
+                      className={`h-5 w-5 group-hover:text-sky-500 ${
+                        isPathActive ? "text-sky-500" : "text-sky-300"
+                      }`}
+                    />
+                  </div>
+                  Staff
+                </NavLink>
+              </li>
             </>
           )}
         </ul>

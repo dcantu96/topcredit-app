@@ -15,6 +15,8 @@ const Login = lazy(() => import("../routes/login"))
 const Register = lazy(() => import("../routes/register"))
 const RegisterSuccess = lazy(() => import("../routes/register/success"))
 const CompaniesList = lazy(() => import("../routes/companies/list"))
+const StaffList = lazy(() => import("../routes/staff/list"))
+const EditStaff = lazy(() => import("../routes/staff/edit"))
 const NewCompany = lazy(() => import("../routes/companies/new"))
 const EditCompany = lazy(() => import("../routes/companies/edit"))
 const ShowCompany = lazy(() => import("../routes/companies/show"))
@@ -147,6 +149,13 @@ function App() {
             element={<ProtectedRoute allowedRoles={["payments"]} />}
           >
             <Route path=":id" element={<Credit />} />
+          </Route>
+          <Route
+            path="staff"
+            element={<ProtectedRoute allowedRoles={["admin"]} />}
+          >
+            <Route index element={<StaffList />} />
+            <Route path=":id/edit" element={<EditStaff />} />
           </Route>
         </Route>
         <Route
