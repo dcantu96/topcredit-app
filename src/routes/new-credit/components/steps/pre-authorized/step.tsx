@@ -13,9 +13,15 @@ import {
   readonlyCreditPayrollReceiptSelector,
 } from "./atoms"
 import { useSubmitCredit } from "./actions"
-import { InformationCircleIcon } from "@heroicons/react/24/outline"
+import Notice from "components/atoms/notice"
+import { useState } from "react"
+import SuccessAnimation from "components/atoms/success-animation"
+
+type AnimationStatus = "pending" | "running" | "finished"
 
 const Step = () => {
+  const [animationStatus, setAnimationStatus] =
+    useState<AnimationStatus>("pending")
   const credit = useRecoilValue(userLatestCreditSelectorQuery)
   const setPayrollReceipt = useSetRecoilState(creditPayrollReceiptState)
   const payrollReceipt = useRecoilValue(readonlyCreditPayrollReceiptSelector)
@@ -25,9 +31,14 @@ const Step = () => {
   const authorization = useRecoilValue(readonlyCreditAuthorizationSelector)
   const { submit } = useSubmitCredit()
 
+  const animate = () => {
+    setAnimationStatus("running")
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await submit()
+
+    await submit(animate)
   }
 
   const isSubmitDisabled =
@@ -37,105 +48,116 @@ const Step = () => {
 
   const isWaiting = credit?.status === "pending"
 
+  const isAuthorized =
+    credit?.status === "authorized" || credit?.status === "dispersed"
+
   return (
-    <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
-      <h1 className="text-gray-900 font-bold text-3xl">Pre Autorización</h1>
+    <>
+      {animationStatus === "running" && (
+        <SuccessAnimation onCompleted={() => setAnimationStatus("finished")} />
+      )}
+      <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
+        <h1 className="text-gray-900 font-bold text-3xl">Pre Autorización</h1>
 
-      <p className="mt-1 text-lg leading-6 text-gray-600">
-        ¡Felicidades! Fuiste pre autorizado por un monto de{" "}
-        <b>{MXNFormat.format(credit?.loan || 0)}</b>
-      </p>
-      {credit?.status === "new" ? (
-        <p className="mt-1 text-sm leading-6 text-gray-600">
-          Necesitamos unos documentos para poder continuar con el proceso.
+        <p className="mt-1 text-lg leading-6 text-gray-600 mb-2">
+          ¡Felicidades! Fuiste pre autorizado por un monto de{" "}
+          <b>{MXNFormat.format(credit?.loan || 0)}</b>
         </p>
-      ) : credit?.status === "pending" ? (
-        <div className="mt-2 rounded-md border-2 border-dashed border-indigo-600 p-2 inline-flex">
-          <InformationCircleIcon className="h-6 w-6 text-indigo-600 mr-2" />
-          Estamos procesando tus datos. Pronto te notificaremos si autorizamos
-          tu crédito.
-        </div>
-      ) : credit?.status === "invalid-documentation" ? (
-        <div className="mt-2 rounded-md border-2 border-dashed border-rose-600 p-2 inline-flex">
-          <InformationCircleIcon className="h-6 w-6 text-rose-600 mr-2" />
-          Hay un problema con tus documentos
-        </div>
-      ) : credit?.status === "authorized" ? (
-        <div className="mt-2 rounded-md border-2 border-dashed border-green-600 p-2 inline-flex">
-          <InformationCircleIcon className="h-6 w-6 text-green-600 mr-2" />
-          ¡Felicidades! Tu crédito ha sido autorizado.
-        </div>
-      ) : null}
+        {credit?.status === "new" ? (
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            Necesitamos unos documentos para poder continuar con el proceso.
+          </p>
+        ) : credit?.status === "pending" ? (
+          <Notice
+            color="primary"
+            title="Procesando"
+            description="Estamos procesando tus datos. Pronto te notificaremos si autorizamos
+            tu crédito."
+          />
+        ) : credit?.status === "invalid-documentation" ? (
+          <Notice
+            color="error"
+            title="Documentación inválida"
+            description="Hay un problema con tus documentos, dejamos más información abajo."
+          />
+        ) : credit?.status === "authorized" ? (
+          <Notice
+            color="success"
+            title="Autorizado"
+            description="¡Felicidades! Tu crédito ha sido autorizado."
+          />
+        ) : null}
 
-      <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-8">
-        <div className="col-span-full">
-          <FileField
-            id="payment-receipt"
-            label="Recibo de Nómina"
-            initialFile={payrollReceipt}
-            error={credit?.payrollReceiptRejectionReason ?? undefined}
-            onRemove={() => setPayrollReceipt(null)}
-            disableRemove={isWaiting}
-            handleFileUpload={({ signedId }) => {
-              if (!signedId) return
-              setPayrollReceipt(signedId)
-            }}
-          />
+        <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-8">
+          <div className="col-span-full">
+            <FileField
+              id="payment-receipt"
+              label="Recibo de Nómina"
+              initialFile={payrollReceipt}
+              error={credit?.payrollReceiptRejectionReason ?? undefined}
+              onRemove={() => setPayrollReceipt(null)}
+              disableRemove={isWaiting || isAuthorized}
+              handleFileUpload={({ signedId }) => {
+                if (!signedId) return
+                setPayrollReceipt(signedId)
+              }}
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
+            <FileField
+              id="contract"
+              label="Contrato"
+              initialFile={contract}
+              error={credit?.contractRejectionReason ?? undefined}
+              onRemove={() => setContract(null)}
+              disableRemove={isWaiting || isAuthorized}
+              handleFileUpload={({ signedId }) => {
+                if (!signedId) return
+                setContract(signedId)
+              }}
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
+            <FileViewer
+              label="Contrato"
+              fileName="contrato.pdf"
+              fileDate="Sat Feb 25"
+              fileSize="1.9MB"
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
+            <FileField
+              id="authorization-letter"
+              label="Carta de Autorización"
+              initialFile={authorization}
+              error={credit?.authorizationRejectionReason ?? undefined}
+              disableRemove={isWaiting || isAuthorized}
+              onRemove={() => setAuthorization(null)}
+              handleFileUpload={({ signedId }) => {
+                if (!signedId) return
+                setAuthorization(signedId)
+              }}
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
+            <FileViewer
+              label="Carta de Autorización"
+              fileName="carta_aut.pdf"
+              fileDate="Sat Feb 25"
+              fileSize="1.9MB"
+            />
+          </div>
         </div>
-        <div className="col-span-2 md:col-span-1">
-          <FileField
-            id="contract"
-            label="Contrato"
-            initialFile={contract}
-            error={credit?.contractRejectionReason ?? undefined}
-            onRemove={() => setContract(null)}
-            disableRemove={isWaiting}
-            handleFileUpload={({ signedId }) => {
-              if (!signedId) return
-              setContract(signedId)
-            }}
-          />
+        <div className="mt-6 flex items-center justify-end gap-x-6">
+          <Button status="secondary" type="button">
+            Cancelar
+          </Button>
+          <Button size="md" type="submit" disabled={isSubmitDisabled}>
+            Enviar
+          </Button>
         </div>
-        <div className="col-span-2 md:col-span-1">
-          <FileViewer
-            label="Contrato"
-            fileName="contrato.pdf"
-            fileDate="Sat Feb 25"
-            fileSize="1.9MB"
-          />
-        </div>
-        <div className="col-span-2 md:col-span-1">
-          <FileField
-            id="authorization-letter"
-            label="Carta de Autorización"
-            initialFile={authorization}
-            error={credit?.authorizationRejectionReason ?? undefined}
-            disableRemove={isWaiting}
-            onRemove={() => setAuthorization(null)}
-            handleFileUpload={({ signedId }) => {
-              if (!signedId) return
-              setAuthorization(signedId)
-            }}
-          />
-        </div>
-        <div className="col-span-2 md:col-span-1">
-          <FileViewer
-            label="Carta de Autorización"
-            fileName="carta_aut.pdf"
-            fileDate="Sat Feb 25"
-            fileSize="1.9MB"
-          />
-        </div>
-      </div>
-      <div className="mt-6 flex items-center justify-end gap-x-6">
-        <Button status="secondary" type="button">
-          Cancelar
-        </Button>
-        <Button size="md" type="submit" disabled={isSubmitDisabled}>
-          Enviar
-        </Button>
-      </div>
-    </form>
+      </form>
+    </>
   )
 }
 

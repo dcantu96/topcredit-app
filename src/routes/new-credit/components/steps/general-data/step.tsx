@@ -45,13 +45,15 @@ import {
 } from "../../../../../constants"
 import { userGeneralDataQuerySelector } from "../../../atoms"
 import { companiesDataSelector } from "../../../../companies/loader"
-import { useState } from "react"
-import { AnimatePresence } from "framer-motion"
-import Dialog from "components/molecules/dialog"
+import { useEffect, useState } from "react"
 import Notice from "components/atoms/notice"
+import SuccessAnimation from "components/atoms/success-animation"
+
+type AnimationStatus = "pending" | "running" | "finished"
 
 const Step = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [animationStatus, setAnimationStatus] =
+    useState<AnimationStatus>("pending")
   const setBankAccountNumberTouched = useSetRecoilState(
     bankAccountNumberFieldTouchedState,
   )
@@ -121,26 +123,25 @@ const Step = () => {
   const identityDocumentStatus = user?.identityDocumentStatus
   const identityDocumentRejectionReason = user?.identityDocumentRejectionReason
 
-  console
-  const closeModal = () => setIsModalOpen(false)
-  const openModal = () => setIsModalOpen(true)
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await submit()
-    openModal()
+    setAnimationStatus("running")
   }
 
-  const handleClose = () => {
-    refreshUser()
-    closeModal()
-  }
+  useEffect(() => {
+    if (animationStatus === "finished") {
+      refreshUser()
+    }
+  }, [animationStatus, refreshUser])
 
   const [salary, setSalary] = useRecoilState(editableSalaryFieldState)
   const setSalaryTouched = useSetRecoilState(salaryFieldTouchedState)
 
   const isWaiting =
     user?.status === "pending" || user?.status === "pre-authorization"
+
+  const isPreAuthorized = user?.status === "pre-authorized"
 
   const anyFieldEmpty =
     employeeNumber === "" ||
@@ -162,6 +163,9 @@ const Step = () => {
 
   return (
     <>
+      {animationStatus === "running" && (
+        <SuccessAnimation onCompleted={() => setAnimationStatus("finished")} />
+      )}
       <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
         <h1 className="text-gray-900 font-bold text-3xl mb-2">
           Datos Generales
@@ -176,7 +180,7 @@ const Step = () => {
           <Notice
             color="error"
             title="Documentación inválida"
-            description="Hay un problema con tus documentos, dejamos mas información abajo."
+            description="Hay un problema con tus documentos, dejamos más información abajo."
           />
         ) : null}
         <div className="mt-8 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
@@ -189,7 +193,7 @@ const Step = () => {
                 value={salary}
                 prefix="$"
                 type="money"
-                disabled={isWaiting}
+                disabled={isWaiting || isPreAuthorized}
                 error={salaryFieldError}
                 trailingDropdownLabel="MXN"
                 trailingDropdownOptions={[{ value: "MXN", label: "MXN" }]}
@@ -217,7 +221,7 @@ const Step = () => {
               label="Numero de Nómina"
               required
               value={employeeNumber}
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               onChange={(e) => setEmployeeNumber(e.target.value)}
             />
           </div>
@@ -230,7 +234,7 @@ const Step = () => {
               error={rfcError}
               value={rfc}
               onBlur={() => setRFCTouched(true)}
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               onChange={(e) => setRfc(e.target.value)}
             />
           </div>
@@ -244,7 +248,7 @@ const Step = () => {
               maxLength={18}
               error={bankAccountNumberError}
               value={bankAccountNumber}
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               onChange={(e) => setBankAccountNumber(e.target.value)}
             />
           </div>
@@ -254,7 +258,7 @@ const Step = () => {
               label="Calle y numero"
               required
               value={addressLineOne}
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               onChange={(e) => setAddressLineOne(e.target.value)}
             />
           </div>
@@ -264,7 +268,7 @@ const Step = () => {
               label="Numero interior"
               placeholder="1206 Torre 4"
               value={addressLineTwo}
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               onChange={(e) => setAddressLineTwo(e.target.value)}
             />
           </div>
@@ -273,7 +277,7 @@ const Step = () => {
               id="city"
               label="Ciudad"
               value={city}
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               onChange={(e) => setCity(e.target.value)}
               required
             />
@@ -282,7 +286,7 @@ const Step = () => {
             <Select
               id="state"
               label="Estado"
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               value={state ?? undefined}
               required
               onChange={(newValue) => setState(newValue ?? null)}
@@ -293,7 +297,7 @@ const Step = () => {
             <Select
               id="country"
               label="País"
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               value={country}
               required
               onChange={(newValue) => setCountry(newValue ?? "MX")}
@@ -302,7 +306,7 @@ const Step = () => {
           </div>
           <div className="col-span-full lg:col-span-3">
             <Input
-              disabled={isWaiting}
+              disabled={isWaiting || isPreAuthorized}
               id="postal-code"
               label="Código Postal"
               maxLength={5}
@@ -322,7 +326,11 @@ const Step = () => {
               id="official-identification"
               label="Identificación oficial"
               description="Unicamente INE o Pasaporte"
-              disableRemove={isWaiting || identityDocumentStatus === "approved"}
+              disableRemove={
+                isWaiting ||
+                identityDocumentStatus === "approved" ||
+                isPreAuthorized
+              }
               initialFile={storedIdentityDocument}
               error={
                 identityDocumentStatus === "rejected" && !identityDocumentId
@@ -342,7 +350,11 @@ const Step = () => {
               id="proof-of-address"
               label="Comprobante de Domicilio"
               description="Antigüedad no mayor a 3 meses."
-              disableRemove={isWaiting || proofOfAddressStatus === "approved"}
+              disableRemove={
+                isWaiting ||
+                proofOfAddressStatus === "approved" ||
+                isPreAuthorized
+              }
               onRemove={() => setProofOfAddress(null)}
               error={
                 proofOfAddressStatus === "rejected" && !proofOfAddressId
@@ -362,7 +374,11 @@ const Step = () => {
               id="cover"
               label="Estado de Cuenta Bancario"
               description="Antigüedad no mayor a 3 meses."
-              disableRemove={isWaiting || bankStatementStatus === "approved"}
+              disableRemove={
+                isWaiting ||
+                bankStatementStatus === "approved" ||
+                isPreAuthorized
+              }
               initialFile={storedBankStatement}
               error={
                 bankStatementStatus === "rejected" && !bankStatementId
@@ -382,7 +398,11 @@ const Step = () => {
               id="payroll-receipt"
               label="Recibo de Nomina"
               description="Antigüedad no mayor a 1 mes."
-              disableRemove={isWaiting || payrollReceiptStatus === "approved"}
+              disableRemove={
+                isWaiting ||
+                payrollReceiptStatus === "approved" ||
+                isPreAuthorized
+              }
               initialFile={storedPayrollReceipt}
               error={
                 payrollReceiptStatus === "rejected" && !payrollReceiptId
@@ -401,23 +421,14 @@ const Step = () => {
           <Button
             size="md"
             type="submit"
-            disabled={isWaiting || anyFieldEmpty || anyDocumentEmpty}
+            disabled={
+              isWaiting || anyFieldEmpty || anyDocumentEmpty || isPreAuthorized
+            }
           >
             Enviar
           </Button>
         </div>
       </form>
-      <AnimatePresence>
-        {isModalOpen && (
-          <Dialog
-            onClose={handleClose}
-            type="notice"
-            title="Listo"
-            message="Hemos recibido tu solicitud. Pronto te notificaremos si fue pre aprobada."
-            confirmText="Aceptar"
-          />
-        )}
-      </AnimatePresence>
     </>
   )
 }

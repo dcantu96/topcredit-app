@@ -18,7 +18,7 @@ export const useSubmitCredit = () => {
 
   const submit = useRecoilCallback(
     ({ snapshot, refresh, reset }) =>
-      async () => {
+      async (animate: () => void) => {
         const api = await snapshot.getPromise(apiSelector)
         try {
           await api.patch("credits", {
@@ -34,6 +34,7 @@ export const useSubmitCredit = () => {
             payrollReceiptStatus: "pending",
             payrollReceiptRejectionReason: null,
           })
+          animate()
           refresh(userLatestCreditSelectorQuery)
           refresh(readonlyCreditPayrollReceiptSelector)
           refresh(readonlyCreditContractSelector)

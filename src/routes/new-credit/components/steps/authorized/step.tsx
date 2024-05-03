@@ -2,29 +2,43 @@ import { useRecoilValue } from "recoil"
 
 import ButtonLink from "components/atoms/button-link"
 import { userLatestAuthorizedCreditSelectorQuery } from "../../../atoms"
-import { ArrowPathIcon, CheckBadgeIcon } from "@heroicons/react/24/solid"
+import { CheckBadgeIcon } from "@heroicons/react/24/solid"
 import { MXNFormat } from "../../../../../constants"
+import Lottie from "react-lottie"
+import WalletMoney from "../../../../../assets/lotties/wallet-money.json"
 
 const Step = () => {
   const credit = useRecoilValue(userLatestAuthorizedCreditSelectorQuery)
   return (
     <div className="p-4 max-w-screen-md">
-      <h1 className="text-gray-900 font-bold text-3xl">Autorización</h1>
       {credit?.status === "authorized" ? (
-        <div className="px-4 py-12">
+        <div className="px-4">
           <div className="text-center">
-            <ArrowPathIcon className="h-12 w-12 text-gray-300 mx-auto" />
-            <h3 className="font-semibold text-sm mt-2 text-gray-900">
-              Estamos procesando tu dispersión
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Tu crédito por{" "}
-              <b>
+            <div className="-mt-10 -mb-10">
+              <Lottie
+                options={{
+                  animationData: WalletMoney,
+                  autoplay: true,
+                  loop: true,
+                  rendererSettings: {
+                    preserveAspectRatio: "xMidYMid slice",
+                  },
+                }}
+                height={350}
+                width={350}
+              />
+            </div>
+            <h3 className="font-semibold mt-2 text-gray-900">
+              ¡Felicidades! Te autorizamos un crédito por{" "}
+              <span className="font-bold text-xl block">
                 {credit?.loan ? MXNFormat.format(credit.loan) : 0}
                 MXN
-              </b>{" "}
-              ha sido autorizado. Este proceso puede tardar de 24 a 72 horas. Te
-              notificaremos por correo cuando tu crédito haya sido dispersado.
+              </span>
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-gray-600">
+              Estamos procesando tu dispersión. Este proceso puede tardar de 24
+              a 72 horas. Te notificaremos por correo cuando tu crédito haya
+              sido dispersado.
             </p>
           </div>
         </div>
