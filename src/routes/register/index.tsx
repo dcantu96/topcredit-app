@@ -185,7 +185,7 @@ const Register = () => {
         </form>
       </div>
       <footer className="relative shrink-0">
-        <div className="space-y-4 text-sm text-gray-900 sm:flex sm:items-center sm:justify-center sm:space-x-4 sm:space-y-0">
+        <div className="space-y-4 text-sm text-gray-900 flex flex-col w-36 sm:w-auto mx-auto sm:flex-row sm:items-center sm:justify-center sm:space-x-4 sm:space-y-0">
           <p className="text-center sm:text-left">¿Ya tienes cuenta?</p>
           <ButtonLink to="/login">
             <span>
