@@ -18,7 +18,11 @@ const Screen = () => {
         <RequestsList />
       </ListContainer>
       <ActivityContainer
-        notificationTypes={["PendingCredit", "PreAuthorizationUser"]}
+        notificationTypes={[
+          "PendingCredit",
+          "PreAuthorizationUser",
+          "DeniedUser",
+        ]}
         to="/dashboard/requests"
       />
     </>
