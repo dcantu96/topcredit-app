@@ -44,11 +44,11 @@ import {
   STATES_OF_MEXICO,
 } from "../../../../../constants"
 import { userGeneralDataQuerySelector } from "../../../atoms"
-import { InformationCircleIcon } from "@heroicons/react/24/outline"
 import { companiesDataSelector } from "../../../../companies/loader"
 import { useState } from "react"
 import { AnimatePresence } from "framer-motion"
 import Dialog from "components/molecules/dialog"
+import Notice from "components/atoms/notice"
 
 const Step = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -163,24 +163,23 @@ const Step = () => {
   return (
     <>
       <form className="p-4 max-w-screen-md" onSubmit={handleSubmit}>
-        <h1 className="text-gray-900 font-bold text-3xl">Datos Generales</h1>
+        <h1 className="text-gray-900 font-bold text-3xl mb-2">
+          Datos Generales
+        </h1>
         {isWaiting ? (
-          <div className="mt-2 rounded-md border-2 border-dashed border-indigo-600 p-2 inline-flex">
-            <InformationCircleIcon className="h-6 w-6 text-indigo-600 mr-2" />
-            Estamos procesando tus datos. Pronto te notificaremos si tu
-            solicitud fue pre aprobada.
-          </div>
+          <Notice
+            color="primary"
+            title="Procesando"
+            description="Estamos procesando tus datos. Pronto te notificaremos si tu solicitud fue pre aprobada."
+          />
         ) : isInvalidDocumentation ? (
-          <div className="mt-2 rounded-md border-2 border-dashed border-rose-600 p-2 inline-flex">
-            <InformationCircleIcon className="h-6 w-6 text-rose-600 mr-2" />
-            Hay un problema con tus documentos
-          </div>
-        ) : (
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Necesitamos algunos datos para poder procesar tu solicitud.
-          </p>
-        )}
-        <div className="mt-10 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
+          <Notice
+            color="error"
+            title="Documentación inválida"
+            description="Hay un problema con tus documentos, dejamos mas información abajo."
+          />
+        ) : null}
+        <div className="mt-8 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
           <div className="col-span-full">
             <div className="flex items-center gap-2">
               <Input
