@@ -5,9 +5,9 @@ import useCreditActions from "hooks/useCreditActions"
 import useUserActions from "hooks/useUserActions"
 import {
   calculateAmortization,
+  calculateMaxDebtCapacity,
   calculateMaxLoanAmount,
-  calculateTotalPaymentsInMonths,
-} from "hooks/useCreditAmortization/utils"
+} from "../../utils"
 import { companiesDataSelector } from "../companies/loader"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 
@@ -60,53 +60,46 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
   )
   const term = termOffering?.term
   const termDuration = term?.duration
-  const termDurationType = term?.durationType
-
-  const totalPayments = useMemo(() => {
-    if (!termDuration || !termDurationType) return undefined
-    return calculateTotalPaymentsInMonths({
-      duration: termDuration,
-      durationType: termDurationType,
-    })
-  }, [termDuration, termDurationType])
 
   const amortization = useMemo(() => {
     if (!loanAmount || !company?.rate) return undefined
-    if (!totalPayments) return undefined
+    if (!termDuration) return undefined
     return calculateAmortization({
-      totalPayments,
+      totalPayments: termDuration,
       loanAmount,
       rate: company?.rate,
     })
-  }, [loanAmount, company?.rate, totalPayments])
+  }, [loanAmount, company?.rate, termDuration])
 
-  const borrowerMaxCapacity =
-    user.salary && company?.borrowingCapacity
-      ? user.salary * company.borrowingCapacity
-      : undefined
+  const maxDebtCapacity = useMemo(() => {
+    return calculateMaxDebtCapacity({
+      salary: user.salary!,
+      companyMaxRateCapacity: company.borrowingCapacity!,
+    })
+  }, [user.salary, company.borrowingCapacity])
 
   const maxLoanAmount = useMemo(() => {
-    if (borrowerMaxCapacity && totalPayments && company?.rate) {
+    if (termDuration && company.rate) {
       return calculateMaxLoanAmount({
-        borrowerMaxCapacity,
-        totalPayments,
-        annualRate: company.rate,
+        maxDebtCapacity,
+        payments: termDuration,
+        rate: company.rate,
       })
     }
     return undefined
-  }, [totalPayments, borrowerMaxCapacity, company?.rate])
+  }, [termDuration, company.rate, maxDebtCapacity])
 
   const loanAmountErrorMsg = useMemo(() => {
     if (
-      borrowerMaxCapacity &&
+      maxDebtCapacity &&
       amortization &&
       maxLoanAmount &&
-      borrowerMaxCapacity < amortization
+      maxDebtCapacity < amortization
     ) {
       return `Monto no puede ser mayor a ${MXNFormat.format(maxLoanAmount)}`
     }
     return undefined
-  }, [borrowerMaxCapacity, amortization, maxLoanAmount])
+  }, [amortization, maxDebtCapacity, maxLoanAmount])
 
   const formattedBorrowingCapacity = company?.borrowingCapacity
     ? `${company.borrowingCapacity * 100} %`
@@ -126,6 +119,11 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
     await updateUserStatus("denied")
     removeUser(user.id)
   }
+
+  const frequency =
+    companies?.[0].employeeSalaryFrequency === "biweekly"
+      ? "Quincenales"
+      : "Mensuales"
 
   return (
     <List.Item>
@@ -148,11 +146,7 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
               {user.salary ? MXNFormat.format(user.salary) : 0}
             </span>
             <span className="text-gray-400">/</span>
-            <span className="whitespace-nowrap">
-              {companies?.[0].employeeSalaryFrequency === "biweekly"
-                ? "Quincenales"
-                : "Mensuales"}
-            </span>
+            <span className="whitespace-nowrap">{frequency}</span>
           </p>
         </div>
         <div className="flex items-center gap-x-3 text-xs leading-5 text-gray-500">
@@ -175,7 +169,9 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
             prefix="$"
             error={loanAmountErrorMsg}
             label={`Préstamo ${
-              amortization ? `(${MXNFormat.format(amortization)} Mensual)` : ""
+              amortization
+                ? `(${MXNFormat.format(amortization)} ${frequency})`
+                : ""
             }`}
             placeholder="10,000"
             trailingDropdownId="loan-amount-frequency"

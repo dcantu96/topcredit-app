@@ -10,7 +10,6 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import useCreditAmortization from "hooks/useCreditAmortization"
 import Button from "components/atoms/button"
 import {
   readonlyIdentityDocumentSelector,
@@ -22,16 +21,6 @@ import {
 const MyCredits = () => {
   const credit = useRecoilValue(userLatestAuthorizedCreditSelectorQuery)
   const user = useRecoilValue(userGeneralDataQuerySelector)
-  const amortization = useCreditAmortization({
-    duration: credit?.termOffering.term.duration,
-    durationType: credit?.termOffering.term.durationType,
-    loan: credit?.loan ?? undefined,
-    rate: 0.1,
-  })
-
-  const formattedAmortization = amortization
-    ? MXNFormat.format(amortization)
-    : 0
 
   const identityDocument = useRecoilValue(readonlyIdentityDocumentSelector)
   const bankStatement = useRecoilValue(readonlyBankStatementSelector)
@@ -81,7 +70,10 @@ const MyCredits = () => {
         <div className="shadow bg-white rounded p-4 ring-1 ring-inset">
           <h4 className="text-base font-semibold">Amortización</h4>
           <p className="text-gray-500">
-            {amortization ? MXNFormat.format(amortization) : 0} MXN
+            {credit?.amortization
+              ? MXNFormat.format(Number(credit.amortization))
+              : 0}{" "}
+            MXN
           </p>
         </div>
 
@@ -99,7 +91,7 @@ const MyCredits = () => {
             <Table.Header columns={["Monto", "Fecha", "Estatus"]} />
             <Table.Body>
               <Table.Row>
-                <Table.Cell>{formattedAmortization} MXN</Table.Cell>
+                <Table.Cell>{credit?.amortization} MXN</Table.Cell>
                 <Table.Cell>12/4/13</Table.Cell>
                 <Table.Cell>
                   <CheckBadgeIcon className="mr-2 w-6 h-6 text-green-500" />
@@ -107,7 +99,7 @@ const MyCredits = () => {
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
-                <Table.Cell>{formattedAmortization} MXN</Table.Cell>
+                <Table.Cell>{credit?.amortization} MXN</Table.Cell>
                 <Table.Cell>16/4/13</Table.Cell>
                 <Table.Cell>
                   <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
@@ -115,7 +107,7 @@ const MyCredits = () => {
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
-                <Table.Cell>{formattedAmortization} MXN</Table.Cell>
+                <Table.Cell>{credit?.amortization} MXN</Table.Cell>
                 <Table.Cell>12/4/13</Table.Cell>
                 <Table.Cell>-</Table.Cell>
               </Table.Row>

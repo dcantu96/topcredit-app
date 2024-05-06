@@ -152,6 +152,9 @@ export interface TermOffering extends ObjectWithId, Timestamps {
 }
 
 export interface Credit extends ObjectWithId, Timestamps {
+  amortization: `${number}` | null
+  creditAmount: `${number}` | null
+  maxLoanAmount: `${number}` | null
   authorizationContentType: string | null
   authorizationFilename: string | null
   authorizationRejectionReason: string | null

@@ -18,7 +18,6 @@ import {
 import { useState } from "react"
 import Dialog from "components/molecules/dialog"
 import { fetchNextPayrollDate } from "../company-installations/utils"
-import { useGetCreditAmortization } from "hooks/useCreditAmortization/useCreditAmortization"
 import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
 
 interface BulkActionsButtonProps {
@@ -26,7 +25,6 @@ interface BulkActionsButtonProps {
 }
 
 const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
-  const callback = useGetCreditAmortization()
   const toast = useToast()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const selectedCredits = useRecoilValue(
@@ -48,18 +46,11 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
 
         for (const creditId of selectedCredits) {
           const credit = credits?.find((credit) => credit.id === creditId)
-          if (!credit) continue
-          const amortization = callback({
-            loan: credit.loan ?? undefined,
-            rate: credit.termOffering.company.rate,
-            duration: credit.termOffering.term.duration,
-            durationType: credit.termOffering.term.durationType,
-          })
+          if (!credit || !credit.amortization) continue
           const paymentNumbers = credit.payments
             .map((payment) => payment.number)
             .sort()
           const lastPaymentNumber = paymentNumbers[paymentNumbers.length - 1]
-          if (!amortization) continue
           const resp = await api.create("payments", {
             credit: {
               data: {
@@ -67,7 +58,7 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
                 type: "credits",
               },
             },
-            amount: amortization,
+            amount: credit.amortization,
             paidAt: new Date().toISOString(),
             number: lastPaymentNumber + 1,
           })

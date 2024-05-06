@@ -107,6 +107,9 @@ export type CompanyCreditDetailedResponse = Pick<
   | "dispersedAt"
   | "loan"
   | "installationDate"
+  | "amortization"
+  | "creditAmount"
+  | "maxLoanAmount"
 > & {
   borrower: {
     data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
@@ -128,7 +131,15 @@ export type CompanyCreditDetailedResponse = Pick<
 
 export type CompanyCreditDetailed = Pick<
   Credit,
-  "id" | "loan" | "dispersedAt" | "installationStatus" | "installationDate"
+  | "id"
+  | "status"
+  | "installationStatus"
+  | "dispersedAt"
+  | "loan"
+  | "installationDate"
+  | "amortization"
+  | "creditAmount"
+  | "maxLoanAmount"
 > & {
   borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
   payments: Pick<Payment, "id" | "paidAt" | "amount" | "number">[]
@@ -159,7 +170,7 @@ export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
               termOfferings: "id,term,company",
               users: "id,firstName,lastName,email",
               credits:
-                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower,payments,termOffering",
+                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower,payments,termOffering,amortization,creditAmount,maxLoanAmount",
             },
             include:
               "borrower,payments,termOffering,termOffering.term,termOffering.company",

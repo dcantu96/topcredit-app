@@ -6,7 +6,6 @@ import Button from "components/atoms/button"
 import FileViewer from "components/atoms/file-viewer/file-viewer"
 import useCreditActions from "hooks/useCreditActions"
 import useCompanies from "hooks/useCompanies"
-import useCreditAmortization from "hooks/useCreditAmortization"
 
 import {
   dispersionsSelector,
@@ -34,17 +33,6 @@ const ShowScreen = () => {
 
   const userDomain = credit?.borrower.email.split("@")[1]
   const company = userDomain ? companiesMap.get(userDomain) : undefined
-  const rate = company?.rate
-  const duration = credit?.termOffering?.term?.duration
-  const durationType = credit?.termOffering?.term?.durationType
-  const loan = credit?.loan
-
-  const amortization = useCreditAmortization({
-    duration,
-    durationType,
-    loan: loan ?? undefined,
-    rate: rate ?? undefined,
-  })
 
   if (!credit) return null
 
@@ -194,7 +182,10 @@ const ShowScreen = () => {
               Amortización
             </label>
             <p className="text-gray-900 font-medium">
-              {amortization ? MXNFormat.format(amortization) : 0} Mensuales
+              {credit.amortization
+                ? MXNFormat.format(Number(credit.amortization))
+                : 0}{" "}
+              Mensuales
             </p>
           </div>
           <div className="col-span-2">

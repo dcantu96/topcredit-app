@@ -10,7 +10,6 @@ import ListItem from "./list-item"
 import { fetchNextPayrollDate } from "../company-installations/utils"
 import { creditDetailedWithPaymentsState } from "./atoms"
 import { Payment } from "src/schema.types"
-import useCreditAmortization from "hooks/useCreditAmortization"
 import { MXNFormat } from "../../constants"
 
 const Screen = () => {
@@ -30,13 +29,6 @@ const Screen = () => {
     const payment = credit.payments.find((payment) => payment.number === i + 1)
     creditPayments.push(payment)
   }
-
-  const amortization = useCreditAmortization({
-    duration: credit.termOffering.term.duration,
-    durationType: credit.termOffering.term.durationType,
-    loan: credit.loan!,
-    rate: credit.termOffering.company.rate,
-  })
 
   const totalPaid = credit.payments.reduce(
     (acc, payment) => acc + payment.amount,
@@ -69,13 +61,27 @@ const Screen = () => {
                 <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
                   <a className="flex text-inherit decoration-inherit gap-x-2">
                     <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                      Crédito
+                      Préstamo
                     </span>
                   </a>
                 </h2>
               </div>
               <p className="whitespace-nowrap mt-2 font-semibold">
                 {MXNFormat.format(credit.loan!)} MXN
+              </p>
+            </div>
+            <div className="min-w-32">
+              <div className="flex items-center gap-x-3">
+                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+                  <a className="flex text-inherit decoration-inherit gap-x-2">
+                    <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                      Crédito
+                    </span>
+                  </a>
+                </h2>
+              </div>
+              <p className="whitespace-nowrap mt-2 font-semibold">
+                {MXNFormat.format(Number(credit.creditAmount) ?? 0)} MXN
               </p>
             </div>
             <div className="min-w-32">
@@ -112,27 +118,16 @@ const Screen = () => {
             <div className="min-w-32">
               <div className="flex items-center gap-x-3">
                 <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-                  <a className="flex text-inherit decoration-inherit gap-x-2">
-                    <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                      Total a Pagar
-                    </span>
-                  </a>
-                </h2>
-              </div>
-              <p className="whitespace-nowrap mt-2 font-semibold">
-                {MXNFormat.format((amortization ?? 0) * termDuration)} MXN
-              </p>
-            </div>
-            <div className="min-w-32">
-              <div className="flex items-center gap-x-3">
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
                   <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
                     Amortización
                   </span>
                 </h2>
               </div>
               <p className="whitespace-nowrap mt-2 font-semibold">
-                {amortization ? MXNFormat.format(amortization) : 0} MXN
+                {credit.amortization
+                  ? MXNFormat.format(Number(credit.amortization))
+                  : 0}{" "}
+                MXN
               </p>
             </div>
           </List.Item>
@@ -143,7 +138,7 @@ const Screen = () => {
               payment={maybePayment}
               installationDate={credit.installationDate!}
               employeeSalaryFrequency={company.employeeSalaryFrequency}
-              amortization={amortization!}
+              amortization={Number(credit.amortization)!}
             />
           ))}
         </List>

@@ -3,7 +3,6 @@ import { useRecoilState } from "recoil"
 import { ChevronRightIcon } from "@heroicons/react/16/solid"
 
 import List from "components/atoms/list"
-import useCreditAmortization from "hooks/useCreditAmortization"
 import { MXNFormat } from "../../constants"
 
 import { completedCreditSelectedState } from "./atoms"
@@ -15,12 +14,6 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
   const [pressed, setPressed] = useRecoilState(
     completedCreditSelectedState(credit.id),
   )
-  const amortization = useCreditAmortization({
-    duration: credit.termOffering.term.duration,
-    durationType: credit.termOffering.term.durationType,
-    loan: credit.loan!,
-    rate: credit.termOffering.company.rate,
-  })
 
   const lastPayment = credit.payments.at(-1)?.paidAt
 
@@ -124,7 +117,8 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
           </h2>
         </div>
         <p className="whitespace-nowrap mt-2 font-semibold text-sm">
-          {MXNFormat.format((amortization ?? 0) * termDuration)} MXN
+          {MXNFormat.format((Number(credit.amortization) ?? 0) * termDuration)}{" "}
+          MXN
         </p>
       </div>
       <button

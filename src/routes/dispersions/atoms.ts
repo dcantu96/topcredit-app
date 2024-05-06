@@ -7,7 +7,7 @@ import type { Credit, Term } from "src/schema.types"
 
 export type DispersionsResponse = Pick<
   Credit,
-  "id" | "status" | "updatedAt" | "createdAt" | "loan"
+  "id" | "status" | "updatedAt" | "createdAt" | "loan" | "amortization"
 > & {
   borrower: {
     data: Credit["borrower"]
@@ -33,6 +33,7 @@ export const dispersionsSelectorQuery = selector<
       | "loan"
       | "termOffering"
       | "borrower"
+      | "amortization"
     >
   >
 >({
@@ -42,7 +43,8 @@ export const dispersionsSelectorQuery = selector<
     const { data }: { data: DispersionsResponse[] } = await api.get("credit", {
       params: {
         fields: {
-          credits: "id,status,updatedAt,createdAt,loan,borrower,termOffering",
+          credits:
+            "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization",
         },
         include: "borrower,termOffering.term",
         filter: {
@@ -62,6 +64,7 @@ export const dispersionsSelectorQuery = selector<
         | "loan"
         | "termOffering"
         | "borrower"
+        | "amortization"
       >
     >()
     for (const credit of data) {
@@ -88,6 +91,7 @@ export const dispersionsSortedSelector = selector<
     | "loan"
     | "termOffering"
     | "borrower"
+    | "amortization"
   >[]
 >({
   key: "dispersionsSortedSelector",
@@ -116,6 +120,7 @@ export const dispersionsState = atom<
     | "loan"
     | "termOffering"
     | "borrower"
+    | "amortization"
   >[]
 >({
   key: "dispersionsState",
@@ -132,6 +137,7 @@ export const dispersionsSelector = selectorFamily<
       | "loan"
       | "termOffering"
       | "borrower"
+      | "amortization"
     >
   | undefined,
   string
