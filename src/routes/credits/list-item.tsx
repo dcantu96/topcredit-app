@@ -142,16 +142,20 @@ const DeletePayment = ({ number, amount, paidAt, id }: DeletePaymentProps) => {
         Eliminar <TrashIcon className="w-4 h-4 ml-1" />
       </Button>
       {isModalOpen && (
-        <Modal title={"Eliminar Pago #" + number} onClose={close}>
-          <div className="p-3">
-            <p className="mb-4">
-              ¿Estás seguro que deseas eliminar el pago de <b>${amount} MXN</b>{" "}
-              realizado el <b>{new Date(paidAt).toLocaleDateString()}</b>?
-            </p>
-            <Button fullWidth variant="danger" onClick={handleDeletePayment}>
-              Eliminar <TrashIcon className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
+        <Modal>
+          <Modal.Header title={"Eliminar Pago #" + number} onClose={close} />
+          <Modal.Body>
+            <div className="p-3">
+              <p className="mb-4">
+                ¿Estás seguro que deseas eliminar el pago de{" "}
+                <b>${amount} MXN</b> realizado el{" "}
+                <b>{new Date(paidAt).toLocaleDateString()}</b>?
+              </p>
+              <Button fullWidth variant="danger" onClick={handleDeletePayment}>
+                Eliminar <TrashIcon className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </Modal.Body>
         </Modal>
       )}
     </>
@@ -178,37 +182,40 @@ const NewPayment = ({ number, initialAmount }: NewPaymentProps) => {
         Registrar <PlusIcon className="w-4 h-4 ml-1" />
       </Button>
       {isModalOpen && (
-        <Modal title={"Registrar Pago #" + number} onClose={close}>
-          <div className="p-3">
-            <Input
-              id="amount"
-              label="Cantidad"
-              placeholder={`Monto estimado: $${initialAmount}`}
-              type="number"
-              required
-              value={amount?.toString() ?? ""}
-              onChange={({ target }) =>
-                setAmount(target.value === "" ? null : Number(target.value))
-              }
-            />
-            <Tooltip
-              content={
-                <>
-                  El monto <b>${amount}</b> es diferente al monto estimado{" "}
-                  <b>${initialAmount}</b>
-                </>
-              }
-              cond={amount !== initialAmount}
-            >
-              <Button
-                fullWidth
-                disabled={!amount}
-                onClick={handleCreatePayment}
+        <Modal>
+          <Modal.Header title={"Registrar Pago #" + number} onClose={close} />
+          <Modal.Body>
+            <div className="p-3">
+              <Input
+                id="amount"
+                label="Cantidad"
+                placeholder={`Monto estimado: $${initialAmount}`}
+                type="number"
+                required
+                value={amount?.toString() ?? ""}
+                onChange={({ target }) =>
+                  setAmount(target.value === "" ? null : Number(target.value))
+                }
+              />
+              <Tooltip
+                content={
+                  <>
+                    El monto <b>${amount}</b> es diferente al monto estimado{" "}
+                    <b>${initialAmount}</b>
+                  </>
+                }
+                cond={amount !== initialAmount}
               >
-                Registrar <PlusIcon className="w-4 h-4 ml-1" />
-              </Button>
-            </Tooltip>
-          </div>
+                <Button
+                  fullWidth
+                  disabled={!amount}
+                  onClick={handleCreatePayment}
+                >
+                  Registrar <PlusIcon className="w-4 h-4 ml-1" />
+                </Button>
+              </Tooltip>
+            </div>
+          </Modal.Body>
         </Modal>
       )}
     </>

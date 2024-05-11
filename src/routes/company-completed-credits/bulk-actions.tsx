@@ -47,19 +47,22 @@ const BulkActions = ({ companyId }: BulkActionsProps) => {
         Baja ({selectedCredits.length})
       </Button>
       {isModalOpen ? (
-        <Modal onClose={closeModal} title="Dar de baja">
-          <p className="text-sm text-gray-500 p-3">
-            Al continuar vas a marcar <b>{selectedCredits.length}</b> créditos
-            como <b>terminados</b>
-          </p>
-          <div className="flex justify-end p-3 gap-2">
-            <Button onClick={closeModal} status="secondary" fullWidth>
-              Cancelar
-            </Button>
-            <Button onClick={handleCompleteCredits} fullWidth>
-              Confirmar
-            </Button>
-          </div>
+        <Modal>
+          <Modal.Header onClose={closeModal} title="Dar de baja" />
+          <Modal.Body>
+            <p className="text-sm text-gray-500 p-3">
+              Al continuar vas a marcar <b>{selectedCredits.length}</b> créditos
+              como <b>terminados</b>
+            </p>
+            <div className="flex justify-end p-3 gap-2">
+              <Button onClick={closeModal} status="secondary" fullWidth>
+                Cancelar
+              </Button>
+              <Button onClick={handleCompleteCredits} fullWidth>
+                Confirmar
+              </Button>
+            </div>
+          </Modal.Body>
         </Modal>
       ) : null}
     </>

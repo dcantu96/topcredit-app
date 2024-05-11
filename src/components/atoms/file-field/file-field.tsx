@@ -3,6 +3,7 @@ import { DocumentIcon } from "@heroicons/react/24/solid"
 import useFileUpload from "hooks/useFileUpload"
 import { useRef, useState } from "react"
 import Button from "../button"
+import { getFileFromEvent } from "../utils"
 
 export interface ReadonlyFile {
   url: string
@@ -62,16 +63,6 @@ const FileField = ({
     e.preventDefault()
 
     setIsDragActive(false)
-  }
-
-  const getFileFromEvent = (
-    e: React.DragEvent<HTMLDivElement> | React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    if ("dataTransfer" in e && e.dataTransfer.files) {
-      return e.dataTransfer.files?.[0] // For drag and drop
-    } else if ("target" in e && "files" in e.target) {
-      return e.target.files?.[0] // For file input
-    }
   }
 
   const handleFileChange = async (

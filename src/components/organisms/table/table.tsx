@@ -5,7 +5,7 @@ interface ITable {
 const Table = ({ children }: ITable) => {
   return (
     <div className="relative rounded-xl overflow-auto bg-slate-100 shadow-sm">
-      <div className="shadow-sm overflow-hidden my-8">
+      <div className="shadow-sm my-8">
         <table className="border-collapse table-auto w-full text-sm">
           {children}
         </table>

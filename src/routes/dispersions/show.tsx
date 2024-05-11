@@ -229,30 +229,36 @@ const ShowScreen = () => {
         </div>
       </div>
       {isModalOpen ? (
-        <Modal title="Dispersar Crédito" onClose={() => setIsModalOpen(false)}>
-          <div className="p-3">
-            <FileField
-              required
-              id="dispersion-receipt"
-              label="Recibo de dispersión"
-              onRemove={() => setDispersionReceiptId(null)}
-              handleFileUpload={({ signedId }) => {
-                if (!signedId) return
-                setDispersionReceiptId(signedId)
-              }}
-            />
-          </div>
-          <div className="flex gap-2 p-3">
-            <Button
-              onClick={handleApproveCredit}
-              disabled={!dispersionReceiptId}
-            >
-              Dispersar
-            </Button>
-            <Button status="secondary" onClick={() => setIsModalOpen(false)}>
-              Cancelar
-            </Button>
-          </div>
+        <Modal>
+          <Modal.Header
+            title="Dispersar Crédito"
+            onClose={() => setIsModalOpen(false)}
+          />
+          <Modal.Body>
+            <div className="p-3">
+              <FileField
+                required
+                id="dispersion-receipt"
+                label="Recibo de dispersión"
+                onRemove={() => setDispersionReceiptId(null)}
+                handleFileUpload={({ signedId }) => {
+                  if (!signedId) return
+                  setDispersionReceiptId(signedId)
+                }}
+              />
+            </div>
+            <div className="flex gap-2 p-3">
+              <Button
+                onClick={handleApproveCredit}
+                disabled={!dispersionReceiptId}
+              >
+                Dispersar
+              </Button>
+              <Button status="secondary" onClick={() => setIsModalOpen(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </Modal.Body>
         </Modal>
       ) : null}
     </>

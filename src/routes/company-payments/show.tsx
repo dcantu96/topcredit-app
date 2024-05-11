@@ -19,6 +19,7 @@ import { useState } from "react"
 import Dialog from "components/molecules/dialog"
 import { fetchNextPayrollDate } from "../company-installations/utils"
 import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
+import ImportDocumentModal from "components/organisms/import-document-modal"
 
 interface BulkActionsButtonProps {
   companyId: string
@@ -101,12 +102,14 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
 
   const modalMessage = `Esto registrará el pago para ${selectedCredits.length} créditos. ¿Estás seguro? Una vez instalados no podrás deshacer esta acción.`
 
-  if (!selectedCredits.length) return null
   return (
     <>
-      <Button size="sm" onClick={openModal}>
-        Registrar pagos ({selectedCredits.length})
-      </Button>
+      {selectedCredits.length ? (
+        <Button size="sm" onClick={openModal}>
+          Registrar pagos ({selectedCredits.length})
+        </Button>
+      ) : null}
+      <ImportDocumentModal />
       {isModalOpen ? (
         <Dialog
           message={modalMessage}
