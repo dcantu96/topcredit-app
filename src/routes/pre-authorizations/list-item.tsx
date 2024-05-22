@@ -96,7 +96,7 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
       maxLoanAmount &&
       maxDebtCapacity < amortization
     ) {
-      return `Monto no puede ser mayor a ${MXNFormat.format(maxLoanAmount)}`
+      return `Monto mayor que ${MXNFormat.format(maxLoanAmount)}`
     }
     return undefined
   }, [amortization, maxDebtCapacity, maxLoanAmount])
@@ -181,6 +181,7 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
               setTermOfferingId(target.value)
             }}
           />
+          {maxLoanAmount ? <div>Máximo End. {MXNFormat.format(maxLoanAmount)} MXN</div> : null}
         </div>
         <div className="flex items-center gap-4">
           <Tooltip
