@@ -11,6 +11,10 @@ import { fetchNextPayrollDate } from "../company-installations/utils"
 import ListItem from "./credit-list-item"
 import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
 import BulkActions from "./bulk-actions"
+import { exportToCSV } from "../../utils"
+import { MXNFormat } from "../../constants"
+import Button from "components/atoms/button"
+import { DocumentArrowDownIcon } from "@heroicons/react/16/solid"
 
 const Screen = () => {
   const { companyId } = useParams()
@@ -29,6 +33,29 @@ const Screen = () => {
 
   if (!credits) return null
 
+  const handleExport = () => {
+    exportToCSV(
+      ["Empleado", "Cliente", "Nómina", "Crédito", "Descuento Total", "Status"],
+      credits.map((credit) => {
+        const totalPaid = credit.payments.reduce(
+          (acc, payment) => acc + payment.amount,
+          0,
+        )
+        const firstName = credit.borrower.firstName
+        const lastName = credit.borrower.lastName
+        const fullName = `${firstName} ${lastName}`
+        return [
+          fullName,
+          company.name,
+          credit.borrower.employeeNumber ?? "",
+          credit.loan !== undefined ? MXNFormat.format(totalPaid) : "",
+          MXNFormat.format(totalPaid),
+          "Bajas",
+        ]
+      }),
+    )
+  }
+
   return (
     <>
       <ListContainer>
@@ -40,6 +67,10 @@ const Screen = () => {
             <h3 className="text-sm">
               Proxima Nómina <b>{nextPayrollDate}</b>
             </h3>
+            <Button size="sm" onClick={handleExport}>
+              Exportar
+              <DocumentArrowDownIcon className="w-4 h-4 ml-2" />
+            </Button>
             <BulkActions companyId={companyId!} />
           </ListHeader.Actions>
         </ListHeader>
