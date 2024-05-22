@@ -35,3 +35,14 @@ export function calculateAmortization({
 
   return Number((creditAmount / totalPayments).toFixed(2))
 }
+
+const escapeCell = (cell: string) => `"${cell.replace(/"/g, '""')}"`
+
+export const exportToCSV = (headers: string[], rows: string[][]) => {
+  const csvContent =
+    "data:text/csv;charset=utf-8," +
+    [headers, ...rows].map((row) => row.map(escapeCell).join(",")).join("\n")
+
+  const encodedUri = encodeURI(csvContent)
+  window.open(encodedUri)
+}
