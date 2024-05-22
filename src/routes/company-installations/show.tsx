@@ -19,6 +19,10 @@ import {
 import { fetchNextPayrollDate } from "./utils"
 import { useState } from "react"
 import Dialog from "components/molecules/dialog"
+import { DocumentArrowDownIcon } from "@heroicons/react/16/solid"
+import { exportToCSV } from "../../utils"
+import { DURATION_TYPES, MXNFormat } from "../../constants"
+import dayjs from "dayjs"
 
 interface BulkActionsButtonProps {
   companyId: string
@@ -108,6 +112,39 @@ const Screen = () => {
 
   if (!credits) return null
 
+  const handleExport = () => {
+    exportToCSV(
+      [
+        "Empleado",
+        "Cliente",
+        "Nómina",
+        "Fecha Dispersión",
+        "Plazos",
+        "Descuento",
+        "Status",
+      ],
+      credits.map((credit) => {
+        const firstName = credit.borrower.firstName
+        const lastName = credit.borrower.lastName
+        const fullName = `${firstName} ${lastName}`
+        const term = `${credit.termOffering.term.duration} ${DURATION_TYPES.get(credit.termOffering.term.durationType)}`
+        return [
+          fullName,
+          company.name,
+          credit.borrower.employeeNumber ?? "",
+          credit.dispersedAt
+            ? dayjs(credit.dispersedAt).format("DD/MM/YYYY")
+            : "",
+          term,
+          credit.amortization
+            ? MXNFormat.format(parseFloat(credit.amortization))
+            : "",
+          "Altas",
+        ]
+      }),
+    )
+  }
+
   return (
     <>
       <ListContainer>
@@ -120,6 +157,10 @@ const Screen = () => {
             <h3 className="text-sm">
               Proxima Nomina <b>{nextPayroll}</b>
             </h3>
+            <Button size="sm" onClick={handleExport}>
+              Exportar
+              <DocumentArrowDownIcon className="w-4 h-4 ml-2" />
+            </Button>
             <BulkActionsButton companyId={companyId!} />
           </ListHeader.Actions>
         </ListHeader>

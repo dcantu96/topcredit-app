@@ -3,7 +3,7 @@ import { atom, atomFamily, selector, selectorFamily } from "recoil"
 import { listSortOrderState } from "components/hocs/with-sort-order/atoms"
 import { apiSelector } from "components/providers/api/atoms"
 
-import type { Company, Credit } from "src/schema.types"
+import type { Company, Credit, Term, TermOffering } from "src/schema.types"
 
 export type CompanyCreditsResponse = Pick<
   Company,
@@ -39,23 +39,46 @@ export type CompanyCredits = Pick<
 
 export type CompanyCreditDetailedResponse = Pick<
   Credit,
-  | "id"
-  | "status"
-  | "installationStatus"
+  | "amortization"
   | "dispersedAt"
-  | "loan"
+  | "id"
   | "installationDate"
+  | "installationStatus"
+  | "loan"
+  | "status"
 > & {
   borrower: {
-    data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
+    data: Pick<
+      Credit["borrower"],
+      "id" | "firstName" | "lastName" | "employeeNumber"
+    >
+  }
+  termOffering: {
+    data: Pick<TermOffering, "id"> & {
+      term: {
+        data: Pick<Term, "id" | "name" | "durationType" | "duration">
+      }
+    }
   }
 }
 
 export type CompanyCreditDetailed = Pick<
   Credit,
-  "id" | "loan" | "dispersedAt" | "installationStatus" | "installationDate"
+  | "amortization"
+  | "dispersedAt"
+  | "id"
+  | "installationDate"
+  | "installationStatus"
+  | "loan"
+  | "status"
 > & {
-  borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
+  borrower: Pick<
+    Credit["borrower"],
+    "id" | "firstName" | "lastName" | "employeeNumber"
+  >
+  termOffering: Pick<TermOffering, "id"> & {
+    term: Pick<Term, "id" | "name" | "durationType" | "duration">
+  }
 }
 
 export const companyCreditsSelectorQuery = selector<
@@ -128,11 +151,13 @@ export const companyCreditsDetailedSelector = selectorFamily<
         {
           params: {
             fields: {
-              users: "id,firstName,lastName,email",
+              users: "id,firstName,lastName,email,employeeNumber",
+              terms: "id,duration,durationType,name",
+              termOfferings: "id,term",
               credits:
-                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower",
+                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower,termOffering,amortization",
             },
-            include: "borrower",
+            include: "borrower,termOffering.term",
             filter: {
               company: id,
               status: "dispersed",
@@ -152,6 +177,10 @@ export const companyCreditsDetailedSelector = selectorFamily<
         .map((credit) => ({
           ...credit,
           borrower: credit.borrower.data,
+          termOffering: {
+            ...credit.termOffering.data,
+            term: credit.termOffering.data.term.data,
+          },
         }))
     },
 })
