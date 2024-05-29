@@ -11,15 +11,15 @@ describe("fetchNextPayrollDate function", () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2022-10-01T12:00:00Z"))
     expect(fetchNextPayrollDate("monthly")).toStrictEqual(
-      new Date("2022-10-31T06:00:00.000Z"),
+      new Date("2022-10-31T12:00:00.000Z"),
     )
     vi.setSystemTime(new Date("2023-04-18T12:00:00Z"))
     expect(fetchNextPayrollDate("monthly")).toStrictEqual(
-      new Date("2023-04-30T06:00:00.000Z"),
+      new Date("2023-04-30T12:00:00.000Z"),
     )
     vi.setSystemTime(new Date("2023-05-15T12:00:00Z"))
     expect(fetchNextPayrollDate("monthly")).toStrictEqual(
-      new Date("2023-05-31T06:00:00.000Z"),
+      new Date("2023-05-31T12:00:00.000Z"),
     )
     vi.useRealTimers()
   })
@@ -28,11 +28,11 @@ describe("fetchNextPayrollDate function", () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2022-11-01T12:00:00Z"))
     expect(fetchNextPayrollDate("biweekly")).toStrictEqual(
-      new Date("2022-11-15T06:00:00.000Z"),
+      new Date("2022-11-15T12:00:00.000Z"),
     )
     vi.setSystemTime(new Date("2023-04-13T12:00:00Z"))
     expect(fetchNextPayrollDate("biweekly")).toStrictEqual(
-      new Date("2023-04-15T06:00:00.000Z"),
+      new Date("2023-04-15T12:00:00.000Z"),
     )
     vi.useRealTimers()
   })
@@ -41,11 +41,11 @@ describe("fetchNextPayrollDate function", () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2022-11-19T12:00:00Z"))
     expect(fetchNextPayrollDate("biweekly")).toStrictEqual(
-      new Date("2022-11-30T06:00:00.000Z"),
+      new Date("2022-11-30T12:00:00.000Z"),
     )
     vi.setSystemTime(new Date("2023-04-16T12:00:00Z"))
     expect(fetchNextPayrollDate("biweekly")).toStrictEqual(
-      new Date("2023-04-30T06:00:00.000Z"),
+      new Date("2023-04-30T12:00:00.000Z"),
     )
     vi.useRealTimers()
   })
@@ -53,16 +53,16 @@ describe("fetchNextPayrollDate function", () => {
   it("should return valid dates for specific dates passed as values", () => {
     expect(
       fetchNextPayrollDate("biweekly", "2022-11-01T12:00:00Z"),
-    ).toStrictEqual(new Date("2022-11-15T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2022-11-15T12:00:00.000Z"))
     expect(
       fetchNextPayrollDate("biweekly", "2023-04-13T12:00:00Z"),
-    ).toStrictEqual(new Date("2023-04-15T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2023-04-15T12:00:00.000Z"))
     expect(
       fetchNextPayrollDate("biweekly", "2022-11-19T12:00:00Z"),
-    ).toStrictEqual(new Date("2022-11-30T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2022-11-30T12:00:00.000Z"))
     expect(
       fetchNextPayrollDate("biweekly", "2023-04-16T12:00:00Z"),
-    ).toStrictEqual(new Date("2023-04-30T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2023-04-30T12:00:00.000Z"))
   })
 })
 
@@ -70,31 +70,31 @@ describe("getNextPaymentDate function", () => {
   it("should return the next expected payment date for biweekly payrolls", () => {
     expect(
       getNextPaymentDate(new Date("2022-11-15T12:00:00.000Z"), "biweekly"),
-    ).toStrictEqual(new Date("2022-11-30T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2022-11-30T12:00:00.000Z"))
     expect(
       getNextPaymentDate(new Date("2023-04-15T12:00:00.000Z"), "biweekly"),
-    ).toStrictEqual(new Date("2023-04-30T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2023-04-30T12:00:00.000Z"))
     expect(
       getNextPaymentDate(new Date("2022-11-30T12:00:00.000Z"), "biweekly"),
-    ).toStrictEqual(new Date("2022-12-15T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2022-12-15T12:00:00.000Z"))
     expect(
       getNextPaymentDate(new Date("2023-04-30T12:00:00.000Z"), "biweekly"),
-    ).toStrictEqual(new Date("2023-05-15T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2023-05-15T12:00:00.000Z"))
   })
 
   it("should return the next expected payment date for monthly payrolls", () => {
     expect(
       getNextPaymentDate(new Date("2022-10-31T12:00:00.000Z"), "monthly"),
-    ).toStrictEqual(new Date("2022-11-30T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2022-11-30T12:00:00.000Z"))
     expect(
       getNextPaymentDate(new Date("2023-04-30T12:00:00.000Z"), "monthly"),
-    ).toStrictEqual(new Date("2023-05-31T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2023-05-31T12:00:00.000Z"))
     expect(
       getNextPaymentDate(new Date("2022-11-30T12:00:00.000Z"), "monthly"),
-    ).toStrictEqual(new Date("2022-12-31T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2022-12-31T12:00:00.000Z"))
     expect(
       getNextPaymentDate(new Date("2023-05-31T12:00:00.000Z"), "monthly"),
-    ).toStrictEqual(new Date("2023-06-30T06:00:00.000Z"))
+    ).toStrictEqual(new Date("2023-06-30T12:00:00.000Z"))
   })
 })
 
@@ -138,7 +138,7 @@ describe("paymentOnTime function", () => {
       }),
     ).toStrictEqual({
       onTime: true,
-      expectedPaymentDate: new Date("2022-11-15T06:00:00.000Z"),
+      expectedPaymentDate: new Date("2022-11-15T12:00:00.000Z"),
     })
     expect(
       paymentOnTime({
@@ -149,7 +149,7 @@ describe("paymentOnTime function", () => {
       }),
     ).toStrictEqual({
       onTime: true,
-      expectedPaymentDate: new Date("2022-11-30T06:00:00.000Z"),
+      expectedPaymentDate: new Date("2022-11-30T12:00:00.000Z"),
     })
     expect(
       paymentOnTime({
@@ -160,7 +160,7 @@ describe("paymentOnTime function", () => {
       }),
     ).toStrictEqual({
       onTime: true,
-      expectedPaymentDate: new Date("2023-03-31T06:00:00.000Z"),
+      expectedPaymentDate: new Date("2023-03-31T12:00:00.000Z"),
     })
   })
 
@@ -174,7 +174,7 @@ describe("paymentOnTime function", () => {
       }),
     ).toStrictEqual({
       onTime: false,
-      expectedPaymentDate: new Date("2022-11-15T06:00:00.000Z"),
+      expectedPaymentDate: new Date("2022-11-15T12:00:00.000Z"),
     })
     expect(
       paymentOnTime({
@@ -185,7 +185,7 @@ describe("paymentOnTime function", () => {
       }),
     ).toStrictEqual({
       onTime: false,
-      expectedPaymentDate: new Date("2022-11-30T06:00:00.000Z"),
+      expectedPaymentDate: new Date("2022-11-30T12:00:00.000Z"),
     })
     expect(
       paymentOnTime({
@@ -196,7 +196,7 @@ describe("paymentOnTime function", () => {
       }),
     ).toStrictEqual({
       onTime: false,
-      expectedPaymentDate: new Date("2023-03-15T06:00:00.000Z"),
+      expectedPaymentDate: new Date("2023-03-15T12:00:00.000Z"),
     })
   })
 })

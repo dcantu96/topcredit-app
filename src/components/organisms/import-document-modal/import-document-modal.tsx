@@ -10,6 +10,8 @@ import useToast from "components/providers/toaster/useToast"
 import { XMarkIcon } from "@heroicons/react/24/solid"
 import Tooltip from "components/atoms/tooltip"
 import { dispersedCreditsImportSelector } from "./atoms"
+import { calculatePaymentNumber } from "../../../utils"
+import { companiesSelectorQuery } from "hooks/useCompanies/atoms"
 
 const ImportDocumentModal = () => {
   const toast = useToast()
@@ -21,15 +23,13 @@ const ImportDocumentModal = () => {
   const [errors, setErrors] = useState<Map<string, string[]>>(
     new Map<string, string[]>(),
   )
-  errors.clear
   const rowKey = headers.at(1)
 
   const validRows = csvRows.filter(
     (row) =>
       dispersedCredits.find(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (credit: any) =>
-          credit.borrower.data.employeeNumber === row["# Nómina"],
+        (credit: any) => credit.borrower.data.employeeNumber === row["Nomina"],
       ) !== undefined,
   )
 
@@ -37,6 +37,8 @@ const ImportDocumentModal = () => {
 
   const handleSave = useRecoilCallback(({ snapshot }) => async () => {
     const api = await snapshot.getPromise(apiSelector)
+    const companies = await snapshot.getPromise(companiesSelectorQuery)
+    const companyList = Array.from(companies.values())
     setIsSaving(true)
     try {
       if (!dispersedCredits || !dispersedCredits.length) {
@@ -49,23 +51,36 @@ const ImportDocumentModal = () => {
         return
       }
 
-      console.log("csvRows", csvRows)
-      console.log("validRows", validRows)
       for (const row of validRows) {
         try {
+          const company = companyList.find(
+            (company) => company.name === row["Cliente"],
+          )
+          if (!company) {
+            throw Error(`No se encontró la empresa ${headers[0]}`)
+          }
           const credit = dispersedCredits.find(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (credit: any) =>
-              credit.borrower.data.employeeNumber === row["# Nómina"],
+              credit.borrower.data.employeeNumber === row["Nomina"],
           )
           if (!credit) {
             throw Error(
-              `No se encontró el crédito para el empleado ${row["# Nómina"]}`,
+              `No se encontró el crédito para el empleado ${row["Nomina"]}`,
             )
           }
           await api.create("payments", {
             amount: row["Descuento"],
-            number: row["Plazo"],
+            number: calculatePaymentNumber({
+              year: Number(row["Año"]),
+              month: Number(row["Mes"]),
+              twoWeekPeriod:
+                company.employeeSalaryFrequency === "biweekly"
+                  ? Number(row["Quincena"])
+                  : undefined,
+              installationDateString: credit.installationDate,
+              termDuration: credit.termOffering.data.term.data.duration,
+            }),
             paidAt: new Date().toISOString(),
             credit: {
               data: {
@@ -83,66 +98,59 @@ const ImportDocumentModal = () => {
     }
   })
 
-  console.log("Errors", errors)
+  const onLoad = (loadedRows: CSVRow[], loadedHeaders: string[]) => {
+    const newMap = errors
+    for (const row of loadedRows) {
+      const employeeNumber = row["Nomina"]
+      const credit = dispersedCredits.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
+      )
+      if (!credit) {
+        if (newMap.has(employeeNumber)) {
+          newMap.set(employeeNumber, [
+            ...newMap.get(employeeNumber)!,
+            `No existe # Nómina: ${employeeNumber} en la base de datos`,
+          ])
+        } else {
+          newMap.set(employeeNumber, [
+            `No existe # Nómina: ${employeeNumber} en la base de datos`,
+          ])
+        }
+      }
+      if (!row["Descuento"]) {
+        if (newMap.has(employeeNumber)) {
+          newMap.set(employeeNumber, [
+            ...newMap.get(employeeNumber)!,
+            `No se encontró la columna Descuento`,
+          ])
+        } else {
+          newMap.set(employeeNumber, [`No se encontró la columna Descuento`])
+        }
+      }
+      if (!row["Mes"]) {
+        if (newMap.has(employeeNumber)) {
+          newMap.set(employeeNumber, [
+            ...newMap.get(employeeNumber)!,
+            `No se encontró la columna mes`,
+          ])
+        } else {
+          newMap.set(employeeNumber, [`No se encontró la columna mes`])
+        }
+      }
+    }
+    setErrors(newMap)
+    setIsModalOpen(true)
+    setHeaders(loadedHeaders)
+    setCSVRows(loadedRows)
+  }
 
   return (
     <>
       <ImportDocumentButton
         id="import-payments"
         onImport={async (file) => {
-          readFile(file, {
-            onLoad(csvRows, headers) {
-              const newMap = errors
-              for (const row of csvRows) {
-                const employeeNumber = row["# Nómina"]
-                const credit = dispersedCredits.find(
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (credit: any) =>
-                    credit.borrower.data.employeeNumber === employeeNumber,
-                )
-                if (!credit) {
-                  if (newMap.has(employeeNumber)) {
-                    newMap.set(employeeNumber, [
-                      ...newMap.get(employeeNumber)!,
-                      `No existe # Nómina: ${employeeNumber} en la base de datos`,
-                    ])
-                  } else {
-                    newMap.set(employeeNumber, [
-                      `No existe # Nómina: ${employeeNumber} en la base de datos`,
-                    ])
-                  }
-                }
-                if (!row["Descuento"]) {
-                  if (newMap.has(employeeNumber)) {
-                    newMap.set(employeeNumber, [
-                      ...newMap.get(employeeNumber)!,
-                      `No se encontró la columna Descuento`,
-                    ])
-                  } else {
-                    newMap.set(employeeNumber, [
-                      `No se encontró la columna Descuento`,
-                    ])
-                  }
-                }
-                if (!row["Plazo"]) {
-                  if (newMap.has(employeeNumber)) {
-                    newMap.set(employeeNumber, [
-                      ...newMap.get(employeeNumber)!,
-                      `No se encontró la columna Plazo`,
-                    ])
-                  } else {
-                    newMap.set(employeeNumber, [
-                      `No se encontró la columna Plazo`,
-                    ])
-                  }
-                }
-              }
-              setErrors(newMap)
-              setIsModalOpen(true)
-              setHeaders(headers)
-              setCSVRows(csvRows)
-            },
-          })
+          readFile(file, { onLoad })
         }}
       />
       {isModalOpen && (
@@ -170,12 +178,14 @@ const ImportDocumentModal = () => {
               <Table.Body>
                 {rowKey &&
                   csvRows.map((row) => (
-                    <Table.Row key={row[rowKey]}>
+                    <Table.Row
+                      key={`${row["Nomina"]}-${row["Año"]}-${row["Mes"]}-${row["Quincena"]}`}
+                    >
                       {headers.map((header) => (
                         <Table.Cell key={header}>{row[header]}</Table.Cell>
                       ))}
                       <MaybeErrorCell
-                        employeeNumber={row["# Nómina"]}
+                        employeeNumber={row["Nomina"]}
                         errorsMap={errors}
                       />
                     </Table.Row>

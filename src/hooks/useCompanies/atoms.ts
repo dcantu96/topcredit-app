@@ -5,7 +5,12 @@ import { Company, Term } from "src/schema.types"
 
 type CompanyResponse = Pick<
   Company,
-  "borrowingCapacity" | "id" | "domain" | "rate" | "name"
+  | "borrowingCapacity"
+  | "id"
+  | "domain"
+  | "rate"
+  | "name"
+  | "employeeSalaryFrequency"
 > & {
   terms: {
     data: Term[]
@@ -17,7 +22,13 @@ export const companiesSelectorQuery = selector<
     string,
     Pick<
       Company,
-      "borrowingCapacity" | "id" | "domain" | "rate" | "name" | "terms"
+      | "borrowingCapacity"
+      | "id"
+      | "domain"
+      | "rate"
+      | "name"
+      | "terms"
+      | "employeeSalaryFrequency"
     >
   >
 >({
@@ -27,7 +38,8 @@ export const companiesSelectorQuery = selector<
     const { data }: { data: CompanyResponse[] } = await api.get("companies", {
       params: {
         fields: {
-          companies: "borrowingCapacity,id,domain,terms,rate,name",
+          companies:
+            "borrowingCapacity,id,domain,terms,rate,name,employeeSalaryFrequency",
         },
         include: "terms",
       },
@@ -37,7 +49,13 @@ export const companiesSelectorQuery = selector<
       string,
       Pick<
         Company,
-        "borrowingCapacity" | "id" | "domain" | "rate" | "name" | "terms"
+        | "borrowingCapacity"
+        | "id"
+        | "domain"
+        | "rate"
+        | "name"
+        | "terms"
+        | "employeeSalaryFrequency"
       >
     >()
     for (const company of data) {
@@ -47,6 +65,7 @@ export const companiesSelectorQuery = selector<
         name: company.name,
         borrowingCapacity: company.borrowingCapacity,
         terms: company.terms.data,
+        employeeSalaryFrequency: company.employeeSalaryFrequency,
         rate: company.rate,
       })
     }

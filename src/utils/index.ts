@@ -1,3 +1,5 @@
+import { expectedPaymentsByDate } from "../routes/company-installations/utils"
+
 interface CalculateAmortizationProps {
   loanAmount: number
   totalPayments: number
@@ -45,4 +47,55 @@ export const exportToCSV = (headers: string[], rows: string[][]) => {
 
   const encodedUri = encodeURI(csvContent)
   window.open(encodedUri)
+}
+
+interface CalculatePaymentNumberProps {
+  year: number
+  month: number
+  installationDateString: string
+  termDuration: number
+  twoWeekPeriod?: number
+}
+
+export const calculatePaymentNumber = ({
+  year,
+  month,
+  installationDateString,
+  termDuration,
+  twoWeekPeriod,
+}: CalculatePaymentNumberProps) => {
+  // 1. Get the installation date
+
+  // 2. Get the payment date using the month and the twoWeekPeriod.
+  if (twoWeekPeriod) {
+    if (twoWeekPeriod === 1) {
+      // 2.1.1. If it's 1, it should be the first payment of the month at the 15th.
+      return expectedPaymentsByDate(
+        new Date(year, month - 1, 15, 6, 0, 0).toISOString(),
+        "biweekly",
+        installationDateString,
+        termDuration,
+      )
+    } else if (twoWeekPeriod === 2) {
+      // 2.1.2. If it's 2, it should be the second payment of the month at the last day of the month.
+      return expectedPaymentsByDate(
+        new Date(year, month, 0, 6, 0, 0).toISOString(),
+        "biweekly",
+        installationDateString,
+        termDuration,
+      )
+    } else {
+      throw new Error(
+        "Invalid value for twoWeekPeriod. It should be either 1 or 2.",
+      )
+    }
+  } else {
+    // 2.2. If the twoWeekPeriod is not provided, it means its a monthly payment and should be at the last day of the month.
+    return expectedPaymentsByDate(
+      new Date(year, month, 0, 6, 0, 0).toISOString(),
+      "monthly",
+      installationDateString,
+      termDuration,
+    )
+  }
 }

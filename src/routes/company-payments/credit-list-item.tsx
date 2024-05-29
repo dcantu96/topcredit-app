@@ -60,7 +60,8 @@ const ListItem = ({
             >
               <a className="flex text-inherit decoration-inherit gap-x-2">
                 <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                  {credit.borrower.firstName} {credit.borrower.lastName}
+                  {credit.borrower.firstName} {credit.borrower.lastName} ·{" "}
+                  {credit.borrower.employeeNumber}
                 </span>
                 <span className="text-gray-400">/</span>
                 <span className="whitespace-nowrap">

@@ -2,7 +2,7 @@ import type { Credit, CreditStatus, Payment } from "src/schema.types"
 
 // Helper function to find the last day of a given month
 function getLastDayOfMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate()
+  return new Date(year, month + 1, 0, 6, 0, 0).getDate()
 }
 
 export function fetchNextPayrollDate(
@@ -16,15 +16,15 @@ export function fetchNextPayrollDate(
   // for monthly payrolls, the next payroll date should always be the last day of the month
   if (durationType === "monthly") {
     // get the last day of the current month
-    return new Date(currentYear, currentMonth + 1, 0)
+    return new Date(currentYear, currentMonth + 1, 0, 6, 0, 0)
   } else {
     // for biweekly payrolls, the next payroll date should be either the 15th or the last day of the month
     // if the current day is greater than 15 then the next payroll date should be the last day of the month
     if (currentDay > 15) {
-      return new Date(currentYear, currentMonth + 1, 0)
+      return new Date(currentYear, currentMonth + 1, 0, 6, 0, 0)
     } else {
       // return the 15th of the current month
-      return new Date(currentYear, currentMonth, 15)
+      return new Date(currentYear, currentMonth, 15, 6, 0, 0)
     }
   }
 }
@@ -40,18 +40,18 @@ export function expectedInstallationDate(
 
   if (durationType === "monthly") {
     // get the last day of the current month
-    return new Date(year, month + 1, 0)
+    return new Date(year, month + 1, 0, 6, 0, 0)
   } else {
     if (day >= 21) {
       // Due date is the 15th of the next month
-      return new Date(year, month + 1, 15)
+      return new Date(year, month + 1, 15, 6, 0, 0)
     } else if (day >= 6) {
       // Due date is the last day of the current month
       const lastDay = getLastDayOfMonth(year, month)
-      return new Date(year, month, lastDay)
+      return new Date(year, month, lastDay, 6, 0, 0)
     } else {
       // If today is between 1st and 5th (inclusive), the due date is the 15th of the current month
-      return new Date(year, month, 15)
+      return new Date(year, month, 15, 6, 0, 0)
     }
   }
 }
@@ -69,16 +69,16 @@ export function getNextPaymentDate(
     // if the current day is greater than 15 then the next payroll date should be the last day of the month
     if (lastPaymentDay > 15) {
       // return the next month's 15th
-      return new Date(lastPaymentYear, lastPaymentMonth + 1, 15)
+      return new Date(lastPaymentYear, lastPaymentMonth + 1, 15, 6, 0, 0)
     } else {
       // return the last day of the current month
-      return new Date(lastPaymentYear, lastPaymentMonth + 1, 0)
+      return new Date(lastPaymentYear, lastPaymentMonth + 1, 0, 6, 0, 0)
     }
   } else {
     // Calculate the end of the next month for monthly payment frequency
     const year = lastPaymentDate.getFullYear()
     const month = lastPaymentDate.getMonth() + 2 // Move to the next month and find its end
-    const nextMonthEnd = new Date(year, month, 0) // Set day to 0 to get the last day of the previous month
+    const nextMonthEnd = new Date(year, month, 0, 6, 0, 0) // Set day to 0 to get the last day of the previous month
     return nextMonthEnd
   }
 }
@@ -150,9 +150,25 @@ export const expectedPaymentsByDate = (
   fromDate: string,
   termDuration: number,
 ) => {
-  const toDate = new Date(date)
+  const toDateRaw = new Date(date)
+  const toDate = new Date(
+    toDateRaw.getFullYear(),
+    toDateRaw.getMonth(),
+    toDateRaw.getDate(),
+    6,
+    0,
+    0,
+  )
   let numberOfPayments = 0
-  let currentDate = new Date(fromDate)
+  const currentDateRaw = new Date(fromDate)
+  let currentDate = new Date(
+    currentDateRaw.getFullYear(),
+    currentDateRaw.getMonth(),
+    currentDateRaw.getDate(),
+    6,
+    0,
+    0,
+  )
 
   while (currentDate <= toDate && numberOfPayments < termDuration) {
     numberOfPayments++ // Assume each cycle we're checking represents a due payment period

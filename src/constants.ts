@@ -1,4 +1,4 @@
-import { DurationType, Role } from "./schema.types"
+import { CreditStatus, DurationType, Role, UserStatus } from "./schema.types"
 
 export const STATES_OF_MEXICO = [
   { value: "AGU" as const, label: "Aguascalientes" },
@@ -85,3 +85,21 @@ export const FREQUENCY_OPTIONS = [
   { value: "monthly" as const, label: "Mensual" },
   { value: "biweekly" as const, label: "Quincenal" },
 ]
+
+export const CREDIT_STATUS = new Map<CreditStatus, string>([
+  ["new", "Nuevo"],
+  ["pending", "Pendiente"],
+  ["invalid-documentation", "Documentación inválida"],
+  ["authorized", "Autorizado"],
+  ["denied", "Denegado"],
+  ["dispersed", "Dispersado"],
+])
+
+export const USER_STATUSES = new Map<UserStatus, string>([
+  ["new", "Nuevo"],
+  ["pending", "Pendiente"],
+  ["invalid-documentation", "Documentación inválida"],
+  ["pre-authorization", "Pre-autorización"],
+  ["pre-authorized", "Pre-autorizado"],
+  ["denied", "Denegado"],
+])

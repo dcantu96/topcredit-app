@@ -34,6 +34,7 @@ export const basicDetailsListSelectorQuery = selector<
           },
           filter: {
             byRole: "",
+            status: "pending,invalid_documentation",
           },
         },
       },
