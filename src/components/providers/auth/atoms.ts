@@ -242,6 +242,8 @@ export const signNowTokenSelector = selector({
         })
         const data = await response.json()
         if (data.error) {
+          // delay 500ms
+          await new Promise((resolve) => setTimeout(resolve, 5000))
           localStorage.removeItem("sign-now-token")
           window.location.href = `https://app.signnow.com/authorize?client_id=${import.meta.env.VITE_APP_SIGN_NOW_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_REDIRECT_URI}`
         } else {
@@ -249,6 +251,7 @@ export const signNowTokenSelector = selector({
           return data
         }
       } catch (error) {
+        await new Promise((resolve) => setTimeout(resolve, 5000))
         localStorage.removeItem("sign-now-token")
         window.location.href = `https://app.signnow.com/authorize?client_id=${import.meta.env.VITE_APP_SIGN_NOW_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_REDIRECT_URI}`
       }
@@ -268,6 +271,7 @@ export const signNowTokenSelector = selector({
           })
           const data = await response.json()
           if (data.errors) {
+            await new Promise((resolve) => setTimeout(resolve, 5000))
             localStorage.removeItem("sign-now-token")
             window.location.href = `https://app.signnow.com/authorize?client_id=${import.meta.env.VITE_APP_SIGN_NOW_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_REDIRECT_URI}`
           } else {
@@ -276,6 +280,7 @@ export const signNowTokenSelector = selector({
           }
           return data
         } catch (error) {
+          await new Promise((resolve) => setTimeout(resolve, 5000))
           localStorage.removeItem("sign-now-token")
           window.location.href = `https://app.signnow.com/authorize?client_id=${import.meta.env.VITE_APP_SIGN_NOW_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_REDIRECT_URI}`
         }
