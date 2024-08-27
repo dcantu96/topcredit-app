@@ -1,7 +1,7 @@
 import { useRecoilCallback } from "recoil"
 
 import { apiSelector } from "components/providers/api/atoms"
-import { CreditStatus } from "src/schema.types"
+import { CreditStatus, HRStatus } from "src/schema.types"
 import useToast from "components/providers/toaster/useToast"
 import {
   authorizationRejectionReasonCreditState,
@@ -26,6 +26,16 @@ const SUCCESS_MESSAGES = new Map<CreditStatus, string>([
   ["authorized", "El usuario ha sido autorizado"],
   ["denied", "El usuario ha sido denegado"],
   ["dispersed", "El crédito ha sido dispersado"],
+])
+
+const HR_SUCCESS_MESSAGES = new Map<HRStatus, string>([
+  ["active", "El usuario ha sido aprobado por recursos humanos"],
+  ["inactive", "El usuario ha sido desactivado"],
+])
+
+const HR_ERROR_MESSAGES = new Map<HRStatus, string>([
+  ["active", "Ocurrió un error al aprobar al usuario"],
+  ["inactive", "Ocurrió un error al desactivar al usuario"],
 ])
 
 const ERROR_MESSAGES = new Map([
@@ -129,6 +139,32 @@ const useCreditActions = () => {
       },
   )
 
+  const updateHRStatus = useRecoilCallback(
+    ({ snapshot }) =>
+      async (creditId: string, status: HRStatus) => {
+        const api = await snapshot.getPromise(apiSelector)
+        try {
+          await api.update(`credits`, {
+            id: creditId,
+            hrStatus: status,
+          })
+          const message = HR_SUCCESS_MESSAGES.get(status)
+          const defaultMessage = "Usuario actualizado"
+          toast.success({
+            title: "Usuario actualizado",
+            message: message ?? defaultMessage,
+          })
+        } catch (error) {
+          const defaultMessage = "Ocurrió un error al actualizar el crédito"
+          const message = HR_ERROR_MESSAGES.get(status)
+          toast.error({
+            title: "Error al actualizar",
+            message: message ?? defaultMessage,
+          })
+        }
+      },
+  )
+
   const approveDocument = useRecoilCallback(
     ({ set }) =>
       (creditId: string, documentKind: CreditDocumentKind) =>
@@ -163,7 +199,13 @@ const useCreditActions = () => {
       },
   )
 
-  return { createCredit, updateCreditStatus, approveDocument, denyDocument }
+  return {
+    createCredit,
+    updateCreditStatus,
+    approveDocument,
+    denyDocument,
+    updateHRStatus,
+  }
 }
 
 export default useCreditActions

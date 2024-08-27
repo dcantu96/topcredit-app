@@ -55,6 +55,8 @@ const CompanyCompletedCredits = lazy(
 const ConfirmationSuccess = lazy(() => import("../routes/confirmation-success"))
 const ConfirmationFailure = lazy(() => import("../routes/confirmation-failure"))
 const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
+const HR = lazy(() => import("../routes/hr/general"))
+const ShowHR = lazy(() => import("../routes/hr/show"))
 
 function App() {
   return (
@@ -156,6 +158,11 @@ function App() {
           >
             <Route index element={<StaffList />} />
             <Route path=":id/edit" element={<EditStaff />} />
+          </Route>
+          <Route path="hr" element={<ProtectedRoute allowedRoles={["hr"]} />}>
+            <Route index element={<HR />} />
+            <Route path=":id" element={<ShowHR />} />
+            <Route path="history" element={<>History</>} />
           </Route>
         </Route>
         <Route

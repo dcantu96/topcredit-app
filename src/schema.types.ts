@@ -20,6 +20,7 @@ export type Role =
   | "payments"
   | "admin"
   | "companies"
+  | "hr"
 
 export type UserStatus =
   | "new"
@@ -37,6 +38,8 @@ export type CreditStatus =
   | "denied"
   | "dispersed"
 
+export type HRStatus = "active" | "inactive"
+
 export type DurationType = "years" | "months" | "two-weeks"
 
 export interface TokenResponse {
@@ -52,6 +55,7 @@ export interface MeResponse {
   firstName: string | null
   lastName: string | null
   roles: Role[]
+  hrCompanyId: number | null
 }
 
 export interface ObjectWithId {
@@ -185,6 +189,7 @@ export interface Credit extends ObjectWithId, Timestamps {
   status: CreditStatus
   termOffering: TermOffering | null
   payments: Payment[] | null
+  hrStatus: HRStatus | null
 }
 
 export interface Term extends ObjectWithId, Timestamps {
