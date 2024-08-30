@@ -16,7 +16,7 @@ import { companySelectorQuery } from "../companies/loader"
 const Screen = () => {
   const companyId = useRecoilValue(myProfileState)?.hrCompanyId
   const company = useRecoilValue(companySelectorQuery(companyId!.toString()))
-  const credits = useRecoilValue(hrCreditsState("requests"))
+  const credits = useRecoilValue(hrCreditsState("history"))
 
   return (
     <>
@@ -26,8 +26,8 @@ const Screen = () => {
             text={"Empleados Autorizados de " + company?.name}
           />
           <ListHeader.Actions>
-            <ButtonLink size="sm" status="secondary" to="/dashboard/hr/history">
-              Historial
+            <ButtonLink size="sm" status="secondary" to="/dashboard/hr">
+              Solicitudes
               <DocumentIcon className="w-4 h-4 ml-2" />
             </ButtonLink>
             <ListSortOrderHandler listName="pre-authorizations" />

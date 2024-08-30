@@ -17,7 +17,7 @@ const ShowScreen = () => {
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const credit = useRecoilValue(hrCreditsSelector(id))
   if (!credit) throw new Error("Credit not found")
-  const { removeCredit } = useHRActions()
+  const { removeCredit } = useHRActions("requests")
   const { updateHRStatus } = useCreditActions()
   const companiesMap = useCompanies()
 

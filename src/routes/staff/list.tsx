@@ -12,6 +12,7 @@ import List from "components/atoms/list"
 import StatusIndicator from "components/atoms/status-indicator"
 
 import { staffListSelector } from "./atoms"
+import { ROLE_OPTIONS } from "../../constants"
 
 const StaffList = () => {
   const staff = useRecoilValue(staffListSelector)
@@ -85,7 +86,11 @@ const StaffList = () => {
                   </h2>
                 </div>
                 <div className="mt-3 flex items-center gap-[0.625rem] text-xs leading-5 text-gray-400 flex-wrap">
-                  {user.roles?.map((role) => <Chip key={role}>{role}</Chip>)}
+                  {user.roles?.map((role) => (
+                    <Chip key={role}>
+                      {ROLE_OPTIONS.find(({ value }) => role === value)?.label}
+                    </Chip>
+                  ))}
                 </div>
               </div>
               <button

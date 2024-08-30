@@ -1,23 +1,36 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { useParams } from "react-router-dom"
 
 import Button from "components/atoms/button"
 import ButtonLink from "components/atoms/button-link"
-import Chip from "components/atoms/chip"
-import Label from "components/atoms/label"
 import FormHeader from "components/atoms/layout/form-header"
 import FormContainer from "components/atoms/layout/form-container"
-import { staffSelector } from "./atoms"
+import { editableStaffState, useStaffActions } from "./atoms"
+import Input from "components/atoms/input"
+import Select from "components/atoms/select"
+import { ROLE_OPTIONS } from "../../constants"
+import { companiesSelectorQuery } from "../companies/loader"
 
 const EditCompany = () => {
+  const { update } = useStaffActions()
+  const companies = useRecoilValue(companiesSelectorQuery)
   const { id } = useParams()
   if (!id) throw new Error("Missing id param")
-  const staff = useRecoilValue(staffSelector(id))
+  const [staff, editStaff] = useRecoilState(editableStaffState(id))
+  const handleStaffUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await update(staff)
+  }
+
+  const companyOptions = companies.map((company) => ({
+    label: company.name,
+    value: company.id,
+  }))
 
   return (
     <FormContainer>
       <FormHeader>
-        <FormHeader.Title text="Editar Cliente" />
+        <FormHeader.Title text="Editar Staff" />
         <FormHeader.Actions>
           <ButtonLink to=".." status="secondary">
             Ver
@@ -49,26 +62,62 @@ const EditCompany = () => {
           </ButtonLink>
         </FormHeader.Actions>
       </FormHeader>
-      <form className="w-full grid grid-cols-2 gap-x-4 gap-y-0">
-        <div>
-          <Label>Nombre</Label>
-          <p>
-            {staff.first_name} {staff.last_name}
-          </p>
-        </div>
-        <div>
-          <Label>Correo</Label>
-          <p>{staff.email}</p>
-        </div>
-        <div className="flex gap-4 items-center col-span-2">
-          <Label>Asignar roles</Label>
-        </div>
-        <div className="col-span-2 md:col-span-1">
-          <Label>Roles asignados</Label>
-          <div className="flex gap-2 mt-2 flex-wrap mb-8">
-            {staff.roles?.map((role) => <Chip key={role}>{role}</Chip>)}
-          </div>
-        </div>
+      <form
+        className="w-full grid grid-cols-2 gap-x-4 gap-y-0"
+        onSubmit={handleStaffUpdate}
+      >
+        <Input
+          label="Nombre"
+          required
+          value={staff.first_name}
+          id="first_name"
+          onChange={(e) =>
+            editStaff((prev) => ({ ...prev, first_name: e.target.value }))
+          }
+        />
+        <Input
+          label="Apellido"
+          required
+          value={staff.last_name}
+          id="last_name"
+          onChange={(e) =>
+            editStaff((prev) => ({ ...prev, last_name: e.target.value }))
+          }
+        />
+        <Input
+          label="Correo"
+          required
+          type="email"
+          value={staff.email}
+          id="email"
+          onChange={(e) =>
+            editStaff((prev) => ({ ...prev, email: e.target.value }))
+          }
+        />
+        <Select
+          id="role"
+          label="Rol del Usuario"
+          value={staff.roles.at(0)}
+          options={ROLE_OPTIONS}
+          onChange={(newRole) =>
+            editStaff((prev) =>
+              newRole ? { ...prev, roles: [newRole] } : prev,
+            )
+          }
+        />
+        {staff.roles.at(0) === "admin" || staff.roles.at(0) === "hr" ? (
+          <Select
+            id="company"
+            label="Cliente"
+            value={staff.hr_company_id}
+            options={companyOptions}
+            onChange={(newCompanyId) =>
+              editStaff((prev) =>
+                newCompanyId ? { ...prev, hr_company_id: newCompanyId } : prev,
+              )
+            }
+          />
+        ) : null}
         <div className="col-span-2 mt-2">
           <Button type="submit" fullWidth>
             Actualizar

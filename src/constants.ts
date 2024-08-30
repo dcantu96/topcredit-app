@@ -61,6 +61,46 @@ export const ROLES: { value: Role; label: string; path: string }[] = [
   { value: "hr", label: "RH", path: "hr" },
 ]
 
+export interface RoleOption {
+  value: Role
+  label: string
+}
+
+export const ROLE_OPTIONS: RoleOption[] = [
+  {
+    label: "Administrador",
+    value: "admin",
+  },
+  {
+    label: "Autorizaciones",
+    value: "authorizations",
+  },
+  {
+    label: "Cobranza",
+    value: "payments",
+  },
+  {
+    label: "Dispersiones",
+    value: "dispersions",
+  },
+  {
+    label: "Instalaciones",
+    value: "installations",
+  },
+  {
+    label: "Pre-autorizaciones",
+    value: "pre_authorizations",
+  },
+  {
+    label: "RH",
+    value: "hr",
+  },
+  {
+    label: "Solicitudes",
+    value: "requests",
+  },
+]
+
 export const SORT_ORDER = [
   { label: "Más recientes", value: "desc" as const },
   { label: "Más antiguas", value: "asc" as const },
