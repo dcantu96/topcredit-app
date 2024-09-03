@@ -1,25 +1,24 @@
 import { useRecoilState, useRecoilValue } from "recoil"
-import { useParams } from "react-router-dom"
 
 import Button from "components/atoms/button"
 import ButtonLink from "components/atoms/button-link"
 import FormHeader from "components/atoms/layout/form-header"
 import FormContainer from "components/atoms/layout/form-container"
-import { editableStaffState, useStaffActions } from "./atoms"
+import { isValidStaff, newStaffState, useStaffActions } from "./atoms"
 import Input from "components/atoms/input"
 import Select from "components/atoms/select"
 import { ROLE_OPTIONS } from "../../constants"
 import { companiesSelectorQuery } from "../companies/loader"
 
 const Screen = () => {
-  const { update } = useStaffActions()
+  const { create } = useStaffActions()
   const companies = useRecoilValue(companiesSelectorQuery)
-  const { id } = useParams()
-  if (!id) throw new Error("Missing id param")
-  const [staff, editStaff] = useRecoilState(editableStaffState(id))
+  const [staff, editStaff] = useRecoilState(newStaffState)
   const handleStaffUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await update(staff)
+    if (isValidStaff(staff)) {
+      await create(staff)
+    }
   }
 
   const companyOptions = companies.map((company) => ({
@@ -69,7 +68,7 @@ const Screen = () => {
         <Input
           label="Nombre"
           required
-          value={staff.first_name}
+          value={staff.first_name || ""}
           id="first_name"
           onChange={(e) =>
             editStaff((prev) => ({ ...prev, first_name: e.target.value }))
@@ -78,35 +77,36 @@ const Screen = () => {
         <Input
           label="Apellido"
           required
-          value={staff.last_name}
+          value={staff.last_name || ""}
           id="last_name"
           onChange={(e) =>
             editStaff((prev) => ({ ...prev, last_name: e.target.value }))
           }
         />
         <Input
-          label="Teléfono"
-          required
-          value={staff.phone}
-          id="phone"
-          onChange={(e) =>
-            editStaff((prev) => ({ ...prev, phone: e.target.value }))
-          }
-        />
-        <Input
           label="Correo"
           required
           type="email"
-          value={staff.email}
+          value={staff.email || ""}
           id="email"
           onChange={(e) =>
             editStaff((prev) => ({ ...prev, email: e.target.value }))
           }
         />
+        <Input
+          label="Teléfono"
+          required
+          type="phone"
+          value={staff.phone || ""}
+          id="phone"
+          onChange={(e) =>
+            editStaff((prev) => ({ ...prev, phone: e.target.value }))
+          }
+        />
         <Select
           id="role"
           label="Rol del Usuario"
-          value={staff.roles.at(0)}
+          value={staff.roles?.at(0)}
           options={ROLE_OPTIONS}
           onChange={(newRole) =>
             editStaff((prev) =>
@@ -114,7 +114,7 @@ const Screen = () => {
             )
           }
         />
-        {staff.roles.at(0) === "admin" || staff.roles.at(0) === "hr" ? (
+        {staff.roles?.at(0) === "admin" || staff.roles?.at(0) === "hr" ? (
           <Select
             id="company"
             label="Cliente"
@@ -128,8 +128,8 @@ const Screen = () => {
           />
         ) : null}
         <div className="col-span-2 mt-2">
-          <Button type="submit" fullWidth>
-            Actualizar
+          <Button type="submit" fullWidth disabled={!isValidStaff(staff)}>
+            Crear
           </Button>
         </div>
       </form>

@@ -31,7 +31,7 @@ const Dashboard = () => {
   } else if (profile?.roles.includes("hr")) {
     return <HR />
   } else {
-    return <div>error</div>
+    return <div>dashboard not found</div>
   }
 }
 

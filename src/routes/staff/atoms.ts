@@ -1,4 +1,10 @@
-import { atomFamily, selector, selectorFamily, useRecoilValue } from "recoil"
+import {
+  atom,
+  atomFamily,
+  selector,
+  selectorFamily,
+  useRecoilValue,
+} from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 
 import type { Role } from "../../schema.types"
@@ -12,6 +18,7 @@ export interface StaffUser {
   last_name: string
   created_at: string
   updated_at: string
+  phone: string
   roles: Role[]
   hr_company_id: string
 }
@@ -47,6 +54,11 @@ export const editableStaffState = atomFamily<StaffUser, string>({
   default: staffSelector,
 })
 
+export const newStaffState = atom<Partial<Omit<StaffUser, "id">>>({
+  key: "newStaffState",
+  default: {},
+})
+
 export const useStaffActions = () => {
   const nav = useNavigate()
   const { success } = useToast()
@@ -68,5 +80,33 @@ export const useStaffActions = () => {
     })
   }
 
-  return { update }
+  const create = async (staff: Omit<StaffUser, "id">) => {
+    await api.request({
+      type: "users",
+      url: "admin/staff/",
+      method: "POST",
+      body: staff,
+    })
+    success({
+      message: "Staff actualizado",
+      title: "Éxito",
+      onClose() {
+        nav("/dashboard/staff")
+      },
+    })
+  }
+
+  return { update, create }
+}
+
+export const isValidStaff = (
+  staff: Partial<Omit<StaffUser, "id">>,
+): staff is Omit<StaffUser, "id"> => {
+  return (
+    staff.email !== "" &&
+    staff.first_name !== "" &&
+    staff.last_name !== "" &&
+    !!staff.roles &&
+    staff.roles.length > 0
+  )
 }

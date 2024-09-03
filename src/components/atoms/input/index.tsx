@@ -9,6 +9,7 @@ interface InputBaseProps {
   placeholder?: string
   required?: boolean
   maxLength?: number
+  fullWidth?: boolean
   min?: React.InputHTMLAttributes<HTMLInputElement>["min"]
   max?: React.InputHTMLAttributes<HTMLInputElement>["max"]
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -56,6 +57,7 @@ const Input = ({
   onBlur,
   min,
   max,
+  fullWidth,
   ...trailingProps
 }: InputProps) => {
   const passwordPaddingRight = type === "password" ? "pr-14" : undefined
@@ -78,7 +80,7 @@ const Input = ({
     type === "password" ? (passwordHidden ? "password" : "text") : type
 
   return (
-    <div>
+    <div className={fullWidth ? "w-full" : undefined}>
       <Label htmlFor={id}>{label}</Label>
       <div className="relative mt-2 rounded-md shadow-sm mb-8">
         {prefix && (

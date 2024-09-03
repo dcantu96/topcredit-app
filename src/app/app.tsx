@@ -17,6 +17,7 @@ const RegisterSuccess = lazy(() => import("../routes/register/success"))
 const CompaniesList = lazy(() => import("../routes/companies/list"))
 const StaffList = lazy(() => import("../routes/staff/list"))
 const EditStaff = lazy(() => import("../routes/staff/edit"))
+const NewStaff = lazy(() => import("../routes/staff/new"))
 const NewCompany = lazy(() => import("../routes/companies/new"))
 const EditCompany = lazy(() => import("../routes/companies/edit"))
 const ShowCompany = lazy(() => import("../routes/companies/show"))
@@ -53,6 +54,7 @@ const CompanyCompletedCredits = lazy(
   () => import("../routes/company-completed-credits/show"),
 )
 const ConfirmationSuccess = lazy(() => import("../routes/confirmation-success"))
+const GeneratePassword = lazy(() => import("../routes/generate-password"))
 const ConfirmationFailure = lazy(() => import("../routes/confirmation-failure"))
 const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 const HR = lazy(() => import("../routes/hr/general"))
@@ -65,6 +67,7 @@ function App() {
       <Toaster />
       <Routes>
         <Route index element={<Landing />} />
+        <Route path="generate-password" element={<GeneratePassword />} />
         <Route path="confirmation-success" element={<ConfirmationSuccess />} />
         <Route path="confirmation-failure" element={<ConfirmationFailure />} />
         <Route path="send-confirmation" element={<SendConfirmation />} />
@@ -158,6 +161,7 @@ function App() {
             element={<ProtectedRoute allowedRoles={["admin"]} />}
           >
             <Route index element={<StaffList />} />
+            <Route path="new" element={<NewStaff />} />
             <Route path=":id/edit" element={<EditStaff />} />
           </Route>
           <Route path="hr" element={<ProtectedRoute allowedRoles={["hr"]} />}>
