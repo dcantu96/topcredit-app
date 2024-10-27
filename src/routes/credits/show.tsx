@@ -1,7 +1,6 @@
 import { useRecoilValue } from "recoil"
 import { useParams } from "react-router-dom"
 
-import NavLink from "components/atoms/nav-link"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
@@ -11,6 +10,13 @@ import { fetchNextPayrollDate } from "../company-installations/utils"
 import { creditDetailedWithPaymentsState } from "./atoms"
 import { Payment } from "src/schema.types"
 import { MXNFormat } from "../../constants"
+import { useMemo } from "react"
+import {
+  CalendarDateRangeIcon,
+  CurrencyDollarIcon,
+  ListBulletIcon,
+} from "@heroicons/react/24/solid"
+import RowCard from "components/atoms/row-card"
 
 const Screen = () => {
   const { id } = useParams()
@@ -35,17 +41,50 @@ const Screen = () => {
     0,
   )
 
+  const { status, installationStatus, hrStatus } = credit
+
+  /**
+   * Credit & hr status workflow:
+   *
+   * 1. new
+   * 2. pending
+   * 3. invalid-documentation
+   * 4. authorized
+   * 5. denied
+   * 6. HR active
+   * 7. dispersed
+   * 8. installed
+   */
+  const creditStatusText = useMemo(() => {
+    if (status === "denied") return "Denegado"
+    if (status === "invalid-documentation") return "Documentación inválida"
+
+    if (status === "new") return "Nuevo"
+    if (status === "pending") return "Pendiente"
+    if (status === "authorized") {
+      if (hrStatus === "active") return "Aprobado por RH"
+      return "Autorizado"
+    }
+    if (status === "dispersed") {
+      if (installationStatus === "installed") return "Instalado"
+      return "Dispersado"
+    }
+  }, [status, installationStatus, hrStatus])
+
   return (
     <>
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text="Cobranza" to={"/dashboard/payments"}>
+          <ListHeader.Title text="Cliente" to={"/dashboard/payments"}>
             /{" "}
             <ListHeader.Title
               text={company.name}
               to={`/dashboard/payments/${company.id}`}
             >
-              / <ListHeader.Title text={credit.borrower.firstName!} />
+              /{" "}
+              <ListHeader.Title
+                text={`${credit.borrower.firstName} ${credit.borrower.lastName}`}
+              />
             </ListHeader.Title>
           </ListHeader.Title>
           <ListHeader.Actions>
@@ -56,80 +95,60 @@ const Screen = () => {
         </ListHeader>
         <List>
           <List.Item>
-            <div className="min-w-32">
-              <div className="flex items-center gap-x-3">
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-                  <a className="flex text-inherit decoration-inherit gap-x-2">
-                    <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                      Préstamo
-                    </span>
-                  </a>
-                </h2>
-              </div>
-              <p className="whitespace-nowrap mt-2 font-semibold">
-                {MXNFormat.format(credit.loan!)} MXN
-              </p>
-            </div>
-            <div className="min-w-32">
-              <div className="flex items-center gap-x-3">
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-                  <a className="flex text-inherit decoration-inherit gap-x-2">
-                    <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                      Crédito
-                    </span>
-                  </a>
-                </h2>
-              </div>
-              <p className="whitespace-nowrap mt-2 font-semibold">
+            <RowCard>
+              <RowCard.Outline>
+                <ListBulletIcon className="fill-current text-gray-500 w-3 h-3 mr-2" />
+                Status
+              </RowCard.Outline>
+              <RowCard.Text>{creditStatusText}</RowCard.Text>
+            </RowCard>
+            <RowCard>
+              <RowCard.Outline>
+                <CurrencyDollarIcon className="fill-current text-gray-500 w-3 h-3 mr-2" />
+                Préstamo
+              </RowCard.Outline>
+              <RowCard.Text>{MXNFormat.format(credit.loan!)} MXN</RowCard.Text>
+            </RowCard>
+            <RowCard>
+              <RowCard.Outline>
+                <CurrencyDollarIcon className="fill-current text-gray-500 w-3 h-3 mr-2" />
+                Crédito
+              </RowCard.Outline>
+              <RowCard.Text>
                 {MXNFormat.format(Number(credit.creditAmount) ?? 0)} MXN
-              </p>
-            </div>
-            <div className="min-w-32">
-              <div className="flex items-center gap-x-3">
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-                  <a className="flex text-inherit decoration-inherit gap-x-2">
-                    <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                      Plazo
-                    </span>
-                  </a>
-                </h2>
-              </div>
-              <p className="whitespace-nowrap mt-2 font-semibold">
+              </RowCard.Text>
+            </RowCard>
+            <RowCard>
+              <RowCard.Outline>
+                <CalendarDateRangeIcon className="fill-current text-gray-500 w-3 h-3 mr-2" />
+                Plazo
+              </RowCard.Outline>
+              <RowCard.Text>
                 {termDuration}{" "}
                 {credit.termOffering.term.durationType === "two-weeks"
                   ? "Quincenas"
                   : "Meses"}
-              </p>
-            </div>
-            <div className="min-w-32">
-              <div className="flex items-center gap-x-3">
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-                  <a className="flex text-inherit decoration-inherit gap-x-2">
-                    <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                      Total Pagado
-                    </span>
-                  </a>
-                </h2>
-              </div>
-              <p className="whitespace-nowrap mt-2 font-semibold">
-                {MXNFormat.format(totalPaid)} MXN
-              </p>
-            </div>
-            <div className="min-w-32">
-              <div className="flex items-center gap-x-3">
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-                  <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                    Amortización
-                  </span>
-                </h2>
-              </div>
-              <p className="whitespace-nowrap mt-2 font-semibold">
+              </RowCard.Text>
+            </RowCard>
+            <RowCard>
+              <RowCard.Outline>
+                <CurrencyDollarIcon className="fill-current text-gray-500 w-3 h-3 mr-2" />
+                Total Pagado
+              </RowCard.Outline>
+              <RowCard.Text>{MXNFormat.format(totalPaid)} MXN</RowCard.Text>
+            </RowCard>
+            <RowCard>
+              <RowCard.Outline>
+                <CurrencyDollarIcon className="fill-current text-gray-500 w-3 h-3 mr-2" />
+                Amortización
+              </RowCard.Outline>
+              <RowCard.Text>
                 {credit.amortization
                   ? MXNFormat.format(Number(credit.amortization))
                   : 0}{" "}
                 MXN
-              </p>
-            </div>
+              </RowCard.Text>
+            </RowCard>
           </List.Item>
           {creditPayments.map((maybePayment, index) => (
             <ListItem
@@ -143,17 +162,6 @@ const Screen = () => {
           ))}
         </List>
       </ListContainer>
-      {/* activity */}
-      <aside className="bg-slate-50 lg:border-gray-900/10 lg:border-l w-full lg:w-96 lg:top-16 lg:h-full h-fit">
-        <header className="py-4 px-4 sm:px-6 lg:px-8 min-h-[70px] border-gray-900/10 border-b flex items-center">
-          <div className="flex items-baseline justify-between flex-1">
-            <h2 className="text-gray-900 leading-7 font-semibold text-base">
-              Actividad
-            </h2>
-            <NavLink to="/pre-authorizations">Ver todo</NavLink>
-          </div>
-        </header>
-      </aside>
     </>
   )
 }
