@@ -12,15 +12,16 @@ import type {
 
 export type CreditDetailedResponse = Pick<
   Credit,
-  | "id"
-  | "status"
-  | "installationStatus"
-  | "dispersedAt"
-  | "loan"
-  | "installationDate"
   | "amortization"
   | "creditAmount"
+  | "dispersedAt"
+  | "hrStatus"
+  | "id"
+  | "installationDate"
+  | "installationStatus"
+  | "loan"
   | "maxLoanAmount"
+  | "status"
 > & {
   borrower: {
     data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
@@ -42,14 +43,16 @@ export type CreditDetailedResponse = Pick<
 
 export type CreditDetailed = Pick<
   Credit,
-  | "id"
-  | "loan"
-  | "dispersedAt"
-  | "installationStatus"
-  | "installationDate"
   | "amortization"
   | "creditAmount"
+  | "dispersedAt"
+  | "hrStatus"
+  | "id"
+  | "installationDate"
+  | "installationStatus"
+  | "loan"
   | "maxLoanAmount"
+  | "status"
 > & {
   borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
   payments: Pick<Payment, "id" | "paidAt" | "amount" | "number">[]
@@ -78,22 +81,13 @@ export const creditDetailedWithPaymentsSelector = selectorFamily<
               termOfferings: "id,term,company",
               users: "id,firstName,lastName,email",
               credits:
-                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower,payments,termOffering,amortization,creditAmount,maxLoanAmount",
+                "amortization,borrower,creditAmount,dispersedAt,hrStatus,id,installationDate,installationStatus,loan,maxLoanAmount,payments,termOffering,status",
             },
             include:
               "borrower,payments,termOffering,termOffering.term,termOffering.company",
-            filter: {
-              company: id,
-              status: "dispersed",
-            },
           },
         },
       )
-
-      const isInstalled = data.installationStatus === "installed"
-      if (!isInstalled) {
-        throw new Error("Credit is not installed")
-      }
 
       return {
         ...data,
