@@ -166,7 +166,7 @@ export const myProfileState = selector<MeResponse | undefined>({
         }
         const data = await response.json()
         return data
-      } catch (error) {
+      } catch {
         logout()
       }
     } else {
@@ -250,7 +250,7 @@ export const signNowTokenSelector = selector({
           localStorage.setItem("sign-now-token", JSON.stringify(data))
           return data
         }
-      } catch (error) {
+      } catch {
         await new Promise((resolve) => setTimeout(resolve, 5000))
         localStorage.removeItem("sign-now-token")
         window.location.href = `https://app.signnow.com/authorize?client_id=${import.meta.env.VITE_APP_SIGN_NOW_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_REDIRECT_URI}`
@@ -279,7 +279,7 @@ export const signNowTokenSelector = selector({
             return data as SignNowTokenResponse
           }
           return data
-        } catch (error) {
+        } catch {
           await new Promise((resolve) => setTimeout(resolve, 5000))
           localStorage.removeItem("sign-now-token")
           window.location.href = `https://app.signnow.com/authorize?client_id=${import.meta.env.VITE_APP_SIGN_NOW_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_REDIRECT_URI}`

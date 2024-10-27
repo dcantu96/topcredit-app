@@ -36,7 +36,7 @@ const useUserActions = (id: string) => {
               "PreAuthorizedUser",
             ]),
           )
-        } catch (error) {
+        } catch {
           const defaultMessage = "Ocurrió un error al actualizar el usuario"
           const message = ERROR_MESSAGES.get(newStatus)
           toast.error({

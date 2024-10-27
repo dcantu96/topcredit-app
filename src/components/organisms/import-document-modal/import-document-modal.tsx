@@ -89,7 +89,7 @@ const ImportDocumentModal = () => {
               },
             },
           })
-        } catch (error) {}
+        } catch {}
       }
       setIsSaving(false)
     } catch (error) {

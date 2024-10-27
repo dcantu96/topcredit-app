@@ -54,12 +54,10 @@ export const readFile = (file: File, callbacks: ReadFileCallbacks) => {
       callbacks.onLoad?.(data, headers)
       callbacks.onLoadStop?.()
     } else {
-      // eslint-disable-next-line no-console
       console.error("File could not be read as text.")
     }
   }
   reader.onerror = (e) => {
-    // eslint-disable-next-line no-console
     console.error("Error reading file:", e.target?.error?.message)
     const message = e.target?.error?.message
     if (message) callbacks.onError?.(message)

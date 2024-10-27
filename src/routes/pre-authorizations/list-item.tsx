@@ -185,7 +185,7 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
         )
         await sendInvite(documentId, token.access_token, user.email)
         setIsLoading(false)
-      } catch (error) {
+      } catch {
         setIsLoading(false)
       }
     }

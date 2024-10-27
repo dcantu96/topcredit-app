@@ -29,7 +29,7 @@ const ConfirmationFailure = () => {
             message: "Correo de confirmación reenviado",
             onClose: () => to("/login"),
           })
-        } catch (error) {
+        } catch {
           toast.error({
             title: "Error",
             message:

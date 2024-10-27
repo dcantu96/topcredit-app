@@ -2,34 +2,25 @@ import { useRecoilState } from "recoil"
 import { toastState } from "./atoms"
 import { useRef } from "react"
 
-interface BaseToast {
+interface IToast {
   title: string
   message: string
   duration?: number
   onClose?: () => void
 }
 
-interface SuccessToast extends BaseToast {}
-
-interface ErrorToast extends BaseToast {}
-
 const useToast = () => {
   const [toast, setToast] = useRecoilState(toastState)
   const clearTimerRef = useRef<NodeJS.Timeout>()
 
-  const success = ({
-    title,
-    message,
-    duration = 3000,
-    onClose,
-  }: SuccessToast) => {
+  const success = ({ title, message, duration = 3000, onClose }: IToast) => {
     clearTimeout(clearTimerRef.current)
     setToast({ status: "success", title, message })
 
     clearToast(duration, onClose)
   }
 
-  const error = ({ title, message, duration = 5000, onClose }: ErrorToast) => {
+  const error = ({ title, message, duration = 5000, onClose }: IToast) => {
     clearTimeout(clearTimerRef.current)
     setToast({ status: "error", title, message })
 

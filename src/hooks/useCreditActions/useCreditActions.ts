@@ -128,7 +128,7 @@ const useCreditActions = () => {
             title: "Usuario actualizado",
             message: message ?? defaultMessage,
           })
-        } catch (error) {
+        } catch {
           const defaultMessage = "Ocurrió un error al actualizar el crédito"
           const message = ERROR_MESSAGES.get(status)
           toast.error({
@@ -154,7 +154,7 @@ const useCreditActions = () => {
             title: "Usuario actualizado",
             message: message ?? defaultMessage,
           })
-        } catch (error) {
+        } catch {
           const defaultMessage = "Ocurrió un error al actualizar el crédito"
           const message = HR_ERROR_MESSAGES.get(status)
           toast.error({
