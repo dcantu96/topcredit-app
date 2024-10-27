@@ -1,4 +1,10 @@
-import { CreditStatus, DurationType, Role, UserStatus } from "./schema.types"
+import {
+  CreditStatus,
+  DurationType,
+  HRStatus,
+  Role,
+  UserStatus,
+} from "./schema.types"
 
 export const STATES_OF_MEXICO = [
   { value: "AGU" as const, label: "Aguascalientes" },
@@ -37,28 +43,28 @@ export const STATES_OF_MEXICO = [
 export const COUNTRIES = [{ value: "MX" as const, label: "México" }]
 
 export const ROLES: { value: Role; label: string; path: string }[] = [
-  { value: "requests" as const, label: "Sol", path: "requests" },
+  { value: "requests", label: "Sol", path: "requests" },
   {
-    value: "pre_authorizations" as const,
+    value: "pre_authorizations",
     label: "Pre-Aut",
     path: "pre-authorizations",
   },
-  { value: "admin" as const, label: "Administrador", path: "administrador" },
+  { value: "admin", label: "Administrador", path: "administrador" },
   {
-    value: "authorizations" as const,
+    value: "authorizations",
     label: "Aut",
     path: "pending-authorizations",
   },
-  { value: "dispersions" as const, label: "Disp", path: "dispersions" },
+  { value: "hr", label: "RH", path: "hr" },
+  { value: "dispersions", label: "Disp", path: "dispersions" },
   {
-    value: "installations" as const,
+    value: "installations",
     label: "Inst",
     path: "installations",
   },
-  { value: "payments" as const, label: "Cobranza", path: "payments" },
-  { value: "payments" as const, label: "Bajas", path: "completed-credits" },
-  { value: "admin" as const, label: "Staff", path: "staff" },
-  { value: "hr", label: "RH", path: "hr" },
+  { value: "payments", label: "Cobranza", path: "payments" },
+  { value: "payments", label: "Bajas", path: "completed-credits" },
+  { value: "admin", label: "Staff", path: "staff" },
 ]
 
 export interface RoleOption {
@@ -143,4 +149,9 @@ export const USER_STATUSES = new Map<UserStatus, string>([
   ["pre-authorization", "Pre-autorización"],
   ["pre-authorized", "Pre-autorizado"],
   ["denied", "Denegado"],
+])
+
+export const HR_STATUS = new Map<HRStatus, string>([
+  ["active", "Activo"],
+  ["inactive", "Inactivo"],
 ])
