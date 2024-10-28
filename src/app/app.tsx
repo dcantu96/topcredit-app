@@ -89,15 +89,40 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
-          <Route
-            path="companies"
-            element={<ProtectedRoute allowedRoles={["companies"]} />}
-          >
-            <Route index element={<CompaniesList />} />
-            <Route path="new" element={<NewCompany />} />
+          <Route path="companies">
+            <Route
+              index
+              element={
+                <ProtectedRoute allowedRoles={["companies"]}>
+                  <CompaniesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="new"
+              element={
+                <ProtectedRoute allowedRoles={["companies"]}>
+                  <NewCompany />
+                </ProtectedRoute>
+              }
+            />
             <Route path=":id">
-              <Route index element={<ShowCompany />} />
-              <Route path="edit" element={<EditCompany />} />
+              <Route
+                index
+                element={
+                  <ProtectedRoute allowedRoles={["companies", "hr"]}>
+                    <ShowCompany />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="edit"
+                element={
+                  <ProtectedRoute allowedRoles={["companies"]}>
+                    <EditCompany />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
           </Route>
           <Route
