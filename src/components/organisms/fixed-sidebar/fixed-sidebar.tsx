@@ -14,7 +14,7 @@ const FixedSidebar = () => {
   const isAdmin = roles.some((role) => role.value === "admin")
   const isPathActive = useMatch(`/dashboard/companies`)
   return (
-    <div className="w-16 bg-slate-50 border-gray-900/10 border-r overflow-y-auto inline-block h-[calc(100vh-4rem)]">
+    <div className="w-16 fixed bg-slate-50 border-gray-900/10 border-r overflow-y-auto inline-block top-16 bottom-0">
       <nav className="lg:text-sm lg:leading-6 relative py-4 overflow-hidden">
         <ul>
           <li>
@@ -43,7 +43,7 @@ const FixedSidebar = () => {
                   <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
                     <NavIconByRole role={value} path={path} />
                   </div>
-                  {label}
+                  <span className="max-w-10 truncate">{label}</span>
                 </NavLink>
               </li>
             ))}
@@ -61,7 +61,7 @@ const FixedSidebar = () => {
                       }`}
                     />
                   </div>
-                  Clientes
+                  <span className="max-w-10 truncate">Clientes</span>
                 </NavLink>
               </li>
               <li>
@@ -76,7 +76,7 @@ const FixedSidebar = () => {
                       }`}
                     />
                   </div>
-                  Staff
+                  <span className="max-w-10 truncate">Staff</span>
                 </NavLink>
               </li>
             </>

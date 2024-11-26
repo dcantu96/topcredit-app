@@ -12,19 +12,18 @@ import LoadingList from "components/atoms/loading-list"
 const DashboardLayout = () => {
   const showSidebar = useRecoilValue(showDashboardSidebarSelector)
   return (
-    <div className="overflow-y-hidden w-screen h-screen">
+    <>
       <DashboardHeader>
         <DashboardHeader.Search />
       </DashboardHeader>
-      <div className="flex">
-        {showSidebar && <FixedSidebar />}
-        <div className="flex flex-wrap h-[calc(100vh-4rem)] overflow-y-auto w-full">
-          <Suspense fallback={<LoadingList />}>
-            <Outlet />
-          </Suspense>
-        </div>
+      {showSidebar && <FixedSidebar />}
+
+      <div className="flex ml-16 flex-wrap mt-16 overflow-y-auto">
+        <Suspense fallback={<LoadingList />}>
+          <Outlet />
+        </Suspense>
       </div>
-    </div>
+    </>
   )
 }
 
