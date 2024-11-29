@@ -1,6 +1,6 @@
 import { apiSelector } from "components/providers/api/atoms"
 import { atom, atomFamily, selector, selectorFamily } from "recoil"
-import { Company, Term, TermOffering } from "src/schema.types"
+import { Company, Credit, Payment, Term, TermOffering } from "src/schema.types"
 
 type CompanyWithTermOfferings = Pick<
   Company,
@@ -134,5 +134,148 @@ export const companiesDataSelector = selectorFamily<
             term: termOffering.term.data,
           })) ?? [],
       }))
+    },
+})
+
+export interface CompanyPaymentFilters {
+  range?: "last-7-days" | "last-payment" | "last-2-payments" | "last-4-payments"
+}
+
+export interface CompanyCreditsFilters {
+  range?: "last-7-days" | "last-payment" | "last-2-payments" | "last-4-payments"
+}
+
+export const companyPaymentFiltersState = atom<CompanyPaymentFilters>({
+  key: "companyPaymentFiltersState",
+  default: { range: "last-7-days" },
+})
+
+export const companyPaymentsQuery = selectorFamily<
+  Pick<
+    Payment,
+    "id" | "amount" | "number" | "paidAt" | "updatedAt" | "createdAt"
+  >[],
+  string
+>({
+  key: "companyPaymentsQuery",
+  get:
+    (id) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const filters = get(companyPaymentFiltersState)
+      const {
+        data,
+      }: {
+        data: Pick<
+          Payment,
+          "id" | "amount" | "number" | "paidAt" | "updatedAt" | "createdAt"
+        >[]
+      } = await api.get(`company/${id}/payments`, {
+        params: {
+          filter: {
+            range: filters.range,
+          },
+        },
+      })
+      return data
+    },
+})
+
+export const companyDispersedCreditsQuery = selectorFamily<
+  Pick<
+    Credit,
+    "id" | "creditAmount" | "dispersedAt" | "updatedAt" | "createdAt"
+  >[],
+  string
+>({
+  key: "companyDispersedCreditsQuery",
+  get:
+    (id) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const filters = get(companyPaymentFiltersState)
+      const {
+        data,
+      }: {
+        data: Pick<
+          Credit,
+          "id" | "creditAmount" | "dispersedAt" | "updatedAt" | "createdAt"
+        >[]
+      } = await api.get(`company/${id}/credits`, {
+        params: {
+          fields: {
+            credits: "id,creditAmount,dispersedAt,updatedAt,createdAt",
+          },
+          filter: {
+            dispersedAtRange: filters.range,
+          },
+        },
+      })
+      return data
+    },
+})
+
+export const companyNewlyInstalledCreditsQuery = selectorFamily<
+  Pick<Credit, "id" | "creditAmount" | "updatedAt" | "createdAt">[],
+  string
+>({
+  key: "companyNewlyInstalledCreditsQuery",
+  get:
+    (id) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const filters = get(companyPaymentFiltersState)
+      const {
+        data,
+      }: {
+        data: Pick<Credit, "id" | "creditAmount" | "updatedAt" | "createdAt">[]
+      } = await api.get(`company/${id}/credits`, {
+        params: {
+          fields: {
+            credits: "id,creditAmount,updatedAt,createdAt",
+          },
+          filter: {
+            installationDateRange: filters.range,
+          },
+        },
+      })
+      return data
+    },
+})
+
+export const companyInstalledCreditsQuery = selectorFamily<
+  Pick<
+    Credit,
+    "id" | "updatedAt" | "createdAt" | "amortization" | "nextExpectedPayment"
+  >[],
+  string
+>({
+  key: "companyInstalledCreditsQuery",
+  get:
+    (id) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const {
+        data,
+      }: {
+        data: Pick<
+          Credit,
+          | "id"
+          | "updatedAt"
+          | "createdAt"
+          | "amortization"
+          | "nextExpectedPayment"
+        >[]
+      } = await api.get(`company/${id}/credits`, {
+        params: {
+          fields: {
+            credits: "id,updatedAt,createdAt,amortization,nextExpectedPayment",
+          },
+          filter: {
+            installationStatus: "installed",
+          },
+        },
+      })
+      return data
     },
 })

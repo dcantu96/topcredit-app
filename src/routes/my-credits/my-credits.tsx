@@ -4,7 +4,7 @@ import {
   userLatestAuthorizedCreditSelectorQuery,
 } from "../new-credit/atoms"
 import DashboardHeader from "components/organisms/dashboard-header"
-import Table from "components/organisms/table"
+import List from "src/components/organisms/list"
 import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
@@ -87,32 +87,32 @@ const MyCredits = () => {
         </div>
 
         <div className="col-span-full">
-          <Table>
-            <Table.Header columns={["Monto", "Fecha", "Estatus"]} />
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell>{credit?.amortization} MXN</Table.Cell>
-                <Table.Cell>12/4/13</Table.Cell>
-                <Table.Cell>
+          <List>
+            <List.Header columns={["Monto", "Fecha", "Estatus"]} />
+            <List.Body>
+              <List.Row>
+                <List.Cell>{credit?.amortization} MXN</List.Cell>
+                <List.Cell>12/4/13</List.Cell>
+                <List.Cell>
                   <CheckBadgeIcon className="mr-2 w-6 h-6 text-green-500" />
                   Pagado
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>{credit?.amortization} MXN</Table.Cell>
-                <Table.Cell>16/4/13</Table.Cell>
-                <Table.Cell>
+                </List.Cell>
+              </List.Row>
+              <List.Row>
+                <List.Cell>{credit?.amortization} MXN</List.Cell>
+                <List.Cell>16/4/13</List.Cell>
+                <List.Cell>
                   <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
                   Demorado
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>{credit?.amortization} MXN</Table.Cell>
-                <Table.Cell>12/4/13</Table.Cell>
-                <Table.Cell>-</Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table>
+                </List.Cell>
+              </List.Row>
+              <List.Row>
+                <List.Cell>{credit?.amortization} MXN</List.Cell>
+                <List.Cell>12/4/13</List.Cell>
+                <List.Cell>-</List.Cell>
+              </List.Row>
+            </List.Body>
+          </List>
         </div>
 
         <div className="col-span-full">

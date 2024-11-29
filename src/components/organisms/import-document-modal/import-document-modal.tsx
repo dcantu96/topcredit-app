@@ -3,7 +3,6 @@ import { useRecoilCallback, useRecoilValue } from "recoil"
 import ImportDocumentButton from "components/molecules/import-document-button"
 import Modal from "components/molecules/modal"
 import { CSVRow, readFile } from "components/atoms/utils"
-import Table from "../table"
 import Button from "components/atoms/button"
 import { apiSelector } from "components/providers/api/atoms"
 import useToast from "components/providers/toaster/useToast"
@@ -12,6 +11,7 @@ import Tooltip from "components/atoms/tooltip"
 import { dispersedCreditsImportSelector } from "./atoms"
 import { calculatePaymentNumber } from "../../../utils"
 import { companiesSelectorQuery } from "hooks/useCompanies/atoms"
+import List from "../list"
 
 const ImportDocumentModal = () => {
   const toast = useToast()
@@ -173,25 +173,25 @@ const ImportDocumentModal = () => {
             </Button>
           </Modal.Header>
           <Modal.Body>
-            <Table>
-              <Table.Header columns={headers.concat("Status")} />
-              <Table.Body>
+            <List>
+              <List.Header columns={headers.concat("Status")} />
+              <List.Body>
                 {rowKey &&
                   csvRows.map((row) => (
-                    <Table.Row
+                    <List.Row
                       key={`${row["Nomina"]}-${row["Año"]}-${row["Mes"]}-${row["Quincena"]}`}
                     >
                       {headers.map((header) => (
-                        <Table.Cell key={header}>{row[header]}</Table.Cell>
+                        <List.Cell key={header}>{row[header]}</List.Cell>
                       ))}
                       <MaybeErrorCell
                         employeeNumber={row["Nomina"]}
                         errorsMap={errors}
                       />
-                    </Table.Row>
+                    </List.Row>
                   ))}
-              </Table.Body>
-            </Table>
+              </List.Body>
+            </List>
           </Modal.Body>
         </Modal>
       )}
@@ -208,7 +208,7 @@ const MaybeErrorCell = ({
 }) => {
   const errors = errorsMap.get(employeeNumber)
   return (
-    <Table.Cell>
+    <List.Cell>
       {errors ? (
         <Tooltip
           content={
@@ -224,7 +224,7 @@ const MaybeErrorCell = ({
           <XMarkIcon className="w-5 h-5 text-red-500" />
         </Tooltip>
       ) : null}
-    </Table.Cell>
+    </List.Cell>
   )
 }
 

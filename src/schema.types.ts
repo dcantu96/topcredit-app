@@ -157,8 +157,6 @@ export interface TermOffering extends ObjectWithId, Timestamps {
 
 export interface Credit extends ObjectWithId, Timestamps {
   amortization: `${number}` | null
-  creditAmount: `${number}` | null
-  maxLoanAmount: `${number}` | null
   authorizationContentType: string | null
   authorizationFilename: string | null
   authorizationRejectionReason: string | null
@@ -174,10 +172,15 @@ export interface Credit extends ObjectWithId, Timestamps {
   contractStatus: DocumentStatus
   contractUploadedAt: string | null
   contractUrl: string | null
+  creditAmount: `${number}` | null
   dispersedAt: string | null
-  installationStatus: "installed" | null
+  hrStatus: HRStatus | null
   installationDate: string | null
+  installationStatus: "installed" | null
   loan: number | null
+  maxLoanAmount: `${number}` | null
+  nextExpectedPayment: string | null
+  payments: Payment[] | null
   payrollReceiptContentType: string | null
   payrollReceiptFilename: string | null
   payrollReceiptRejectionReason: string | null
@@ -188,8 +191,6 @@ export interface Credit extends ObjectWithId, Timestamps {
   reason: string | null
   status: CreditStatus
   termOffering: TermOffering | null
-  payments: Payment[] | null
-  hrStatus: HRStatus | null
 }
 
 export interface Term extends ObjectWithId, Timestamps {

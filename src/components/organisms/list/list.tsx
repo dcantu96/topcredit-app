@@ -2,7 +2,7 @@ interface ITable {
   children?: React.ReactNode
 }
 
-const Table = ({ children }: ITable) => {
+const List = ({ children }: ITable) => {
   return (
     <div className="relative rounded-xl overflow-auto bg-slate-100 shadow-sm">
       <div className="shadow-sm my-8">
@@ -55,9 +55,9 @@ const Cell = ({ children }: ITable) => {
   )
 }
 
-Table.Header = Header
-Table.Body = Body
-Table.Row = Row
-Table.Cell = Cell
+List.Header = Header
+List.Body = Body
+List.Row = Row
+List.Cell = Cell
 
-export { Table }
+export default List

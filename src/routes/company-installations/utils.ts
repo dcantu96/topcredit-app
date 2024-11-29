@@ -1,3 +1,4 @@
+import dayjs from "dayjs"
 import type { Credit, CreditStatus, Payment } from "src/schema.types"
 
 // Helper function to find the last day of a given month
@@ -25,6 +26,24 @@ export function fetchNextPayrollDate(
     } else {
       // return the 15th of the current month
       return new Date(currentYear, currentMonth, 15, 6, 0, 0)
+    }
+  }
+}
+
+export function fetchLastPayrollDate(durationType: "biweekly" | "monthly") {
+  const currentDate = dayjs()
+  // for monthly payrolls, the last payroll date should always be the last day of the last month
+  if (durationType === "monthly") {
+    // get the last day of the last month
+    return currentDate.subtract(1, "month").endOf("month").locale()
+  } else {
+    // for biweekly payrolls, the last payroll date should be either the 15th or the last day of the month
+    // if the current day is greater than 15 then the last payroll date is the 15th of the current month
+    if (currentDate.date() > 15) {
+      return currentDate.set("day", 15).endOf("day").toDate()
+    } else {
+      // return the last day of the last month
+      return currentDate.subtract(1, "month").endOf("month").toDate()
     }
   }
 }

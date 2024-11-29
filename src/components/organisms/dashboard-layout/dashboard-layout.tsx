@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { Outlet } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 
@@ -6,7 +7,6 @@ import FixedSidebar from "../fixed-sidebar"
 import { showDashboardSidebarSelector } from "components/providers/auth/atoms"
 
 import DashboardHeader from "../dashboard-header"
-import { Suspense } from "react"
 import LoadingList from "components/atoms/loading-list"
 
 const DashboardLayout = () => {
