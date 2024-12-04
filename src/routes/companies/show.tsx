@@ -21,7 +21,7 @@ import {
 import { myProfileState } from "components/providers/auth/atoms"
 import Table from "components/molecules/table"
 import Cell from "components/atoms/cell"
-import { notificationsSelector } from "components/organisms/activity-container/atoms"
+import { eventsSelector } from "components/organisms/activity-container/atoms"
 import "dayjs/locale/es"
 import relativeTime from "dayjs/plugin/relativeTime"
 
@@ -170,7 +170,7 @@ const ShowCompany = () => {
 
 const EntireTable = () => {
   const notifications = useRecoilValue(
-    notificationsSelector([
+    eventsSelector([
       "AuthorizedCredit",
       "DeniedCredit",
       "DispersedCredit",

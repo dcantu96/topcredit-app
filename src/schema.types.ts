@@ -220,3 +220,9 @@ export interface Payment extends ObjectWithId, Timestamps {
 export interface Notification extends ObjectWithId, Timestamps {
   message: string
 }
+
+export interface Event extends ObjectWithId, Timestamps {
+  record: unknown
+  type: NotificationType
+  params: Record<string, unknown>
+}
