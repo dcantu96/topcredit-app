@@ -150,6 +150,7 @@ const Screen = () => {
               </RowCard.Text>
             </RowCard>
           </List.Item>
+
           {creditPayments.map((maybePayment, index) => (
             <ListItem
               key={index}

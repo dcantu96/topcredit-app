@@ -106,9 +106,9 @@ const Search = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleResultClick = (user: any) => {
-    if (user.credits.data?.[0]) {
+    if (user.id) {
       setSearchResults([])
-      navigate(`/dashboard/credits/${user.credits.data?.[0].id}`)
+      navigate(`/dashboard/users/${user.id}`)
     }
   }
 

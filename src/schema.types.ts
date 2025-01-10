@@ -223,6 +223,7 @@ export interface Notification extends ObjectWithId, Timestamps {
 
 export interface Event extends ObjectWithId, Timestamps {
   record: unknown
+  message: string
   type: NotificationType
   params: Record<string, unknown>
 }

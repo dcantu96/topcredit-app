@@ -1,3 +1,4 @@
+import React from "react"
 import dayjs from "dayjs"
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
@@ -21,7 +22,7 @@ import {
 import { myProfileState } from "components/providers/auth/atoms"
 import Table from "components/molecules/table"
 import Cell from "components/atoms/cell"
-import { eventsSelector } from "components/organisms/activity-container/atoms"
+import { groupedEventsSelector } from "components/organisms/activity-container/atoms"
 import "dayjs/locale/es"
 import relativeTime from "dayjs/plugin/relativeTime"
 
@@ -169,8 +170,8 @@ const ShowCompany = () => {
 }
 
 const EntireTable = () => {
-  const notifications = useRecoilValue(
-    eventsSelector([
+  const events = useRecoilValue(
+    groupedEventsSelector([
       "AuthorizedCredit",
       "DeniedCredit",
       "DispersedCredit",
@@ -179,12 +180,21 @@ const EntireTable = () => {
       "PendingCredit",
     ]),
   )
+
+  const sortedEvents = useMemo(
+    () =>
+      Object.entries(events).toSorted(
+        (a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime(),
+      ),
+    [events],
+  )
+
   return (
     <div className="pt-16">
       <div>
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <h2 className="lg:max-w-none lg:mx-0 text-gray-900 font-semibold text-base max-w-2xl mx-auto">
-            Actividad Reciente
+            Actividad
           </h2>
         </div>
         <Table>
@@ -192,20 +202,24 @@ const EntireTable = () => {
             <Table.ScreenReader.Header>Message</Table.ScreenReader.Header>
           </Table.ScreenReader>
           <Table.Body>
-            <Table.Divider span={3}>Hoy</Table.Divider>
-            {notifications.map((notification) => (
-              <Table.Row key={notification.id}>
-                <Cell>
-                  <Cell.Data>
-                    <Cell.Data.Title>
-                      <Cell.Data.Text>{notification.message}</Cell.Data.Text>
-                    </Cell.Data.Title>
-                    <Cell.Data.Subtitle>
-                      {dayjs(notification.createdAt).locale("es").fromNow()}
-                    </Cell.Data.Subtitle>
-                  </Cell.Data>
-                </Cell>
-              </Table.Row>
+            {sortedEvents.map(([date, events]) => (
+              <React.Fragment key={date}>
+                <Table.Divider span={3}>{date}</Table.Divider>
+                {events.map((event) => (
+                  <Table.Row key={event.id}>
+                    <Cell>
+                      <Cell.Data>
+                        <Cell.Data.Title>
+                          <Cell.Data.Text>{event.message}</Cell.Data.Text>
+                        </Cell.Data.Title>
+                        <Cell.Data.Subtitle>
+                          {dayjs(event.createdAt).locale("es").fromNow()}
+                        </Cell.Data.Subtitle>
+                      </Cell.Data>
+                    </Cell>
+                  </Table.Row>
+                ))}
+              </React.Fragment>
             ))}
           </Table.Body>
         </Table>

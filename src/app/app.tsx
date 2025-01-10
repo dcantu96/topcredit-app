@@ -60,6 +60,7 @@ const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 const HR = lazy(() => import("../routes/hr/general"))
 const ShowHR = lazy(() => import("../routes/hr/show"))
 const HRHistory = lazy(() => import("../routes/hr/history"))
+const ShowUser = lazy(() => import("../routes/users/show"))
 
 function App() {
   return (
@@ -132,6 +133,14 @@ function App() {
             <Route index element={<RequestsList />} />
             <Route path=":id">
               <Route index element={<ShowRequest />} />
+            </Route>
+          </Route>
+          <Route
+            path="users"
+            element={<ProtectedRoute allowedRoles={["requests"]} />}
+          >
+            <Route path=":id">
+              <Route index element={<ShowUser />} />
             </Route>
           </Route>
           <Route

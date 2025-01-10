@@ -18,7 +18,9 @@ const DashboardLayout = () => {
       </DashboardHeader>
       {showSidebar && <FixedSidebar />}
 
-      <div className="flex ml-16 flex-wrap mt-16">
+      <div
+        className={`flex flex-wrap mt-16 ${showSidebar ? "ml-16" : undefined}`}
+      >
         <Suspense fallback={<LoadingList />}>
           <Outlet />
         </Suspense>

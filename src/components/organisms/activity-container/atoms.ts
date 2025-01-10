@@ -6,6 +6,7 @@ import type {
   NotificationType,
   Event,
 } from "../../../schema.types"
+import dayjs from "dayjs"
 
 export const notificationsSelector = selectorFamily<
   Pick<Notification, "id" | "message" | "createdAt">[],
@@ -50,7 +51,7 @@ export const notificationsSelector = selectorFamily<
 })
 
 export const eventsSelector = selectorFamily<
-  Pick<Event, "id" | "params" | "record" | "createdAt">[],
+  Pick<Event, "id" | "params" | "record" | "createdAt" | "message">[],
   NotificationType[]
 >({
   key: "eventsSelector",
@@ -79,8 +80,36 @@ export const eventsSelector = selectorFamily<
         },
       })
 
-      console.log({ data })
-
       return data
+    },
+})
+
+export const groupedEventsSelector = selectorFamily<
+  Record<
+    string,
+    Pick<Event, "id" | "params" | "record" | "createdAt" | "message">[]
+  >,
+  NotificationType[]
+>({
+  key: "groupedEventsSelector",
+  get:
+    (types) =>
+    async ({ get }) => {
+      const events = get(eventsSelector(types))
+
+      const group: Record<
+        string,
+        Pick<Event, "id" | "params" | "record" | "createdAt" | "message">[]
+      > = {}
+
+      events.forEach((event) => {
+        const key = dayjs(event.createdAt).format("DD/MM/YYYY")
+        if (!group[key]) {
+          group[key] = []
+        }
+        group[key].push(event)
+      })
+
+      return group
     },
 })
