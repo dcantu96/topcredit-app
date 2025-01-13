@@ -7,7 +7,14 @@ import type { Credit, Term } from "src/schema.types"
 
 export type DispersionsResponse = Pick<
   Credit,
-  "id" | "status" | "updatedAt" | "createdAt" | "loan" | "amortization"
+  | "id"
+  | "status"
+  | "updatedAt"
+  | "createdAt"
+  | "loan"
+  | "amortization"
+  | "hrStatus"
+  | "dispersedAt"
 > & {
   borrower: {
     data: Credit["borrower"]
@@ -34,6 +41,7 @@ export const dispersionsSelectorQuery = selector<
       | "termOffering"
       | "borrower"
       | "amortization"
+      | "hrStatus"
     >
   >
 >({
@@ -44,7 +52,7 @@ export const dispersionsSelectorQuery = selector<
       params: {
         fields: {
           credits:
-            "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization",
+            "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus",
         },
         include: "borrower,termOffering.term",
         filter: {
@@ -65,6 +73,7 @@ export const dispersionsSelectorQuery = selector<
         | "termOffering"
         | "borrower"
         | "amortization"
+        | "hrStatus"
       >
     >()
     for (const credit of data) {
@@ -92,6 +101,7 @@ export const dispersionsSortedSelector = selector<
     | "termOffering"
     | "borrower"
     | "amortization"
+    | "hrStatus"
   >[]
 >({
   key: "dispersionsSortedSelector",
@@ -121,6 +131,7 @@ export const dispersionsState = atom<
     | "termOffering"
     | "borrower"
     | "amortization"
+    | "hrStatus"
   >[]
 >({
   key: "dispersionsState",
@@ -138,6 +149,8 @@ export const dispersionsSelector = selectorFamily<
       | "termOffering"
       | "borrower"
       | "amortization"
+      | "hrStatus"
+      | "dispersedAt"
     >
   | undefined,
   string
@@ -145,9 +158,29 @@ export const dispersionsSelector = selectorFamily<
   key: "dispersionsSelector",
   get:
     (creditId) =>
-    ({ get }) => {
-      const credits = get(dispersionsSelectorQuery)
-      return credits.get(creditId)
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const { data }: { data: DispersionsResponse } = await api.get(
+        "credits/" + creditId,
+        {
+          params: {
+            fields: {
+              credits:
+                "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus,dispersedAt",
+            },
+            include: "borrower,termOffering.term",
+          },
+        },
+      )
+
+      return {
+        ...data,
+        borrower: data.borrower.data,
+        termOffering: {
+          ...(data.termOffering.data || {}),
+          term: data.termOffering.data?.term.data,
+        },
+      }
     },
 })
 

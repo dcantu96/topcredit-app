@@ -11,10 +11,7 @@ import {
 import { companiesDataSelector } from "../companies/loader"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 
-import {
-  isUserAdminSelector,
-  signNowTokenState,
-} from "components/providers/auth/atoms"
+import { isUserAdminSelector } from "components/providers/auth/atoms"
 import Button from "components/atoms/button"
 import List from "components/atoms/list"
 import SmallDot from "components/atoms/small-dot"
@@ -30,66 +27,8 @@ interface PreAuthorizationListItemProps {
   user: PreAuthorizationUsersResponse
 }
 
-const createDocument = async (
-  token: string,
-  templateId: string,
-  fullName: string,
-) => {
-  try {
-    const response = await fetch(
-      `https://api.signnow.com/template/${templateId}/copy`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          document_name: `Préstamo ${fullName}`,
-        }),
-      },
-    )
-    const data = await response.json()
-    return data.id
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const sendInvite = async (documentId: string, token: string, email: string) => {
-  try {
-    await fetch(`https://api.signnow.com/document/${documentId}/invite`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        to: [
-          {
-            email,
-            role: "Recipient 1",
-            subject: "You’ve got a new signature request",
-            message:
-              "Hi, this is an invite to sign a document from sender@emaildomain.com.",
-            redirect_uri: "https://example.com",
-            decline_redirect_uri: "https://signnow.com",
-            close_redirect_uri: "https://close-redirect-uri.com",
-            redirect_target: "blank",
-          },
-        ],
-        from: "admin@staff.com",
-      }),
-    })
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
   const [isLoading, setIsLoading] = useState(false)
-  const token = useRecoilValue(signNowTokenState)
   const isAdmin = useRecoilValue(isUserAdminSelector)
   const { updateUserStatus } = useUserActions(user.id)
   const { removeUser } = usePreAuthorizationActions()
@@ -168,26 +107,18 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
     : undefined
 
   const handlePreAuthorize = async () => {
-    if (token) {
-      setIsLoading(true)
-      try {
-        await updateUserStatus("pre-authorized")
-        await createCredit({
-          userId: user.id,
-          loan: loanAmount,
-          termOfferingId,
-        })
-        removeUser(user.id)
-        const documentId = await createDocument(
-          token.access_token,
-          "fb8a5de74e4c44ddb33971adbc3cdbc4ca8a91a4",
-          user.firstName + " " + user.lastName,
-        )
-        await sendInvite(documentId, token.access_token, user.email)
-        setIsLoading(false)
-      } catch {
-        setIsLoading(false)
-      }
+    setIsLoading(true)
+    try {
+      await updateUserStatus("pre-authorized")
+      await createCredit({
+        userId: user.id,
+        loan: loanAmount,
+        termOfferingId,
+      })
+      removeUser(user.id)
+      setIsLoading(false)
+    } catch {
+      setIsLoading(false)
     }
   }
 

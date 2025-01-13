@@ -54,6 +54,23 @@ export const hrCreditsSelectorQuery = selectorFamily<
     async ({ get }) => {
       const user = get(myProfileState)
       const api = get(apiSelector)
+
+      if (!user?.roles.includes("admin") && !user?.roles.length) {
+        throw new Error("Usuario no autorizado")
+      }
+
+      const filter = {
+        status: "authorized",
+      }
+
+      if (mode === "history") {
+        filter.hrStatus = "active"
+      }
+
+      if (user?.hrCompanyId) {
+        filter.company = user.hrCompanyId
+      }
+
       const { data }: { data: HRCreditsResponse[] } = await api.get("credit", {
         params: {
           fields: {
@@ -61,11 +78,7 @@ export const hrCreditsSelectorQuery = selectorFamily<
               "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus",
           },
           include: "borrower,termOffering.term",
-          filter: {
-            company: user?.hrCompanyId,
-            status: "authorized",
-            hrStatus: mode === "history" ? "active" : null,
-          },
+          filter,
         },
       })
 
@@ -170,7 +183,7 @@ export const hrCreditsSelector = selectorFamily<
   | undefined,
   string
 >({
-  key: "dispersionsSelector",
+  key: "hrCreditsSelector",
   get:
     (creditId) =>
     ({ get }) => {

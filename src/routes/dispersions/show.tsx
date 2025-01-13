@@ -12,10 +12,11 @@ import {
   editableDispersionReceiptFieldState,
 } from "./atoms"
 import { useDispersionsActions } from "./actions"
-import { DURATION_TYPES, MXNFormat } from "../../constants"
+import { DURATION_TYPES, HR_STATUS, MXNFormat } from "../../constants"
 import { useState } from "react"
 import Modal from "components/molecules/modal"
 import FileField from "components/atoms/file-field"
+import Tooltip from "components/atoms/tooltip"
 
 const ShowScreen = () => {
   const { id } = useParams()
@@ -39,7 +40,7 @@ const ShowScreen = () => {
   const handleApproveCredit = () => {
     updateCreditStatus(credit.id, "dispersed")
     removeCredit(credit.id)
-    navigate("..")
+    navigate("/dashboard/dispersions")
   }
 
   const openDisperseModal = () => setIsModalOpen(true)
@@ -47,7 +48,7 @@ const ShowScreen = () => {
   const handleDenyCredit = () => {
     updateCreditStatus(credit.id, "denied")
     removeCredit(credit.id)
-    navigate("..")
+    navigate("/dashboard/dispersions")
   }
 
   return (
@@ -104,11 +105,31 @@ const ShowScreen = () => {
           </div>
           <div className="mt-5 flex lg:ml-4 lg:mt-0">
             <span className="flex gap-2">
-              <Button onClick={openDisperseModal}>
-                <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
-                Dispersar
-              </Button>
-              <Button status="secondary" onClick={handleDenyCredit}>
+              <Tooltip
+                content={
+                  credit.dispersedAt
+                    ? "El crédito ya ha sido dispersado"
+                    : credit.hrStatus !== "active"
+                      ? "El crédito debe estar activo para poder dispersarlo"
+                      : undefined
+                }
+                cond={!!credit.dispersedAt || credit.hrStatus !== "active"}
+              >
+                <Button
+                  onClick={openDisperseModal}
+                  disabled={
+                    credit.hrStatus !== "active" || !!credit.dispersedAt
+                  }
+                >
+                  <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
+                  Dispersar
+                </Button>
+              </Tooltip>
+              <Button
+                status="secondary"
+                onClick={handleDenyCredit}
+                disabled={!!credit.dispersedAt}
+              >
                 <XMarkIcon className="h-5 w-5 mr-1.5" />
                 Rechazar
               </Button>
@@ -122,6 +143,14 @@ const ShowScreen = () => {
             </label>
             <p className="text-gray-900 font-medium">
               {credit.borrower.employeeNumber}
+            </p>
+          </div>
+          <div className="col-span-1">
+            <label className="text-gray-500 font-medium text-sm">
+              Estatus de RH
+            </label>
+            <p className="text-gray-900 font-medium">
+              {credit.hrStatus ? HR_STATUS.get(credit.hrStatus) : "--"}
             </p>
           </div>
           <div className="col-span-1">
@@ -248,12 +277,19 @@ const ShowScreen = () => {
               />
             </div>
             <div className="flex gap-2 p-3">
-              <Button
-                onClick={handleApproveCredit}
-                disabled={!dispersionReceiptId}
+              <Tooltip
+                content="El crédito debe estar activo para poder dispersarlo"
+                cond={credit.hrStatus !== "active"}
               >
-                Dispersar
-              </Button>
+                <Button
+                  onClick={handleApproveCredit}
+                  disabled={
+                    !dispersionReceiptId || credit.hrStatus !== "active"
+                  }
+                >
+                  Dispersar
+                </Button>
+              </Tooltip>
               <Button status="secondary" onClick={() => setIsModalOpen(false)}>
                 Cancelar
               </Button>
