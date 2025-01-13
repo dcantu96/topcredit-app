@@ -47,6 +47,7 @@ const CompanyInstallation = lazy(
 const CompanyPayments = lazy(() => import("../routes/company-payments/list"))
 const CompanyPayment = lazy(() => import("../routes/company-payments/show"))
 const Credit = lazy(() => import("../routes/credits/show"))
+const CreditPayments = lazy(() => import("../routes/credits/payments/show"))
 const CompanyCompletedCreditsList = lazy(
   () => import("../routes/company-completed-credits/list"),
 )
@@ -188,7 +189,10 @@ function App() {
             path="credits"
             element={<ProtectedRoute allowedRoles={["payments"]} />}
           >
-            <Route path=":id" element={<Credit />} />
+            <Route path=":id">
+              <Route index element={<Credit />} />
+              <Route path="payments" element={<CreditPayments />} />
+            </Route>
           </Route>
           <Route
             path="staff"

@@ -22,9 +22,34 @@ export type CreditDetailedResponse = Pick<
   | "loan"
   | "maxLoanAmount"
   | "status"
+  | "createdAt"
+  | "payrollReceiptUrl"
+  | "payrollReceiptContentType"
+  | "payrollReceiptFilename"
+  | "payrollReceiptSize"
+  | "payrollReceiptUploadedAt"
+  | "contractUrl"
+  | "contractContentType"
+  | "contractFilename"
+  | "contractSize"
+  | "contractUploadedAt"
+  | "authorizationUrl"
+  | "authorizationContentType"
+  | "authorizationFilename"
+  | "authorizationSize"
+  | "authorizationUploadedAt"
 > & {
   borrower: {
-    data: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
+    data: Pick<
+      Credit["borrower"],
+      | "id"
+      | "firstName"
+      | "lastName"
+      | "email"
+      | "bankAccountNumber"
+      | "employeeNumber"
+      | "salary"
+    >
   }
   payments: {
     data: Pick<Payment, "id" | "paidAt" | "amount" | "number">[] | null
@@ -53,8 +78,33 @@ export type CreditDetailed = Pick<
   | "loan"
   | "maxLoanAmount"
   | "status"
+  | "createdAt"
+  | "payrollReceiptUrl"
+  | "payrollReceiptContentType"
+  | "payrollReceiptFilename"
+  | "payrollReceiptSize"
+  | "payrollReceiptUploadedAt"
+  | "contractUrl"
+  | "contractContentType"
+  | "contractFilename"
+  | "contractSize"
+  | "contractUploadedAt"
+  | "authorizationUrl"
+  | "authorizationContentType"
+  | "authorizationFilename"
+  | "authorizationSize"
+  | "authorizationUploadedAt"
 > & {
-  borrower: Pick<Credit["borrower"], "id" | "firstName" | "lastName">
+  borrower: Pick<
+    Credit["borrower"],
+    | "id"
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "bankAccountNumber"
+    | "employeeNumber"
+    | "salary"
+  >
   payments: Pick<Payment, "id" | "paidAt" | "amount" | "number">[]
   termOffering: Pick<TermOffering, "id"> & {
     term: Pick<Term, "id" | "durationType" | "duration">
@@ -79,9 +129,10 @@ export const creditDetailedWithPaymentsSelector = selectorFamily<
               terms: "id,durationType,duration",
               companies: "rate,employeeSalaryFrequency,name,id",
               termOfferings: "id,term,company",
-              users: "id,firstName,lastName,email",
+              users:
+                "id,firstName,lastName,email,bankAccountNumber,employeeNumber,salary",
               credits:
-                "amortization,borrower,creditAmount,dispersedAt,hrStatus,id,installationDate,installationStatus,loan,maxLoanAmount,payments,termOffering,status",
+                "createdAt,amortization,borrower,creditAmount,dispersedAt,hrStatus,id,installationDate,installationStatus,loan,maxLoanAmount,payments,termOffering,status,payrollReceiptUrl,payrollReceiptContentType,payrollReceiptFilename,payrollReceiptSize,payrollReceiptUploadedAt,contractUrl,contractContentType,contractFilename,contractSize,contractUploadedAt,authorizationUrl,authorizationContentType,authorizationFilename,authorizationSize,authorizationUploadedAt",
             },
             include:
               "borrower,payments,termOffering,termOffering.term,termOffering.company",
