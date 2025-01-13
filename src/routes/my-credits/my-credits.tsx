@@ -4,7 +4,7 @@ import {
   userLatestAuthorizedCreditSelectorQuery,
 } from "../new-credit/atoms"
 import DashboardHeader from "components/organisms/dashboard-header"
-import List from "src/components/organisms/list"
+import List from "components/organisms/list"
 import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
