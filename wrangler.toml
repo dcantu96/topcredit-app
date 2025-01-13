@@ -1,4 +1,0 @@
-name = "topcredit"
-compatibility_date = "2025-01-13"
-node_compat = true
-pages_build_output_dir = "./dist"
