@@ -59,7 +59,7 @@ export const hrCreditsSelectorQuery = selectorFamily<
         throw new Error("Usuario no autorizado")
       }
 
-      const filter = {
+      const filter: Record<string, string | number> = {
         status: "authorized",
       }
 
