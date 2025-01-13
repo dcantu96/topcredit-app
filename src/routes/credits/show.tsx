@@ -117,9 +117,9 @@ const Screen = () => {
           </div>
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          Datos Generales
+          Datos Generales del Crédito
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8">
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">
               CLABE Interbancaria
@@ -207,9 +207,9 @@ const Screen = () => {
               Mensuales
             </p>
           </div>
-          <div className="col-span-2">
-            <h1 className="text-gray-900 font-bold text-xl">Documentos</h1>
-          </div>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Documentos</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8">
           <div className="col-span-1">
             <FileViewer
               label="Recibo de Nómina"
