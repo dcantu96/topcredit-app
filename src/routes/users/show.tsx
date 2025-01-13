@@ -175,10 +175,20 @@ const ShowScreen = () => {
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2 mt-8">Créditos</h3>
       {user.credits.map((credit) => (
-        <p key={credit.id}>
-          Monto: {MXNFormat.format(credit.loan!)} MXN -{" "}
-          {CREDIT_STATUS.get(credit.status)}
-        </p>
+        <div
+          key={credit.id}
+          className="flex items-baseline justify-between border-b border-gray-200 py-2 gap-4"
+        >
+          <p>
+            <span className="mr-2">
+              Monto: {MXNFormat.format(credit.loan!)} MXN
+            </span>
+            <Chip status="info">{CREDIT_STATUS.get(credit.status)}</Chip>
+          </p>
+          <ButtonLink size="sm" to={`/dashboard/credits/${credit.id}`}>
+            Ver
+          </ButtonLink>
+        </div>
       ))}
     </div>
   )
