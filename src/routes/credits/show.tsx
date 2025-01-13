@@ -172,7 +172,9 @@ const Screen = () => {
             </label>
             {credit.termOffering?.term && (
               <p className="text-gray-900 font-medium">
-                {dayjs(credit.dispersedAt).locale("es").format("LLL")}
+                {credit.dispersedAt
+                  ? dayjs(credit.dispersedAt).locale("es").format("LLL")
+                  : "--"}
               </p>
             )}
           </div>
@@ -182,7 +184,9 @@ const Screen = () => {
             </label>
             {credit.termOffering?.term && (
               <p className="text-gray-900 font-medium">
-                {dayjs(credit.installationDate).locale("es").format("LLL")}
+                {credit.installationDate
+                  ? dayjs(credit.installationDate).locale("es").format("LLL")
+                  : "--"}
               </p>
             )}
           </div>
