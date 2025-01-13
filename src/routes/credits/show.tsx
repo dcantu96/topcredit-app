@@ -6,7 +6,6 @@ import ButtonLink from "components/atoms/button-link"
 import FileViewer from "components/atoms/file-viewer"
 
 import { creditDetailedWithPaymentsState } from "./atoms"
-import { Payment } from "src/schema.types"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 import { useMemo } from "react"
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid"
@@ -19,16 +18,6 @@ const Screen = () => {
   const { id } = useParams()
   const credit = useRecoilValue(creditDetailedWithPaymentsState(id!))
   const company = credit.termOffering.company
-  const termDuration = credit.termOffering.term.duration
-  const creditPayments: (
-    | Pick<Payment, "number" | "id" | "paidAt" | "amount">
-    | undefined
-  )[] = []
-
-  for (let i = 0; i < termDuration; i++) {
-    const payment = credit.payments.find((payment) => payment.number === i + 1)
-    creditPayments.push(payment)
-  }
 
   const { status, installationStatus, hrStatus } = credit
 
@@ -130,7 +119,7 @@ const Screen = () => {
         <h3 className="text-lg font-medium text-gray-900 mb-2">
           Datos Generales
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8">
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">
               CLABE Interbancaria
