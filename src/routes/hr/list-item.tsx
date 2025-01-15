@@ -85,29 +85,39 @@ const ListItem = ({
           </span>
         )}
       </div>
-      {!credit.hrStatus ? (
-        <button
-          onClick={() => navigate("/dashboard/hr/" + credit.id)}
-          className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
-        >
-          <ChevronRightIcon className="w-6 h-6 text-gray-400" />
-        </button>
-      ) : (
-        <div className="min-w-32">
-          <div className="flex items-center gap-x-3">
-            <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-              <a className="flex text-inherit decoration-inherit gap-x-2">
-                <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                  Status
-                </span>
-              </a>
-            </h2>
-          </div>
-          <Chip status={credit.hrStatus === "active" ? "success" : "error"}>
-            {credit.hrStatus === "active" ? "Activo" : "Inactivo"}
-          </Chip>
+
+      <div className="min-w-32">
+        <div className="flex items-center gap-x-3">
+          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+            <a className="flex text-inherit decoration-inherit gap-x-2">
+              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                Status
+              </span>
+            </a>
+          </h2>
         </div>
-      )}
+        <Chip
+          status={
+            credit.hrStatus === "active"
+              ? "success"
+              : !credit.hrStatus
+                ? "info"
+                : "error"
+          }
+        >
+          {credit.hrStatus === "active"
+            ? "Activo"
+            : !credit.hrStatus
+              ? "Pendiente"
+              : "Inactivo"}
+        </Chip>
+      </div>
+      <button
+        onClick={() => navigate("/dashboard/hr/" + credit.id)}
+        className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
+      >
+        <ChevronRightIcon className="w-6 h-6 text-gray-400" />
+      </button>
     </List.Item>
   )
 }
