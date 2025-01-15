@@ -12,10 +12,17 @@ import CreditListItem from "./credit-list-item"
 import { fetchNextPayrollDate } from "../company-installations/utils"
 import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
 import BulkActionsButton from "./bulk-actions-button"
+import Button from "components/atoms/button"
+import { exportToCSV } from "../../utils"
+import { DURATION_TYPES, MXNFormat } from "../../constants"
+import { useCallback } from "react"
+import dayjs from "dayjs"
+import { DocumentArrowUpIcon } from "@heroicons/react/24/solid"
 
 const Screen = () => {
   const { companyId } = useParams()
-  const company = useRecoilValue(companySelectorQuery(companyId!))
+  if (!companyId) throw new Error("companyId is required")
+  const company = useRecoilValue(companySelectorQuery(companyId))
   const credits = useRecoilValue(
     companyCreditsDetailedWithPaymentsState(companyId),
   )?.filter((credit) => {
@@ -30,7 +37,58 @@ const Screen = () => {
     company.employeeSalaryFrequency,
   ).toLocaleDateString()
 
+  const totalPaid = useCallback(
+    (creditId: string) => {
+      const credit = credits?.find((credit) => credit.id === creditId)
+      if (!credit) return 0
+      return credit.payments.reduce((acc, payment) => acc + payment.amount, 0)
+    },
+    [credits],
+  )
+
   if (!credits) return null
+
+  const handleExport = () => {
+    exportToCSV(
+      [
+        "Empleado",
+        "Cliente",
+        "Nómina",
+        "Plazo",
+        "Préstamo",
+        "Pendiente",
+        "Descuento",
+        "Pagos Realizados",
+        "Pagos Pendientes",
+        "Último Descuento",
+      ],
+      credits.map((credit) => {
+        if (!credit.loan || !credit.amortization) return []
+        const lastPayment = credit.payments.at(-1)
+        const paymentsDone = lastPayment?.number ?? 0
+        const missingPayments = credit.termOffering.term.duration - paymentsDone
+        const firstName = credit.borrower.firstName
+        const lastName = credit.borrower.lastName
+        const fullName = `${firstName} ${lastName}`
+        const term = `${credit.termOffering.term.duration} ${DURATION_TYPES.get(credit.termOffering.term.durationType)}`
+        return [
+          fullName,
+          company.name,
+          credit.borrower.employeeNumber ?? "",
+          term,
+          MXNFormat.format(credit.loan),
+          MXNFormat.format(credit.loan - totalPaid(credit.id)),
+          MXNFormat.format(Number(credit.amortization)),
+          paymentsDone.toString(),
+          missingPayments.toString(),
+          dayjs(credit.payments[credit.payments.length - 1]?.paidAt).format(
+            "DD/MM/YYYY",
+          ),
+        ]
+      }),
+      `${company.name.toLowerCase()}-cobranza.csv`,
+    )
+  }
 
   return (
     <>
@@ -43,7 +101,11 @@ const Screen = () => {
             <h3 className="text-sm">
               Proxima Nómina <b>{nextPayrollDate}</b>
             </h3>
-            <BulkActionsButton companyId={companyId!} />
+            <Button onClick={handleExport} size="sm" status="secondary">
+              Exportar
+              <DocumentArrowUpIcon className="h-4 w-4 ml-1" />
+            </Button>
+            <BulkActionsButton companyId={companyId} />
           </ListHeader.Actions>
         </ListHeader>
         <List>
