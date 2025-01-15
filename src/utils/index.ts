@@ -40,13 +40,23 @@ export function calculateAmortization({
 
 const escapeCell = (cell: string) => `"${cell.replace(/"/g, '""')}"`
 
-export const exportToCSV = (headers: string[], rows: string[][]) => {
+export const exportToCSV = (
+  headers: string[],
+  rows: string[][],
+  fileName?: string,
+) => {
   const csvContent =
     "data:text/csv;charset=utf-8," +
     [headers, ...rows].map((row) => row.map(escapeCell).join(",")).join("\n")
 
   const encodedUri = encodeURI(csvContent)
-  window.open(encodedUri)
+
+  const link = document.createElement("a")
+  link.setAttribute("href", encodedUri)
+  link.setAttribute("download", fileName || "export.csv")
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 
 interface CalculatePaymentNumberProps {
