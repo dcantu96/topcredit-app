@@ -29,7 +29,8 @@ const ImportDocumentModal = () => {
     (row) =>
       dispersedCredits.find(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (credit: any) => credit.borrower.data.employeeNumber === row["Nomina"],
+        (credit: any) =>
+          credit.borrower.data.employeeNumber === row["Empleado"],
       ) !== undefined,
   )
 
@@ -62,11 +63,11 @@ const ImportDocumentModal = () => {
           const credit = dispersedCredits.find(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (credit: any) =>
-              credit.borrower.data.employeeNumber === row["Nomina"],
+              credit.borrower.data.employeeNumber === row["Empleado"],
           )
           if (!credit) {
             throw Error(
-              `No se encontró el crédito para el empleado ${row["Nomina"]}`,
+              `No se encontró el crédito para el empleado ${row["Empleado"]}`,
             )
           }
           await api.create("payments", {
@@ -101,7 +102,7 @@ const ImportDocumentModal = () => {
   const onLoad = (loadedRows: CSVRow[], loadedHeaders: string[]) => {
     const newMap = errors
     for (const row of loadedRows) {
-      const employeeNumber = row["Nomina"]
+      const employeeNumber = row["Empleado"]
       const credit = dispersedCredits.find(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
@@ -110,11 +111,11 @@ const ImportDocumentModal = () => {
         if (newMap.has(employeeNumber)) {
           newMap.set(employeeNumber, [
             ...newMap.get(employeeNumber)!,
-            `No existe # Nómina: ${employeeNumber} en la base de datos`,
+            `No existe # Empleado: ${employeeNumber} en la base de datos`,
           ])
         } else {
           newMap.set(employeeNumber, [
-            `No existe # Nómina: ${employeeNumber} en la base de datos`,
+            `No existe # Empleado: ${employeeNumber} en la base de datos`,
           ])
         }
       }
@@ -143,6 +144,7 @@ const ImportDocumentModal = () => {
     setIsModalOpen(true)
     setHeaders(loadedHeaders)
     setCSVRows(loadedRows)
+    console.log(loadedRows)
   }
 
   return (
@@ -179,13 +181,13 @@ const ImportDocumentModal = () => {
                 {rowKey &&
                   csvRows.map((row) => (
                     <List.Row
-                      key={`${row["Nomina"]}-${row["Año"]}-${row["Mes"]}-${row["Quincena"]}`}
+                      key={`${row["Empleado"]}-${row["Año"]}-${row["Mes"]}-${row["Quincena"]}`}
                     >
                       {headers.map((header) => (
                         <List.Cell key={header}>{row[header]}</List.Cell>
                       ))}
                       <MaybeErrorCell
-                        employeeNumber={row["Nomina"]}
+                        employeeNumber={row["Empleado"]}
                         errorsMap={errors}
                       />
                     </List.Row>
