@@ -12,6 +12,8 @@ import {
   selectedInstalledCreditWithPaymentsIdsState,
   installedCreditWithPaymentSelectedState,
 } from "./atoms"
+import { CloudArrowDownIcon } from "@heroicons/react/24/solid"
+import { exportToCSV } from "../../utils"
 
 interface BulkActionsButtonProps {
   companyId: string
@@ -25,6 +27,22 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
   )
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
+
+  const downloadTemplate = () => {
+    const headers = [
+      "Empleado",
+      "Cliente",
+      "Año",
+      "Mes",
+      "Quincena",
+      "Descuento",
+    ]
+    exportToCSV(
+      headers,
+      [["JP3424", "Soriana", "2025", "01", "1", "100.59"]],
+      "pagos.csv",
+    )
+  }
 
   const handleRegisterPayments = useRecoilCallback(
     ({ snapshot, set, reset }) =>
@@ -96,12 +114,16 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
 
   return (
     <>
+      <ImportDocumentModal />
       {selectedCredits.length ? (
         <Button size="sm" onClick={openModal}>
           Registrar pagos ({selectedCredits.length})
         </Button>
       ) : null}
-      <ImportDocumentModal />
+      <Button size="sm" onClick={downloadTemplate}>
+        Descargar Formato
+        <CloudArrowDownIcon className="h-4 w-4 ml-1" />
+      </Button>
       {isModalOpen ? (
         <Dialog
           message={modalMessage}
