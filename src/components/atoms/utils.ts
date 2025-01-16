@@ -21,7 +21,9 @@ export interface ReadFileCallbacks {
 
 export const parseCSV = (csvText: string) => {
   const lines = csvText.split("\n")
-  const headers = lines[0].split(",").map((header) => header.trim())
+  const headers = lines[0]
+    .split(",")
+    .map((header) => header.trim().replaceAll('"', ""))
   const dataLines = lines.slice(1)
 
   const data = dataLines.map((line) => {
