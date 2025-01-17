@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { useRecoilCallback, useRecoilValue } from "recoil"
 import ImportDocumentButton from "components/molecules/import-document-button"
 import Modal from "components/molecules/modal"
@@ -9,7 +9,6 @@ import useToast from "components/providers/toaster/useToast"
 import { XMarkIcon } from "@heroicons/react/24/solid"
 import Tooltip from "components/atoms/tooltip"
 import { dispersedCreditsImportSelector } from "./atoms"
-import { calculatePaymentNumber } from "../../../utils"
 import { companiesSelectorQuery } from "hooks/useCompanies/atoms"
 import List from "../list"
 
@@ -35,6 +34,17 @@ const ImportDocumentModal = () => {
   )
 
   const invalidRowsCount = csvRows.length - validRows.length
+
+  const nextPaymentNumber = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (credit: any) => {
+      const sortedPayments = credit.payments.data.toSorted(
+        (a: { number: number }, b: { number: number }) => a.number - b.number,
+      )
+      return ((sortedPayments.at(-1)?.number as number) ?? 0) + 1
+    },
+    [],
+  )
 
   const handleSave = useRecoilCallback(({ snapshot }) => async () => {
     const api = await snapshot.getPromise(apiSelector)
@@ -72,16 +82,7 @@ const ImportDocumentModal = () => {
           }
           await api.create("payments", {
             amount: row["Descuento"],
-            number: calculatePaymentNumber({
-              year: Number(row["Año"]),
-              month: Number(row["Mes"]),
-              twoWeekPeriod:
-                company.employeeSalaryFrequency === "biweekly"
-                  ? Number(row["Quincena"])
-                  : undefined,
-              installationDateString: credit.installationDate,
-              termDuration: credit.termOffering.data.term.data.duration,
-            }),
+            number: nextPaymentNumber(credit),
             paidAt: new Date().toISOString(),
             credit: {
               data: {

@@ -7,10 +7,11 @@ export const dispersedCreditsImportSelector = selector({
     const api = get(apiSelector)
     const credits = await api.get("credits", {
       params: {
-        include: "borrower,termOffering.term",
+        include: "borrower,termOffering.term,payments",
         fields: {
           users: "id,employeeNumber",
-          credits: "id,borrower,installationDate,termOffering",
+          credits: "id,borrower,installationDate,termOffering,payments",
+          payments: "id,amount,number,paidAt",
           termOfferings: "id,term",
           terms: "id,duration",
         },
