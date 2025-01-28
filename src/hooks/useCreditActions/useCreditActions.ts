@@ -12,6 +12,10 @@ import {
   payrollReceiptStatusCreditState,
 } from "../../routes/pending-authorizations/atoms"
 import { editableDispersionReceiptFieldState } from "../../routes/dispersions/atoms"
+import {
+  hrCreditsSelector,
+  hrCreditsSelectorQuery,
+} from "../../routes/hr/atoms"
 
 export interface CreateCreditProps {
   userId: string
@@ -140,7 +144,7 @@ const useCreditActions = () => {
   )
 
   const updateHRStatus = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, refresh }) =>
       async (creditId: string, status: HRStatus) => {
         const api = await snapshot.getPromise(apiSelector)
         try {
@@ -154,6 +158,13 @@ const useCreditActions = () => {
             title: "Usuario actualizado",
             message: message ?? defaultMessage,
           })
+          refresh(hrCreditsSelectorQuery("all"))
+          refresh(hrCreditsSelectorQuery("active"))
+          refresh(hrCreditsSelectorQuery("inactive"))
+          refresh(hrCreditsSelectorQuery("pending"))
+          refresh(hrCreditsSelectorQuery("pending"))
+          refresh(hrCreditsSelector(creditId))
+          // update all states
         } catch {
           const defaultMessage = "Ocurrió un error al actualizar el crédito"
           const message = HR_ERROR_MESSAGES.get(status)

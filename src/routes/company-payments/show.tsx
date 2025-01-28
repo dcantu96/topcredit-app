@@ -65,6 +65,7 @@ const Screen = () => {
       credits.map((credit) => {
         if (!credit.loan || !credit.amortization) return []
         const lastPayment = credit.payments.at(-1)
+        const lastPaidAt = lastPayment?.paidAt
         const paymentsDone = lastPayment?.number ?? 0
         const missingPayments = credit.termOffering.term.duration - paymentsDone
         const firstName = credit.borrower.firstName
@@ -81,9 +82,7 @@ const Screen = () => {
           MXNFormat.format(Number(credit.amortization)),
           paymentsDone.toString(),
           missingPayments.toString(),
-          dayjs(credit.payments[credit.payments.length - 1]?.paidAt).format(
-            "DD/MM/YYYY",
-          ),
+          lastPaidAt ? dayjs(lastPaidAt).format("DD/MM/YYYY") : "",
         ]
       }),
       `${company.name.toLowerCase()}-cobranza.csv`,

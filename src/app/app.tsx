@@ -60,7 +60,8 @@ const ConfirmationFailure = lazy(() => import("../routes/confirmation-failure"))
 const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 const HR = lazy(() => import("../routes/hr/general"))
 const ShowHR = lazy(() => import("../routes/hr/show"))
-const HRHistory = lazy(() => import("../routes/hr/history"))
+const HRActive = lazy(() => import("../routes/hr/active"))
+const HRInactive = lazy(() => import("../routes/hr/inactive"))
 const ShowUser = lazy(() => import("../routes/users/show"))
 
 function App() {
@@ -138,7 +139,7 @@ function App() {
           </Route>
           <Route
             path="users"
-            element={<ProtectedRoute allowedRoles={["requests"]} />}
+            element={<ProtectedRoute allowedRoles={["requests", "hr"]} />}
           >
             <Route path=":id">
               <Route index element={<ShowUser />} />
@@ -187,7 +188,7 @@ function App() {
           </Route>
           <Route
             path="credits"
-            element={<ProtectedRoute allowedRoles={["payments"]} />}
+            element={<ProtectedRoute allowedRoles={["payments", "hr"]} />}
           >
             <Route path=":id">
               <Route index element={<Credit />} />
@@ -205,7 +206,8 @@ function App() {
           <Route path="hr" element={<ProtectedRoute allowedRoles={["hr"]} />}>
             <Route index element={<HR />} />
             <Route path=":id" element={<ShowHR />} />
-            <Route path="history" element={<HRHistory />} />
+            <Route path="active" element={<HRActive />} />
+            <Route path="inactive" element={<HRInactive />} />
           </Route>
         </Route>
         <Route

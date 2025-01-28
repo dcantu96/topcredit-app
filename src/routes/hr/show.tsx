@@ -1,15 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { CurrencyDollarIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { CheckIcon, EyeIcon, XMarkIcon } from "@heroicons/react/24/solid"
 
 import Button from "components/atoms/button"
-import FileViewer from "components/atoms/file-viewer/file-viewer"
 import useCreditActions from "hooks/useCreditActions"
 import useCompanies from "hooks/useCompanies"
 
 import { hrCreditsSelector } from "./atoms"
-import { useHRActions } from "./actions"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
+import ButtonLink from "components/atoms/button-link"
 
 const ShowScreen = () => {
   const { id } = useParams()
@@ -17,7 +16,6 @@ const ShowScreen = () => {
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
   const credit = useRecoilValue(hrCreditsSelector(id))
   if (!credit) throw new Error("Credit not found")
-  const { removeCredit } = useHRActions("requests")
   const { updateHRStatus } = useCreditActions()
   const companiesMap = useCompanies()
 
@@ -28,13 +26,11 @@ const ShowScreen = () => {
 
   const handleApproveCredit = () => {
     updateHRStatus(credit.id, "active")
-    removeCredit(credit.id)
     navigate("..")
   }
 
   const handleDenyCredit = () => {
     updateHRStatus(credit.id, "inactive")
-    removeCredit(credit.id)
     navigate("..")
   }
 
@@ -92,11 +88,27 @@ const ShowScreen = () => {
           </div>
           <div className="mt-5 flex lg:ml-4 lg:mt-0">
             <span className="flex gap-2">
-              <Button onClick={handleApproveCredit}>
-                <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
-                Aprobar
+              <ButtonLink to={`/dashboard/credits/${credit.id}`}>
+                <EyeIcon className="h-5 w-5 text-white mr-1.5" />
+                Detalles
+              </ButtonLink>
+              <Button
+                onClick={handleApproveCredit}
+                disabled={
+                  credit.status === "dispersed" || credit.hrStatus === "active"
+                }
+              >
+                <CheckIcon className="h-5 w-5 text-white mr-1.5" />
+                Activar
               </Button>
-              <Button status="secondary" onClick={handleDenyCredit}>
+              <Button
+                status="secondary"
+                onClick={handleDenyCredit}
+                disabled={
+                  credit.status === "dispersed" ||
+                  credit.hrStatus === "inactive"
+                }
+              >
                 <XMarkIcon className="h-5 w-5 mr-1.5" />
                 Rechazar
               </Button>
@@ -175,44 +187,6 @@ const ShowScreen = () => {
                 : 0}{" "}
               Mensuales
             </p>
-          </div>
-          <div className="col-span-2">
-            <h1 className="text-gray-900 font-bold text-xl">Documentos</h1>
-          </div>
-          <div className="col-span-1">
-            <FileViewer
-              label="Identificación Oficial"
-              fileName="Document1.pdf"
-              fileDate="Sat Feb 25"
-              fileSize="2.5MB"
-            />
-          </div>
-
-          <div className="col-span-1">
-            <FileViewer
-              label="Comprobante de Domicilio"
-              fileName="Document2.pdf"
-              fileDate="Sat Feb 25"
-              fileSize="1.9MB"
-            />
-          </div>
-
-          <div className="col-span-1">
-            <FileViewer
-              label="Estado de Cuenta"
-              fileName="Document2.pdf"
-              fileDate="Sat Feb 25"
-              fileSize="1.9MB"
-            />
-          </div>
-
-          <div className="col-span-1">
-            <FileViewer
-              label="Recibo de Nómina"
-              fileName="nomina.pdf"
-              fileDate="Sat Feb 25"
-              fileSize="1.05MB"
-            />
           </div>
         </div>
       </div>
