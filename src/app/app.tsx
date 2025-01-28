@@ -63,6 +63,9 @@ const ShowHR = lazy(() => import("../routes/hr/show"))
 const HRActive = lazy(() => import("../routes/hr/active"))
 const HRInactive = lazy(() => import("../routes/hr/inactive"))
 const ShowUser = lazy(() => import("../routes/users/show"))
+const ShowCompanyCredits = lazy(
+  () => import("../routes/companies/credits/index"),
+)
 
 function App() {
   return (
@@ -118,6 +121,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="credits" element={<ShowCompanyCredits />} />
               <Route
                 path="edit"
                 element={
