@@ -25,6 +25,7 @@ import Cell from "components/atoms/cell"
 import { groupedEventsSelector } from "components/organisms/activity-container/atoms"
 import "dayjs/locale/es"
 import relativeTime from "dayjs/plugin/relativeTime"
+import ButtonLink from "components/atoms/button-link"
 
 dayjs.extend(relativeTime)
 
@@ -35,7 +36,9 @@ const ShowCompany = () => {
   const user = useRecoilValue(myProfileState)
   if (!user?.roles.includes("admin") && Number(id) !== user?.hrCompanyId)
     throw new Error("Unauthorized")
-  const { employeeSalaryFrequency } = useRecoilValue(companySelectorQuery(id))
+  const { employeeSalaryFrequency, name } = useRecoilValue(
+    companySelectorQuery(id),
+  )
 
   const payments = useRecoilValue(companyPaymentsQuery(id))
   const total = payments.reduce((acc, payment) => acc + payment.amount, 0)
@@ -60,7 +63,6 @@ const ShowCompany = () => {
   )
   const incomingPayments = installedCredits.reduce(
     (acc, { amortization = 0, nextExpectedPayment }) => {
-      console.log({ nextExpectedPayment, nextPayrollDate })
       if (
         nextExpectedPayment &&
         dayjs(nextExpectedPayment).isBefore(nextPayrollDate)
@@ -71,13 +73,12 @@ const ShowCompany = () => {
     0,
   )
 
-  console.log({ payments, incomingPayments })
   return (
     <div className="flex w-full flex-col">
       <header className="pt-6 pb-4 sm:pb-6">
         <div className="px-4 gap-6 items-center flex-wrap max-w-7xl flex mx-auto md:flex-nowrap md:px-6 lg:px-8">
           <h1 className="text-gray-900 text-base leading-7 font-semibold whitespace-nowrap">
-            Cashflow {dayjs(nextPayrollDate).format("DD/MM/YYYY")}
+            Cashflow {name} {dayjs(nextPayrollDate).format("DD/MM/YYYY")}
           </h1>
           <div className="leading-6 font-semibold text-sm gap-8 w-full flex md:w-auto md:border-l md:border-gray-200 md:pl-6 md:leading-7 mr-auto">
             <button
@@ -108,6 +109,14 @@ const ShowCompany = () => {
             >
               2 Meses
             </button>
+          </div>
+          <div className="flex items-center gap-4">
+            <ButtonLink to="overview" size="sm">
+              Generales
+            </ButtonLink>
+            <ButtonLink to="credits" size="sm">
+              Créditos
+            </ButtonLink>
           </div>
         </div>
       </header>
