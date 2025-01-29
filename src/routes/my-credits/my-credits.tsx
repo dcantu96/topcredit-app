@@ -17,40 +17,81 @@ import {
   readonlyPayrollReceiptSelector,
   readonlyProofOfAddressSelector,
 } from "../new-credit/components/steps/general-data/atoms"
+import dayjs from "dayjs"
+import { useMemo } from "react"
+import {
+  fetchNextPayrollDate,
+  getNextPaymentDate,
+} from "../company-installations/utils"
+import { ClockIcon } from "@heroicons/react/16/solid"
+import relativeTime from "dayjs/plugin/relativeTime"
+import "dayjs/locale/es"
+dayjs.extend(relativeTime)
+
+interface AmortizedTable {
+  amount: number
+  paidAt?: string
+  expectedPaidAt: string
+  number: number
+}
 
 const MyCredits = () => {
   const credit = useRecoilValue(userLatestAuthorizedCreditSelectorQuery)
   const user = useRecoilValue(userGeneralDataQuerySelector)
-
   const identityDocument = useRecoilValue(readonlyIdentityDocumentSelector)
   const bankStatement = useRecoilValue(readonlyBankStatementSelector)
   const payrollReceipt = useRecoilValue(readonlyPayrollReceiptSelector)
   const proofOfAddress = useRecoilValue(readonlyProofOfAddressSelector)
+
+  const frequency =
+    credit?.termOffering.term.durationType === "months" ? "monthly" : "biweekly"
+  const nextPayrollDate = fetchNextPayrollDate(
+    frequency,
+    credit?.installationDate ?? undefined,
+  )
+
+  const amortizedTable = useMemo(() => {
+    if (!credit) return []
+    const list: AmortizedTable[] = []
+
+    for (let i = 0; i < credit.termOffering.term.duration; i++) {
+      const payment = credit.payments?.find(
+        (payment) => payment.number === i + 1,
+      )
+      const prevExpectedPaidAt = list.at(i - 1)?.expectedPaidAt
+      const prevExpectedPaidAtDate = prevExpectedPaidAt
+        ? new Date(prevExpectedPaidAt)
+        : nextPayrollDate
+      list.push({
+        amount: payment?.amount ?? Number(credit.amortization),
+        expectedPaidAt: getNextPaymentDate(
+          prevExpectedPaidAtDate,
+          frequency,
+        ).toISOString(),
+        paidAt: payment?.paidAt,
+        number: i + 1,
+      })
+    }
+    return list
+  }, [credit, nextPayrollDate, frequency])
   return (
     <div className="flex flex-col h-screen grid-rows-[60px_1fr]">
       <div className="w-full">
         <DashboardHeader />
       </div>
-      <header className="bg-white shadow">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <header className="bg-white mt-14">
+        <div className="px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             Vida del Crédito
           </h1>
         </div>
       </header>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4 py-6 sm:px-6 lg:px-8 gap-4">
-        <div className="col-span-full shadow bg-white rounded p-4 ring-1 ring-inset ring-red-600">
-          <h4 className="text-base font-semibold inline-flex">
-            <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
-            No pagaste a tiempo el pago del mes de febrero del 2024.
-          </h4>
-          <p className="text-gray-500">
-            Se aplicarán los intereses y aumentará...
-          </p>
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4 sm:px-6 lg:px-8 gap-4">
         <div className="shadow bg-white rounded p-4 ring-1 ring-inset">
           <h4 className="text-base font-semibold">Próximo Pago</h4>
-          <p className="text-gray-500">En 13 días</p>
+          <p className="text-gray-500">
+            {dayjs(nextPayrollDate).locale("es").from(dayjs())}
+          </p>
         </div>
         <div className="shadow bg-white rounded p-4 ring-1 ring-inset">
           <h4 className="text-base font-semibold">Crédito</h4>
@@ -88,29 +129,60 @@ const MyCredits = () => {
 
         <div className="col-span-full">
           <List>
-            <List.Header columns={["Monto", "Fecha", "Estatus"]} />
+            <List.Header
+              columns={[
+                "Monto",
+                "Fecha Programada",
+                "Fecha de Pago",
+                "Estatus",
+              ]}
+            />
             <List.Body>
-              <List.Row>
-                <List.Cell>{credit?.amortization} MXN</List.Cell>
-                <List.Cell>12/4/13</List.Cell>
-                <List.Cell>
-                  <CheckBadgeIcon className="mr-2 w-6 h-6 text-green-500" />
-                  Pagado
-                </List.Cell>
-              </List.Row>
-              <List.Row>
-                <List.Cell>{credit?.amortization} MXN</List.Cell>
-                <List.Cell>16/4/13</List.Cell>
-                <List.Cell>
-                  <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
-                  Demorado
-                </List.Cell>
-              </List.Row>
-              <List.Row>
-                <List.Cell>{credit?.amortization} MXN</List.Cell>
-                <List.Cell>12/4/13</List.Cell>
-                <List.Cell>-</List.Cell>
-              </List.Row>
+              {amortizedTable?.map((payment) => (
+                <List.Row key={payment.number}>
+                  <List.Cell>{payment.amount} MXN</List.Cell>
+                  <List.Cell>
+                    {dayjs(payment.expectedPaidAt).format("DD/MM/YYYY")}
+                  </List.Cell>
+                  <List.Cell>
+                    {payment.paidAt
+                      ? dayjs(payment.paidAt).format("DD/MM/YYYY")
+                      : "--"}
+                  </List.Cell>
+                  <List.Cell>
+                    {payment.paidAt ? (
+                      dayjs(payment.paidAt).isAfter(payment.expectedPaidAt) ? (
+                        <>
+                          <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
+                          Pagado Demorado
+                        </>
+                      ) : dayjs(payment.paidAt).isBefore(
+                          payment.expectedPaidAt,
+                        ) ? (
+                        <>
+                          <CheckBadgeIcon className="mr-2 w-6 h-6 text-green-500" />
+                          Pagado Adelantado
+                        </>
+                      ) : (
+                        <>
+                          <CheckBadgeIcon className="mr-2 w-6 h-6 text-blue-500" />
+                          Pagado
+                        </>
+                      )
+                    ) : dayjs().isAfter(payment.expectedPaidAt) ? (
+                      <>
+                        <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
+                        Pago Atrasado
+                      </>
+                    ) : (
+                      <>
+                        <ClockIcon className="mr-2 w-6 h-6 text-gray-500" />
+                        Pendiente de Pago
+                      </>
+                    )}
+                  </List.Cell>
+                </List.Row>
+              ))}
             </List.Body>
           </List>
         </div>

@@ -93,6 +93,9 @@ type CreditWithTermResponse = CreditWithoutBorrower & {
         })
       | null
   }
+  payments: {
+    data: Credit["payments"]
+  }
 }
 
 export const userLatestAuthorizedCreditSelectorQuery = selector<
@@ -115,7 +118,7 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
           filter: {
             status: "authorized,dispersed",
           },
-          include: "termOffering.term",
+          include: "termOffering.term,payments",
           page: {
             limit: 1,
             offset: 0,
@@ -135,6 +138,7 @@ export const userLatestAuthorizedCreditSelectorQuery = selector<
         ...termOffering,
         term: termOffering.term.data,
       },
+      payments: credit.payments.data,
     }
   },
 })

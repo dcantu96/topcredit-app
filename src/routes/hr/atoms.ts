@@ -69,11 +69,8 @@ export const hrCreditsSelectorQuery = selectorFamily<
       if (mode === "pending") {
         filter.hrStatus = null
       } else if (mode !== "all") {
-        filter.hrStatus = mode
-      }
-
-      if (user?.hrCompanyId) {
         filter.company = user.hrCompanyId
+        filter.hrStatus = mode
       }
 
       const { data }: { data: HRCreditsResponse[] } = await api.get("credit", {

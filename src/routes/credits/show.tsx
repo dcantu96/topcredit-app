@@ -8,13 +8,15 @@ import FileViewer from "components/atoms/file-viewer"
 import { creditDetailedWithPaymentsState } from "./atoms"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 import { useMemo } from "react"
-import { CurrencyDollarIcon } from "@heroicons/react/24/solid"
+import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/24/solid"
 import dayjs from "dayjs"
 import localizedFormat from "dayjs/plugin/localizedFormat"
 dayjs.extend(localizedFormat)
 import "dayjs/locale/es"
+import useIsRole from "hooks/useIsRole"
 
 const Screen = () => {
+  const isAdmin = useIsRole("admin")
   const { id } = useParams()
   const credit = useRecoilValue(creditDetailedWithPaymentsState(id!))
   const company = credit.termOffering.company
@@ -109,9 +111,15 @@ const Screen = () => {
           </div>
           <div className="mt-5 flex lg:ml-4 lg:mt-0">
             <span className="flex gap-2">
-              <ButtonLink to="payments">
-                <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
-                Pagos
+              {isAdmin && (
+                <ButtonLink to="payments">
+                  <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
+                  Pagos
+                </ButtonLink>
+              )}
+              <ButtonLink to={`/dashboard/users/${credit.borrower.id}`}>
+                <UserIcon className="h-5 w-5 text-white mr-1.5" />
+                Ver Usuario
               </ButtonLink>
             </span>
           </div>

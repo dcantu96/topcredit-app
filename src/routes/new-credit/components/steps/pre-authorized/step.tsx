@@ -1,6 +1,5 @@
 import FileField from "components/atoms/file-field"
 import Button from "components/atoms/button"
-import FileViewer from "components/atoms/file-viewer"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { userLatestCreditSelectorQuery } from "../../../atoms"
 import { MXNFormat } from "../../../../../constants"
@@ -103,6 +102,13 @@ const Step = () => {
               }}
             />
           </div>
+          <div className="col-span-2">
+            <p className="text-sm text-gray-600">
+              Te enviaremos un correo con donde podrás descargar y firmar el{" "}
+              <b>contrato</b> asi como la <b>carta de autorización.</b> Una vez
+              firmados los documentos, deberás subirlos aquí.
+            </p>
+          </div>
           <div className="col-span-2 md:col-span-1">
             <FileField
               id="contract"
@@ -118,14 +124,6 @@ const Step = () => {
             />
           </div>
           <div className="col-span-2 md:col-span-1">
-            <FileViewer
-              label="Contrato"
-              fileName="contrato.pdf"
-              fileDate="Sat Feb 25"
-              fileSize="1.9MB"
-            />
-          </div>
-          <div className="col-span-2 md:col-span-1">
             <FileField
               id="authorization-letter"
               label="Carta de Autorización"
@@ -137,14 +135,6 @@ const Step = () => {
                 if (!signedId) return
                 setAuthorization(signedId)
               }}
-            />
-          </div>
-          <div className="col-span-2 md:col-span-1">
-            <FileViewer
-              label="Carta de Autorización"
-              fileName="carta_aut.pdf"
-              fileDate="Sat Feb 25"
-              fileSize="1.9MB"
             />
           </div>
         </div>

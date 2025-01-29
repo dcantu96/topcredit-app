@@ -147,6 +147,14 @@ function App() {
           >
             <Route path=":id">
               <Route index element={<ShowUser />} />
+              <Route
+                path="edit"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <div>pending edit user</div>
+                  </ProtectedRoute>
+                }
+              />
             </Route>
           </Route>
           <Route
@@ -196,7 +204,14 @@ function App() {
           >
             <Route path=":id">
               <Route index element={<Credit />} />
-              <Route path="payments" element={<CreditPayments />} />
+              <Route
+                path="payments"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <CreditPayments />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
           </Route>
           <Route

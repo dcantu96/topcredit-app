@@ -8,10 +8,12 @@ import dayjs from "dayjs"
 import Chip from "components/atoms/chip"
 import { CREDIT_STATUS, MXNFormat, USER_STATUSES } from "../../constants"
 import FileViewer from "components/atoms/file-viewer"
+import useIsRole from "hooks/useIsRole"
 
 const ShowScreen = () => {
   const { id } = useParams()
   if (!id || Number.isNaN(id)) throw new Error("Missing id param")
+  const isAdmin = useIsRole("admin")
   const user = useRecoilValue(userSelector(id))
   const status = user.status ? USER_STATUSES.get(user.status) : undefined
 
@@ -71,10 +73,12 @@ const ShowScreen = () => {
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="flex gap-2">
-            <ButtonLink to="edit">
-              <PencilIcon className="h-5 w-5 text-white mr-1.5" />
-              Editar
-            </ButtonLink>
+            {isAdmin && (
+              <ButtonLink to="edit">
+                <PencilIcon className="h-5 w-5 text-white mr-1.5" />
+                Editar
+              </ButtonLink>
+            )}
           </span>
         </div>
       </div>
