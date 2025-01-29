@@ -7,7 +7,6 @@ import List from "components/atoms/list"
 
 import { ArrowLeftIcon, DocumentArrowUpIcon } from "@heroicons/react/24/solid"
 import ButtonLink from "components/atoms/button-link"
-import { myProfileState } from "components/providers/auth/atoms"
 import { companySelectorQuery } from "../loader"
 import ListItem from "./list-item"
 import { companyCreditsSelectorQuery } from "./atoms"
@@ -16,14 +15,13 @@ import { useCallback } from "react"
 import { exportToCSV } from "../../../utils"
 import dayjs from "dayjs"
 import Button from "components/atoms/button"
+import { useParams } from "react-router-dom"
 
 const Screen = () => {
-  const companyId = useRecoilValue(myProfileState)?.hrCompanyId
-  if (!companyId) throw new Error("companyId is required")
-  const company = useRecoilValue(companySelectorQuery(companyId.toString()))
-  const credits = useRecoilValue(
-    companyCreditsSelectorQuery(companyId.toString()),
-  )
+  const { id } = useParams()
+  if (!id) throw new Error("companyId is required")
+  const company = useRecoilValue(companySelectorQuery(id))
+  const credits = useRecoilValue(companyCreditsSelectorQuery(id))
 
   const totalPaid = useCallback(
     (creditId: string) => {
@@ -33,7 +31,6 @@ const Screen = () => {
         (acc, payment) => acc + payment.amount,
         0,
       )
-      console.log(credit.borrower.firstName, paid)
       return paid
     },
     [credits],
