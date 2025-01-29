@@ -10,7 +10,6 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import Button from "components/atoms/button"
 import {
   readonlyIdentityDocumentSelector,
   readonlyBankStatementSelector,
@@ -410,14 +409,6 @@ const MyCredits = () => {
               </div>
             </dl>
           </div>
-        </div>
-
-        <h1 className="col-span-full text-2xl font-bold tracking-tight text-gray-900">
-          Opciones
-        </h1>
-        <div className="col-span-full flex gap-4">
-          <Button>Liquidación</Button>
-          <Button>Restructura</Button>
         </div>
       </div>
     </div>
