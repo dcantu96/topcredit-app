@@ -56,6 +56,7 @@ const Screen = () => {
         "Nómina",
         "Plazo",
         "Préstamo",
+        "Crédito",
         "Pendiente",
         "Descuento",
         "Pagos Realizados",
@@ -63,14 +64,17 @@ const Screen = () => {
         "Último Descuento",
       ],
       credits.map((credit) => {
-        if (!credit.loan || !credit.amortization) return []
-        const lastPayment = credit.payments.at(-1)
+        if (!credit.loan || !credit.amortization || !credit.termOffering)
+          return []
+        const lastPayment = credit.payments?.at(-1)
         const lastPaidAt = lastPayment?.paidAt
         const paymentsDone = lastPayment?.number ?? 0
         const missingPayments = credit.termOffering.term.duration - paymentsDone
         const firstName = credit.borrower.firstName
         const lastName = credit.borrower.lastName
         const fullName = `${firstName} ${lastName}`
+        const creditAmount =
+          credit.termOffering.term.duration * Number(credit.amortization)
         const term = `${credit.termOffering.term.duration} ${DURATION_TYPES.get(credit.termOffering.term.durationType)}`
         return [
           fullName,
@@ -78,7 +82,8 @@ const Screen = () => {
           credit.borrower.employeeNumber ?? "",
           term,
           MXNFormat.format(credit.loan),
-          MXNFormat.format(credit.loan - totalPaid(credit.id)),
+          MXNFormat.format(creditAmount),
+          MXNFormat.format(creditAmount - totalPaid(credit.id)),
           MXNFormat.format(Number(credit.amortization)),
           paymentsDone.toString(),
           missingPayments.toString(),
