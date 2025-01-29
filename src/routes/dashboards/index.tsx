@@ -1,17 +1,6 @@
-import { lazy } from "react"
 import { myProfileState } from "components/providers/auth/atoms"
 import { useRecoilValue } from "recoil"
-const Admin = lazy(() => import("./admin"))
-const StaffRequests = lazy(() => import("../requests/list/list"))
-const PreAuthorizations = lazy(
-  () => import("../../routes/pre-authorizations/list"),
-)
-const PendingAuthorizations = lazy(
-  () => import("../../routes/pending-authorizations/list"),
-)
-const Dispersions = lazy(() => import("../../routes/dispersions/list"))
-const HR = lazy(() => import("../../routes/hr/general"))
-
+import { Navigate } from "react-router-dom"
 /**
  * This component is in charge of rendering a screen depending on the user's role.
  */
@@ -19,17 +8,17 @@ const Dashboard = () => {
   const profile = useRecoilValue(myProfileState)
 
   if (profile?.roles.includes("admin")) {
-    return <Admin />
+    return <Navigate to="companies" />
   } else if (profile?.roles.includes("requests")) {
-    return <StaffRequests />
+    return <Navigate to="requests" />
   } else if (profile?.roles.includes("pre_authorizations")) {
-    return <PreAuthorizations />
+    return <Navigate to="pre-authorizations" />
   } else if (profile?.roles.includes("authorizations")) {
-    return <PendingAuthorizations />
+    return <Navigate to="pending-authorizations" />
   } else if (profile?.roles.includes("dispersions")) {
-    return <Dispersions />
+    return <Navigate to="dispersions" />
   } else if (profile?.roles.includes("hr")) {
-    return <HR />
+    return <Navigate to="hr" />
   } else {
     return <div>dashboard not found</div>
   }
