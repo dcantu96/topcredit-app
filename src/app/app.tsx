@@ -66,6 +66,7 @@ const ShowUser = lazy(() => import("../routes/users/show"))
 const ShowCompanyCredits = lazy(
   () => import("../routes/companies/credits/index"),
 )
+const CompanyOverview = lazy(() => import("../routes/companies/overview/index"))
 
 function App() {
   return (
@@ -122,6 +123,7 @@ function App() {
                 }
               />
               <Route path="credits" element={<ShowCompanyCredits />} />
+              <Route path="overview" element={<CompanyOverview />} />
               <Route
                 path="edit"
                 element={

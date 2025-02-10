@@ -256,3 +256,24 @@ export const paymentOnTime = ({
     }
   }
 }
+
+export const amortizedTable = (
+  termDuration: number,
+  termFrequency: "biweekly" | "monthly",
+  amortization: number,
+  installationDate: string,
+) => {
+  const table = []
+  let currentDate = new Date(installationDate)
+  for (let i = 0; i < termDuration; i++) {
+    const nextPaymentDate = getNextPaymentDate(currentDate, termFrequency)
+
+    table.push({
+      number: i + 1,
+      expected: amortization,
+      dueDate: nextPaymentDate.toISOString().slice(0, 10),
+    })
+    currentDate = nextPaymentDate
+  }
+  return table
+}
