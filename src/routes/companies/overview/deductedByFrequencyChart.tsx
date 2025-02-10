@@ -25,7 +25,7 @@ import { amortizedTable } from "../../../routes/company-installations/utils"
 
 const chartConfig = {
   amount: {
-    label: "Dispersiones",
+    label: "Descuentos",
     color: "hsl(var(--chart-1))",
   },
   expected: {
