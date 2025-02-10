@@ -109,7 +109,7 @@ const CompanyOverview = () => {
           </div>
         </dl>
       </div>
-      <div className="grid grid-cols-2 gap-4 px-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-6">
         <DispersedByFrequencyChart />
         <DeductedByFreqChart />
       </div>
