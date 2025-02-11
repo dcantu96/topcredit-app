@@ -85,8 +85,8 @@ export default function DeductedByFreqChart() {
           acc[period].expected += expected // Accumulate expected amount
         })
 
-        payments.forEach(({ amount, createdAt }) => {
-          const date = new Date(createdAt)
+        payments.forEach(({ amount, paidAt }) => {
+          const date = new Date(paidAt)
           let period
           let label
 

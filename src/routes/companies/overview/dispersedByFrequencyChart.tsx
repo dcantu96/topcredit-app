@@ -39,8 +39,8 @@ export default function DispersedByFrequencyChart() {
     if (!company) return []
 
     const creditsByPeriod = installedCredits.reduce(
-      (acc, { createdAt, loan }) => {
-        const date = new Date(createdAt)
+      (acc, { dispersedAt, loan }) => {
+        const date = new Date(dispersedAt!)
         let period
         let label
 

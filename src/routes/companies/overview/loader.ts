@@ -51,7 +51,7 @@ type CompanyInstalledCredit = Pick<
   | "dispersedAt"
   | "installationDate"
 > & {
-  payments: Pick<Payment, "id" | "createdAt" | "amount" | "number">[]
+  payments: Pick<Payment, "id" | "createdAt" | "amount" | "number" | "paidAt">[]
   borrower: Pick<User, "id" | "firstName" | "lastName" | "email"> | null
   termOffering:
     | (Pick<TermOffering, "id"> & {
@@ -76,7 +76,7 @@ export const companyInstalledCreditsQuery = selectorFamily<
           {
             params: {
               fields: {
-                payments: "id,createdAt,amount,number",
+                payments: "id,createdAt,amount,number,paidAt",
                 termOfferings: "id,term",
                 terms: "id,name,durationType,duration",
                 users: "id,firstName,lastName,email",
