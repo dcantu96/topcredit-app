@@ -9,7 +9,10 @@ export interface ReadonlyFile {
   url: string
   filename: string
   contentType: string
-  size: string
+  /**
+   * Size in bytes
+   */
+  size: number
   uploadedAt: string
 }
 
@@ -46,6 +49,7 @@ const FileField = ({
   const [file, setFile] = useState<File | undefined | null>(undefined)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragActive, setIsDragActive] = useState<boolean>(false)
+  console.log(file?.lastModified)
 
   const handleDragEnter = () => {
     setIsDragActive(true)
@@ -159,8 +163,8 @@ const FileField = ({
               url: "",
               contentType: file.type,
               filename: file.name,
-              size: file.size.toString(),
-              uploadedAt: file.lastModified.toString(),
+              size: file.size,
+              uploadedAt: new Date(file.lastModified).toISOString(),
             }}
           />
         ) : null}
@@ -197,8 +201,8 @@ const ChosenFile = ({
       </p>
 
       <p className="text-gray-500 text-sm mb-4">
-        {new Date(file.uploadedAt).toLocaleDateString()} &#x2022; {file.size}{" "}
-        &#x2022; {file.contentType}
+        {new Date(file.uploadedAt).toLocaleDateString()} &#x2022;{" "}
+        {humanReadableFileSize(file.size)} &#x2022; {file.contentType}
       </p>
       <Button
         type="button"
@@ -214,6 +218,39 @@ const ChosenFile = ({
       </Button>
     </div>
   )
+}
+
+function humanReadableFileSize(
+  bytes: number | null | undefined,
+  si: boolean = true,
+  dp: number = 1,
+): string {
+  if (bytes == null || Number.isNaN(bytes)) {
+    //Handles null, undefined, and NaN
+    return "N/A"
+  }
+
+  const thresh: number = si ? 1000 : 1024
+
+  if (Math.abs(bytes) < thresh) {
+    return bytes + " B"
+  }
+
+  const units: string[] = si
+    ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+    : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
+  let u: number = -1
+  const r: number = 10 ** dp
+
+  do {
+    bytes /= thresh
+    ++u
+  } while (
+    Math.round(Math.abs(bytes) * r) / r >= thresh &&
+    u < units.length - 1
+  )
+
+  return bytes.toFixed(dp) + " " + units[u]
 }
 
 export default FileField
