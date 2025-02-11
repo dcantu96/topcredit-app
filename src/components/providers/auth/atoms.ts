@@ -73,23 +73,22 @@ export const authActions = selector({
       ({ set }) =>
         async (email: string, password: string) => {
           // 1. send login request to server
-
-          const response = await fetch(
-            `${import.meta.env.VITE_APP_API_URL}/oauth/token`,
-            {
-              method: "POST",
-              body: JSON.stringify({
-                grant_type: "password",
-                client_id: import.meta.env.VITE_APP_CLIENT_ID,
-                client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
-                email,
-                password,
-              }),
-              headers: {
-                "Content-Type": "application/json",
-              },
+          const baseUrl = import.meta.env.PROD
+            ? import.meta.env.VITE_APP_API_URL
+            : ""
+          const response = await fetch(`${baseUrl}/oauth/token`, {
+            method: "POST",
+            body: JSON.stringify({
+              grant_type: "password",
+              client_id: import.meta.env.VITE_APP_CLIENT_ID,
+              client_secret: import.meta.env.VITE_APP_CLIENT_SECRET,
+              email,
+              password,
+            }),
+            headers: {
+              "Content-Type": "application/json",
             },
-          )
+          })
 
           const data = await response.json()
           if (data.error) {
@@ -147,17 +146,17 @@ export const myProfileState = selector<MeResponse | undefined>({
 
     if (auth) {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_APP_API_URL}/api/me`,
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/vnd.api+json",
-              "Content-Type": "application/vnd.api+json",
-              Authorization: `Bearer ${auth.token}`,
-            },
+        const baseUrl = import.meta.env.PROD
+          ? import.meta.env.VITE_APP_API_URL
+          : ""
+        const response = await fetch(`${baseUrl}/api/me`, {
+          method: "GET",
+          headers: {
+            Accept: "application/vnd.api+json",
+            "Content-Type": "application/vnd.api+json",
+            Authorization: `Bearer ${auth.token}`,
           },
-        )
+        })
 
         if (!response.ok) {
           throw new Error(

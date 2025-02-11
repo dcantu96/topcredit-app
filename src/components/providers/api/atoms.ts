@@ -10,7 +10,10 @@ export const apiSelector = selector({
     const authHeader = auth?.token ? `Bearer ${auth.token}` : undefined
     if (!import.meta.env.VITE_APP_API_URL)
       throw new Error("VITE_APP_API_URL is not defined")
-    const baseURL = `${import.meta.env.VITE_APP_API_URL}/api`
+
+    const baseURL = import.meta.env.PROD
+      ? `${import.meta.env.VITE_APP_API_URL}/api` // Production: Absolute URL
+      : "/api"
 
     if (authHeader) {
       const api = new Kitsu({

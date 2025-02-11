@@ -8,7 +8,21 @@ export default defineConfig((configEnv) => {
   return {
     plugins: [react()],
     server: {
-      port: 3000,
+      proxy: {
+        "/oauth": {
+          // Match the path you're requesting
+          target: "http://localhost:4000", // Your backend's address
+          changeOrigin: true, // Important for virtual hosted sites (usually needed)
+          // rewrite: (path) => path.replace(/^\/api/, ''), // Optional: Remove /api prefix
+        },
+        // Add more proxies if you have other API endpoints
+        "/api": {
+          target: "http://localhost:4000",
+          changeOrigin: true,
+        },
+      },
+      host: "0.0.0.0", // Listen on all network interfaces (important for mobile access)
+      port: 3000, // Or whichever port your Vite app uses
     },
     test: {
       globals: true,
