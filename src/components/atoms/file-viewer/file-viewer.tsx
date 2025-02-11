@@ -59,7 +59,7 @@ const FileViewer = ({
           }}
           className={`${
             fileUrl ? "text-indigo-600" : "text-gray-900"
-          } font-medium mb-2 inline-flex`}
+          } font-medium mb-2 inline-flex cursor-pointer`}
         >
           {fileName}
         </p>
