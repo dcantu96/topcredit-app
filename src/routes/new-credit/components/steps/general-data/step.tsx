@@ -169,6 +169,10 @@ const Step = () => {
         <h1 className="text-gray-900 font-bold text-3xl mb-2">
           Datos Generales
         </h1>
+        <p className="text-gray-600 text-lg mb-6">
+          Tee vamos a pedir unos datos esenciales para poder proceder con tu
+          crédito en <b>{companies?.[0]?.name}</b>
+        </p>
         {isWaiting ? (
           <Notice
             color="primary"
@@ -194,8 +198,8 @@ const Step = () => {
                       {FREQUENCY_OPTIONS.find(
                         ({ value }) => value === companySalaryFrequency,
                       )?.label.toLowerCase()}
-                    </b>{" "}
-                    en {companies?.[0]?.name}?
+                    </b>
+                    ?
                   </>
                 }
                 required
