@@ -29,18 +29,18 @@ const steps = [
 const Screen = () => {
   const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState)
   return (
-    <div className="grid grid-cols-[64px_1fr] md:grid-cols-[400px_1fr] h-screen grid-rows-[60px_1fr] overflow-hidden">
+    <div className="min-h-screen">
       <div className="w-full col-span-2">
         <DashboardHeader />
       </div>
-      <div className="flex items-center justify-center self-center">
+      <div className="flex items-center justify-center self-center fixed h-screen -mt-16 w-16 md:w-[400px]">
         <Steps
           steps={steps}
           activeStep={activeStep}
           setActiveStep={(label) => setActiveStep(label as StepLabelOptions)}
         />
       </div>
-      <div className="overflow-y-auto">
+      <div className="overflow-y-auto pl-16 md:pl-[400px] mt-16">
         <ActiveStep activeStep={activeStep} />
       </div>
     </div>
