@@ -67,6 +67,7 @@ export const hrCreditsSelectorQuery = selectorFamily<
       }
 
       if (mode === "pending") {
+        filter.company = user.hrCompanyId
         filter.hrStatus = null
       } else if (mode !== "all") {
         filter.company = user.hrCompanyId
