@@ -229,6 +229,16 @@ const ShowScreen = () => {
             Mensuales
           </p>
         </div>
+        <div className="col-span-1">
+          <label className="text-gray-500 font-medium text-sm">
+            Crédito Total
+          </label>
+          <p className="text-gray-900 font-medium">
+            {credit.creditAmount
+              ? MXNFormat.format(Number(credit.creditAmount))
+              : 0}
+          </p>
+        </div>
         <div className="col-span-2">
           <h1 className="text-gray-900 font-bold text-xl">Documentos</h1>
         </div>
