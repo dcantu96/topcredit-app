@@ -40,7 +40,7 @@ import Select from "components/atoms/select"
 import { useCreditScreenSubmitActions } from "./actions"
 import {
   COUNTRIES,
-  SALARY_FREQUENCIES,
+  FREQUENCY_OPTIONS,
   STATES_OF_MEXICO,
 } from "../../../../../constants"
 import { userGeneralDataQuerySelector } from "../../../atoms"
@@ -95,7 +95,6 @@ const Step = () => {
     }),
   )
   const companySalaryFrequency = companies?.[0]?.employeeSalaryFrequency
-  const mappedFreq = companySalaryFrequency === "biweekly" ? "Q" : "M"
   const storedIdentityDocument = useRecoilValue(
     readonlyIdentityDocumentSelector,
   )
@@ -188,7 +187,17 @@ const Step = () => {
             <div className="flex items-center gap-2">
               <Input
                 id="salary"
-                label={`¿Cual es tu salario en ${companies?.[0]?.name}?`}
+                label={
+                  <>
+                    ¿Cual es tu salario{" "}
+                    <b>
+                      {FREQUENCY_OPTIONS.find(
+                        ({ value }) => value === companySalaryFrequency,
+                      )?.label.toLowerCase()}
+                    </b>{" "}
+                    en {companies?.[0]?.name}?
+                  </>
+                }
                 required
                 value={salary}
                 prefix="$"
@@ -201,18 +210,6 @@ const Step = () => {
                 onBlur={() => setSalaryTouched(true)}
                 onChange={(e) => setSalary(e.target.value)}
               />
-              {Array.from(SALARY_FREQUENCIES.entries()).map(
-                ([value, label]) => (
-                  <Button
-                    key={value}
-                    type="button"
-                    disabled
-                    status={mappedFreq === value ? "primary" : "secondary"}
-                  >
-                    {label}
-                  </Button>
-                ),
-              )}
             </div>
           </div>
           <div className="col-span-full lg:col-span-4">
@@ -334,7 +331,7 @@ const Step = () => {
               initialFile={storedIdentityDocument}
               error={
                 identityDocumentStatus === "rejected" && !identityDocumentId
-                  ? identityDocumentRejectionReason ?? "Documento rechazado"
+                  ? (identityDocumentRejectionReason ?? "Documento rechazado")
                   : undefined
               }
               onRemove={() => setIdentityDocument(null)}
@@ -358,7 +355,7 @@ const Step = () => {
               onRemove={() => setProofOfAddress(null)}
               error={
                 proofOfAddressStatus === "rejected" && !proofOfAddressId
-                  ? proofOfAddressRejectionReason ?? "Documento rechazado"
+                  ? (proofOfAddressRejectionReason ?? "Documento rechazado")
                   : undefined
               }
               initialFile={storedProofOfAddress}
@@ -382,7 +379,7 @@ const Step = () => {
               initialFile={storedBankStatement}
               error={
                 bankStatementStatus === "rejected" && !bankStatementId
-                  ? bankStatementRejectionReason ?? "Documento rechazado"
+                  ? (bankStatementRejectionReason ?? "Documento rechazado")
                   : undefined
               }
               onRemove={() => setBankStatement(null)}
@@ -406,7 +403,7 @@ const Step = () => {
               initialFile={storedPayrollReceipt}
               error={
                 payrollReceiptStatus === "rejected" && !payrollReceiptId
-                  ? payrollReceiptRejectionReason ?? "Documento rechazado"
+                  ? (payrollReceiptRejectionReason ?? "Documento rechazado")
                   : undefined
               }
               onRemove={() => setPayrollReceipt(null)}
