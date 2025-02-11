@@ -20,6 +20,10 @@ export default defineConfig((configEnv) => {
           target: "http://localhost:4000",
           changeOrigin: true,
         },
+        "/rails": {
+          target: "http://localhost:4000",
+          changeOrigin: true,
+        },
       },
       host: "0.0.0.0", // Listen on all network interfaces (important for mobile access)
       port: 3000, // Or whichever port your Vite app uses
