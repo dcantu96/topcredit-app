@@ -1,7 +1,7 @@
 import Steps from "components/molecules/steps/steps"
 import ActiveStep from "./components/active-step"
-import { useRecoilState } from "recoil"
-import { activeStepSelectorState } from "./atoms"
+import { useRecoilState, useRecoilValue } from "recoil"
+import { activeStepSelectorState, isStepAccessible } from "./atoms"
 import withAuthorizationRedirect from "components/hocs/with-authorization-redirect"
 import withAuth from "components/hocs/with-auth/with-auth"
 import DashboardHeader from "components/organisms/dashboard-header"
@@ -11,23 +11,34 @@ export type StepLabelOptions =
   | "Pre Autorizado"
   | "Autorizado"
 
-const steps = [
-  {
-    label: "Datos Generales",
-    description: "Necesitamos algunos datos básicos para poder continuar.",
-  },
-  {
-    label: "Pre Autorizado",
-    description: "!Felicidades, fuiste pre aprobado!",
-  },
-  {
-    label: "Autorizado",
-    description: "¡Felicidades, te Autorizamos tu crédito!",
-  },
-]
-
 const Screen = () => {
+  const datosGeneralesAccesible = useRecoilValue(
+    isStepAccessible("Datos Generales"),
+  )
+  const preAutorizadoAccesible = useRecoilValue(
+    isStepAccessible("Pre Autorizado"),
+  )
+  const autorizadoAccesible = useRecoilValue(isStepAccessible("Autorizado"))
   const [activeStep, setActiveStep] = useRecoilState(activeStepSelectorState)
+
+  const steps = [
+    {
+      label: "Datos Generales",
+      description: "Necesitamos algunos datos básicos para poder continuar.",
+      accessible: datosGeneralesAccesible,
+    },
+    {
+      label: "Pre Autorizado",
+      description: "!Felicidades, fuiste pre aprobado!",
+      accessible: preAutorizadoAccesible,
+    },
+    {
+      label: "Autorizado",
+      description: "¡Felicidades, te Autorizamos tu crédito!",
+      accessible: autorizadoAccesible,
+    },
+  ]
+
   return (
     <div className="min-h-screen">
       <div className="w-full col-span-2">

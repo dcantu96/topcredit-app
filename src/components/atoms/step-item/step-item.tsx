@@ -7,6 +7,7 @@ interface StepItemProps {
   currentStep: number
   stepsCount: number
   position: number
+  accessible: boolean
   handleStepClick?: () => void
 }
 
@@ -16,6 +17,7 @@ const StepItem = ({
   currentStep,
   position,
   stepsCount,
+  accessible,
   handleStepClick,
 }: StepItemProps) => {
   const isLastStep = position === stepsCount - 1
@@ -26,8 +28,11 @@ const StepItem = ({
     <li className={`relative ${isLastStep ? "" : "pb-10"}`}>
       {!isLastStep && <StepItemConnector isCompleted={state === "completed"} />}
       <a
-        href="#"
-        onClick={handleStepClick}
+        onClick={() => {
+          if (accessible && handleStepClick) {
+            handleStepClick()
+          }
+        }}
         className={`text-inherit decoration-inherit relative flex items-start ${
           canHover ? "group" : ""
         }`}

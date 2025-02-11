@@ -4,6 +4,7 @@ export interface StepsProps {
   steps: {
     label: string
     description: string
+    accessible: boolean
   }[]
   /**
    * The label of the active step
@@ -27,6 +28,7 @@ const Steps = ({ steps, activeStep, setActiveStep }: StepsProps) => {
                 currentStep={currentStepIndex}
                 position={index}
                 stepsCount={steps.length}
+                accessible={step.accessible}
                 handleStepClick={() => setActiveStep(step.label)}
               />
             ))}

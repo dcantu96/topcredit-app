@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil"
+import { atom, selector, selectorFamily } from "recoil"
 import { apiSelector } from "components/providers/api/atoms"
 import { myProfileState } from "components/providers/auth/atoms"
 import { Credit, Term, TermOffering, User } from "src/schema.types"
@@ -178,6 +178,31 @@ export const initialActiveStep = selector<
         throw new Error("No credit found")
     }
   },
+})
+
+export const isStepAccessible = selectorFamily<
+  boolean,
+  "Datos Generales" | "Pre Autorizado" | "Autorizado"
+>({
+  key: "isStepAccessible",
+  get:
+    (step) =>
+    ({ get }) => {
+      const initialActiveStepValue = get(initialActiveStep)
+      if (step === "Datos Generales") return true
+      if (
+        (step === "Pre Autorizado" &&
+          initialActiveStepValue === "Datos Generales") ||
+        initialActiveStepValue === "Pre Autorizado"
+      ) {
+        return true
+      }
+      if (step === "Autorizado" && initialActiveStepValue === "Autorizado") {
+        return true
+      } else {
+        return false
+      }
+    },
 })
 
 export const activeStepSelectorState = atom({
