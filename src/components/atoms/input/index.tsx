@@ -1,9 +1,9 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import Label from "../label"
 
 interface InputBaseProps {
   id: string
-  label: string
+  label: React.ReactNode
   disabled?: boolean
   type?: string
   placeholder?: string
