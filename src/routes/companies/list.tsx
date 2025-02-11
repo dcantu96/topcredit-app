@@ -65,7 +65,9 @@ const CompaniesList = () => {
                 <p className="whitespace-nowrap">
                   Tasa{" "}
                   <span className="font-medium text-gray-500">
-                    {company.rate ? `${company.rate * 100}%` : "N/A"}
+                    {company.rate
+                      ? `${(company.rate * 100).toFixed(2)}%`
+                      : "N/A"}
                   </span>
                 </p>
                 <SmallDot />
@@ -73,7 +75,7 @@ const CompaniesList = () => {
                   Cap End.{" "}
                   <span className="font-medium text-gray-500">
                     {company.borrowingCapacity
-                      ? `${company.borrowingCapacity * 100}%`
+                      ? `${(company.borrowingCapacity * 100).toFixed(2)}%`
                       : "N/A"}
                   </span>
                 </p>

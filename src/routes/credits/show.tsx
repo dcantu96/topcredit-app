@@ -205,7 +205,7 @@ const Screen = () => {
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">Taza</label>
             <p className="text-gray-900 font-medium">
-              {company?.rate ? company.rate * 100 : 0}%
+              {(company?.rate ? company.rate * 100 : 0).toFixed(2)}%
             </p>
           </div>
           <div className="col-span-1">

@@ -21,7 +21,7 @@ const Screen = () => {
   const { id } = useParams()
   if (!id) throw new Error("companyId is required")
   const company = useRecoilValue(companySelectorQuery(id))
-  const credits = useRecoilValue(companyCreditsSelectorQuery(id))
+  const credits = useRecoilValue(companyCreditsSelectorQuery(company.id))
 
   const totalPaid = useCallback(
     (creditId: string) => {

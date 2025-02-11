@@ -29,10 +29,12 @@ const EditCompany = () => {
   const [name, setName] = useState<string>(companyData.name)
   const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(
-    companyData?.rate ? companyData.rate * 100 : 0,
+    companyData?.rate ? Number((companyData.rate * 100).toFixed(2)) : 0,
   )
   const [borrowingCapacity, setBorrowingCapacity] = useState<number>(
-    companyData.borrowingCapacity ? companyData.borrowingCapacity * 100 : 0,
+    companyData.borrowingCapacity
+      ? Number((companyData.borrowingCapacity * 100).toFixed(2))
+      : 0,
   )
   const { errors, handleErrors, clearErrors } = useFormErrors()
   const [isLoading, setIsLoading] = useState<boolean>(false)

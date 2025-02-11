@@ -103,7 +103,7 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
   }, [amortization, maxDebtCapacity, maxLoanAmount])
 
   const formattedBorrowingCapacity = company?.borrowingCapacity
-    ? `${company.borrowingCapacity * 100} %`
+    ? `${(company.borrowingCapacity * 100).toFixed(2)} %`
     : undefined
 
   const handlePreAuthorize = async () => {
