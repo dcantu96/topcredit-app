@@ -15,7 +15,7 @@ export interface StepsProps {
 const Steps = ({ steps, activeStep, setActiveStep }: StepsProps) => {
   const currentStepIndex = steps.findIndex((step) => step.label === activeStep)
   return (
-    <div className="flex justify-center px-4 py-12 md:px-6 lg:px-8">
+    <div className="flex justify-center pl-4 py-12 md:px-6 lg:px-8">
       <div className="min-w-0">
         <nav aria-label="Progress">
           <ol role="list" className="overflow-hidden list-none m-0 p-0">
