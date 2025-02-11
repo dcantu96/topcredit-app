@@ -53,7 +53,7 @@ const Select = <TOptions extends OptionsArray | OptionObject[]>({
           name={id}
           required={required}
           defaultValue={defaultValue}
-          value={value}
+          value={value === undefined ? "" : value}
           disabled={disabled}
           autoComplete={autoComplete}
           onChange={({ target: { value } }) =>
@@ -65,7 +65,7 @@ const Select = <TOptions extends OptionsArray | OptionObject[]>({
               : "ring-gray-300 focus:ring-indigo-600"
           } text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed`}
         >
-          <option value="" selected disabled>
+          <option value="" disabled>
             Selecciona una opción
           </option>
           {options?.map((option) =>
