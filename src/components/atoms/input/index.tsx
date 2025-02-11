@@ -15,6 +15,7 @@ interface InputBaseProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   value: string
   prefix?: string
+  prefixPadding?: string
   /**
    * When set to `true`, the input will be marked as errored.
    *
@@ -58,6 +59,7 @@ const Input = ({
   min,
   max,
   fullWidth,
+  prefixPadding = "pl-7",
   ...trailingProps
 }: InputProps) => {
   const passwordPaddingRight = type === "password" ? "pr-14" : undefined
@@ -72,7 +74,7 @@ const Input = ({
   const inputBaseClasses =
     "min-w-52 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
 
-  const prefixPaddingLeft = prefix ? "pl-7" : "pl-3"
+  const prefixPaddingLeft = prefix ? prefixPadding : "pl-3"
 
   const [passwordHidden, setPasswordHidden] = useState(true)
 
