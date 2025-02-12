@@ -28,7 +28,7 @@ export const readonlyCreditPayrollReceiptSelector = selector<
         url,
         filename,
         contentType,
-        size,
+        size: Number(size),
         uploadedAt,
       }
     } else {
@@ -58,7 +58,7 @@ export const readonlyCreditContractSelector = selector<
         url,
         filename,
         contentType,
-        size,
+        size: Number(size),
         uploadedAt,
       }
     } else {
@@ -88,7 +88,7 @@ export const readonlyCreditAuthorizationSelector = selector<
         url,
         filename,
         contentType,
-        size,
+        size: Number(size),
         uploadedAt,
       }
     } else {

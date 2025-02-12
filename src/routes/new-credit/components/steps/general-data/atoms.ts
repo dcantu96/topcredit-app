@@ -168,7 +168,7 @@ export const readonlyIdentityDocumentSelector = selector<
         url,
         filename,
         contentType,
-        size,
+        size: Number(size),
         uploadedAt,
       }
     } else {
@@ -205,7 +205,7 @@ export const readonlyBankStatementSelector = selector<ReadonlyFile | undefined>(
           url,
           filename,
           contentType,
-          size,
+          size: Number(size),
           uploadedAt,
         }
       } else {
@@ -239,7 +239,7 @@ export const readonlyPayrollReceiptSelector = selector<
         url,
         filename,
         contentType,
-        size,
+        size: Number(size),
         uploadedAt,
       }
     } else {
@@ -272,7 +272,7 @@ export const readonlyProofOfAddressSelector = selector<
         url,
         filename,
         contentType,
-        size,
+        size: Number(size),
         uploadedAt,
       }
     } else {
