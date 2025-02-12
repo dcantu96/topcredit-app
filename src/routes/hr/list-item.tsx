@@ -98,14 +98,14 @@ const ListItem = ({
         </div>
         <Chip
           status={
-            credit.hrStatus === "active"
+            credit.hrStatus === "approved"
               ? "success"
               : !credit.hrStatus
                 ? "info"
                 : "error"
           }
         >
-          {credit.hrStatus === "active"
+          {credit.hrStatus === "approved"
             ? "Activo"
             : !credit.hrStatus
               ? "Pendiente"

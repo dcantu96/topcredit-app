@@ -21,7 +21,7 @@ import Button from "components/atoms/button"
 const Screen = () => {
   const companyId = useRecoilValue(myProfileState)?.hrCompanyId
   const company = useRecoilValue(companySelectorQuery(companyId!.toString()))
-  const credits = useRecoilValue(hrCreditsSelectorQuery("active"))
+  const credits = useRecoilValue(hrCreditsSelectorQuery("approved"))
 
   const totalPaid = useCallback(
     (creditId: string) => {

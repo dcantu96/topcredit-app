@@ -33,13 +33,13 @@ const SUCCESS_MESSAGES = new Map<CreditStatus, string>([
 ])
 
 const HR_SUCCESS_MESSAGES = new Map<HRStatus, string>([
-  ["active", "El usuario ha sido aprobado por recursos humanos"],
-  ["inactive", "El usuario ha sido desactivado"],
+  ["approved", "El usuario ha sido aprobado por recursos humanos"],
+  ["denied", "El usuario ha sido rechazado"],
 ])
 
 const HR_ERROR_MESSAGES = new Map<HRStatus, string>([
-  ["active", "Ocurrió un error al aprobar al usuario"],
-  ["inactive", "Ocurrió un error al desactivar al usuario"],
+  ["approved", "Ocurrió un error al aprobar al usuario"],
+  ["denied", "Ocurrió un error al rechazar al usuario"],
 ])
 
 const ERROR_MESSAGES = new Map([
@@ -159,9 +159,8 @@ const useCreditActions = () => {
             message: message ?? defaultMessage,
           })
           refresh(hrCreditsSelectorQuery("all"))
-          refresh(hrCreditsSelectorQuery("active"))
-          refresh(hrCreditsSelectorQuery("inactive"))
-          refresh(hrCreditsSelectorQuery("pending"))
+          refresh(hrCreditsSelectorQuery("approved"))
+          refresh(hrCreditsSelectorQuery("denied"))
           refresh(hrCreditsSelectorQuery("pending"))
           refresh(hrCreditsSelector(creditId))
           // update all states

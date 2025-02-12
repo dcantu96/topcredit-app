@@ -62,7 +62,7 @@ const Screen = () => {
     if (status === "new") return "Nuevo"
     if (status === "pending") return "Pendiente"
     if (status === "authorized") {
-      if (hrStatus === "active") return "Aprobado por RH"
+      if (hrStatus === "approved") return "Aprobado por RH"
       return "Autorizado"
     }
     if (status === "dispersed") {

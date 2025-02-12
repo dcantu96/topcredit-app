@@ -16,7 +16,7 @@ import { companySelectorQuery } from "../companies/loader"
 const Screen = () => {
   const companyId = useRecoilValue(myProfileState)?.hrCompanyId
   const company = useRecoilValue(companySelectorQuery(companyId!.toString()))
-  const credits = useRecoilValue(hrCreditsSelectorQuery("inactive"))
+  const credits = useRecoilValue(hrCreditsSelectorQuery("denied"))
 
   return (
     <>

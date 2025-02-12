@@ -109,16 +109,16 @@ const ShowScreen = () => {
                 content={
                   credit.dispersedAt
                     ? "El crédito ya ha sido dispersado"
-                    : credit.hrStatus !== "active"
-                      ? "El crédito debe estar activo para poder dispersarlo"
+                    : credit.hrStatus !== "approved"
+                      ? "El crédito debe estar autorizado por RH para poder dispersarlo"
                       : undefined
                 }
-                cond={!!credit.dispersedAt || credit.hrStatus !== "active"}
+                cond={!!credit.dispersedAt || credit.hrStatus !== "approved"}
               >
                 <Button
                   onClick={openDisperseModal}
                   disabled={
-                    credit.hrStatus !== "active" || !!credit.dispersedAt
+                    credit.hrStatus !== "approved" || !!credit.dispersedAt
                   }
                 >
                   <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
@@ -278,13 +278,13 @@ const ShowScreen = () => {
             </div>
             <div className="flex gap-2 p-3">
               <Tooltip
-                content="El crédito debe estar activo para poder dispersarlo"
-                cond={credit.hrStatus !== "active"}
+                content="El crédito debe estar autorizado por RH para poder dispersarlo"
+                cond={credit.hrStatus !== "approved"}
               >
                 <Button
                   onClick={handleApproveCredit}
                   disabled={
-                    !dispersionReceiptId || credit.hrStatus !== "active"
+                    !dispersionReceiptId || credit.hrStatus !== "approved"
                   }
                 >
                   Dispersar

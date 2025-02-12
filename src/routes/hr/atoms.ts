@@ -5,7 +5,7 @@ import { apiSelector } from "components/providers/api/atoms"
 import type { Credit, Term } from "src/schema.types"
 import { myProfileState } from "components/providers/auth/atoms"
 
-export type HRCreditViewMode = "pending" | "active" | "inactive" | "all"
+export type HRCreditViewMode = "pending" | "approved" | "denied" | "all"
 
 export type HRCreditsResponse = Pick<
   Credit,
@@ -62,14 +62,14 @@ export const hrCreditsSelectorQuery = selectorFamily<
         throw new Error("Usuario no autorizado")
       }
 
-      const filter: Record<string, string | number | null> = {
-        status: "authorized",
-      }
+      const filter: Record<string, string | number | null> = {}
 
       if (mode === "pending") {
+        filter.status = "authorized"
         filter.company = user.hrCompanyId
         filter.hrStatus = null
       } else if (mode !== "all") {
+        filter.status = "dispersed"
         filter.company = user.hrCompanyId
         filter.hrStatus = mode
       }

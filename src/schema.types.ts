@@ -38,7 +38,7 @@ export type CreditStatus =
   | "denied"
   | "dispersed"
 
-export type HRStatus = "active" | "inactive"
+export type HRStatus = "approved" | "denied"
 
 export type DurationType = "years" | "months" | "two-weeks"
 

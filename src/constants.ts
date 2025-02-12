@@ -152,6 +152,6 @@ export const USER_STATUSES = new Map<UserStatus, string>([
 ])
 
 export const HR_STATUS = new Map<HRStatus, string>([
-  ["active", "Activo"],
-  ["inactive", "Inactivo"],
+  ["approved", "Aprobado"],
+  ["denied", "Rechazado"],
 ])

@@ -25,12 +25,12 @@ const ShowScreen = () => {
   if (!credit) return null
 
   const handleApproveCredit = () => {
-    updateHRStatus(credit.id, "active")
+    updateHRStatus(credit.id, "approved")
     navigate("..")
   }
 
   const handleDenyCredit = () => {
-    updateHRStatus(credit.id, "inactive")
+    updateHRStatus(credit.id, "denied")
     navigate("..")
   }
 
@@ -95,7 +95,8 @@ const ShowScreen = () => {
               <Button
                 onClick={handleApproveCredit}
                 disabled={
-                  credit.status === "dispersed" || credit.hrStatus === "active"
+                  credit.status === "dispersed" ||
+                  credit.hrStatus === "approved"
                 }
               >
                 <CheckIcon className="h-5 w-5 text-white mr-1.5" />
@@ -105,8 +106,7 @@ const ShowScreen = () => {
                 status="secondary"
                 onClick={handleDenyCredit}
                 disabled={
-                  credit.status === "dispersed" ||
-                  credit.hrStatus === "inactive"
+                  credit.status === "dispersed" || credit.hrStatus === "denied"
                 }
               >
                 <XMarkIcon className="h-5 w-5 mr-1.5" />
