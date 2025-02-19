@@ -24,7 +24,7 @@ export type Role =
 /**
  * The routes that are displayed in the sidebar depending on the user's role.
  */
-export type SidebarRoutes = Exclude<Role, "hr"> | "staff"
+export type SidebarRoutes = Exclude<Role, "hr">
 
 export type UserStatus =
   | "new"

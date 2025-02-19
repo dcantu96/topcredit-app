@@ -3,11 +3,10 @@ import {
   CheckBadgeIcon,
   ClipboardDocumentListIcon,
   HomeIcon,
-  UsersIcon,
 } from "@heroicons/react/24/solid"
 import { useRecoilValue } from "recoil"
 import { userRolesState } from "components/providers/auth/atoms"
-import { Role } from "src/schema.types"
+import { SidebarRoutes } from "src/schema.types"
 
 const FixedSidebar = () => {
   const roles = useRecoilValue(userRolesState)
@@ -88,7 +87,13 @@ const FixedSidebar = () => {
   )
 }
 
-const NavIconByRole = ({ role, path }: { role: Role; path: string }) => {
+const NavIconByRole = ({
+  role,
+  path,
+}: {
+  role: SidebarRoutes
+  path: string
+}) => {
   const isPathActive = useMatch(`/dashboard/${path}`)
 
   switch (role) {
@@ -119,14 +124,6 @@ const NavIconByRole = ({ role, path }: { role: Role; path: string }) => {
     case "pre_authorizations":
       return (
         <CheckBadgeIcon
-          className={`h-5 w-5 group-hover:text-sky-500 ${
-            isPathActive ? "text-sky-500" : "text-sky-300"
-          }`}
-        />
-      )
-    case "hr":
-      return (
-        <UsersIcon
           className={`h-5 w-5 group-hover:text-sky-500 ${
             isPathActive ? "text-sky-500" : "text-sky-300"
           }`}
