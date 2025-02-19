@@ -57,11 +57,6 @@ export const ROLES: { value: Role; label: string; path: string }[] = [
   },
   { value: "hr", label: "RH", path: "hr" },
   { value: "dispersions", label: "Disp", path: "dispersions" },
-  {
-    value: "installations",
-    label: "Inst",
-    path: "installations",
-  },
   { value: "payments", label: "Cobranza", path: "payments" },
   { value: "payments", label: "Bajas", path: "completed-credits" },
   { value: "admin", label: "Staff", path: "staff" },
@@ -88,10 +83,6 @@ export const ROLE_OPTIONS: RoleOption[] = [
   {
     label: "Dispersiones",
     value: "dispersions",
-  },
-  {
-    label: "Instalaciones",
-    value: "installations",
   },
   {
     label: "Pre-autorizaciones",

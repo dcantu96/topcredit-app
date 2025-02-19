@@ -3,6 +3,7 @@ import {
   CheckBadgeIcon,
   ClipboardDocumentListIcon,
   HomeIcon,
+  UsersIcon,
 } from "@heroicons/react/24/solid"
 import { useRecoilValue } from "recoil"
 import { userRolesState } from "components/providers/auth/atoms"
@@ -33,7 +34,7 @@ const FixedSidebar = () => {
             </NavLink>
           </li>
           {roles
-            .filter((r) => r.value !== "admin" && r.value !== "hr")
+            .filter((r) => r.value !== "admin")
             .map(({ label, value, path }) => (
               <li key={path}>
                 <NavLink
@@ -123,9 +124,9 @@ const NavIconByRole = ({ role, path }: { role: Role; path: string }) => {
           }`}
         />
       )
-    case "installations":
+    case "hr":
       return (
-        <ClipboardDocumentListIcon
+        <UsersIcon
           className={`h-5 w-5 group-hover:text-sky-500 ${
             isPathActive ? "text-sky-500" : "text-sky-300"
           }`}

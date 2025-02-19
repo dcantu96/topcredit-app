@@ -16,7 +16,6 @@ export type Role =
   | "pre_authorizations"
   | "authorizations"
   | "dispersions"
-  | "installations"
   | "payments"
   | "admin"
   | "companies"

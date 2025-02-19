@@ -38,12 +38,6 @@ const ShowDispersions = lazy(() => import("../routes/dispersions/show"))
 const Landing = lazy(() => import("../routes/landing"))
 const LatestCreditMonitor = lazy(() => import("./latest-credit-monitor"))
 const MyCredits = lazy(() => import("../routes/my-credits/my-credits"))
-const CompanyInstallations = lazy(
-  () => import("../routes/company-installations/list"),
-)
-const CompanyInstallation = lazy(
-  () => import("../routes/company-installations/show"),
-)
 const CompanyPayments = lazy(() => import("../routes/company-payments/list"))
 const CompanyPayment = lazy(() => import("../routes/company-payments/show"))
 const Credit = lazy(() => import("../routes/credits/show"))
@@ -180,15 +174,8 @@ function App() {
             <Route path=":id" element={<ShowDispersions />} />
           </Route>
           <Route
-            path="installations"
-            element={<ProtectedRoute allowedRoles={["installations"]} />}
-          >
-            <Route index element={<CompanyInstallations />} />
-            <Route path=":companyId" element={<CompanyInstallation />} />
-          </Route>
-          <Route
             path="completed-credits"
-            element={<ProtectedRoute allowedRoles={["installations"]} />}
+            element={<ProtectedRoute allowedRoles={["hr"]} />}
           >
             <Route index element={<CompanyCompletedCreditsList />} />
             <Route path=":companyId" element={<CompanyCompletedCredits />} />
