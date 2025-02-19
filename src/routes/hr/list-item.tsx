@@ -113,7 +113,7 @@ const ListItem = ({
         </Chip>
       </div>
       <button
-        onClick={() => navigate("/dashboard/hr/" + credit.id)}
+        onClick={() => navigate(credit.id)}
         className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"
       >
         <ChevronRightIcon className="w-6 h-6 text-gray-400" />

@@ -8,6 +8,7 @@ import DashboardLayout from "components/organisms/dashboard-layout"
 /* Utility */
 import ProtectedRoute from "components/providers/auth/ProtectedRoute"
 import Toaster from "components/providers/toaster/toaster"
+import NotFound from "components/molecules/not-found"
 
 /* Routes */
 const Dashboard = lazy(() => import("../routes/dashboards"))
@@ -54,8 +55,6 @@ const ConfirmationFailure = lazy(() => import("../routes/confirmation-failure"))
 const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 const HR = lazy(() => import("../routes/hr/general"))
 const ShowHR = lazy(() => import("../routes/hr/show"))
-const HRActive = lazy(() => import("../routes/hr/active"))
-const HRInactive = lazy(() => import("../routes/hr/inactive"))
 const ShowUser = lazy(() => import("../routes/users/show"))
 const ShowCompanyCredits = lazy(
   () => import("../routes/companies/credits/index"),
@@ -211,11 +210,12 @@ function App() {
             <Route path="new" element={<NewStaff />} />
             <Route path=":id/edit" element={<EditStaff />} />
           </Route>
-          <Route path="hr" element={<ProtectedRoute allowedRoles={["hr"]} />}>
+          <Route
+            path="hr/:id"
+            element={<ProtectedRoute allowedRoles={["hr"]} />}
+          >
             <Route index element={<HR />} />
-            <Route path=":id" element={<ShowHR />} />
-            <Route path="active" element={<HRActive />} />
-            <Route path="inactive" element={<HRInactive />} />
+            <Route path=":creditId" element={<ShowHR />} />
           </Route>
         </Route>
         <Route
@@ -226,7 +226,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<div>Not Found</div>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   )

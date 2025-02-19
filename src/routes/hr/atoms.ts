@@ -116,6 +116,77 @@ export const hrCreditsSelectorQuery = selectorFamily<
     },
 })
 
+export const activeCreditsSelectorQuery = selectorFamily<
+  Map<
+    string,
+    Pick<
+      Credit,
+      | "id"
+      | "status"
+      | "updatedAt"
+      | "createdAt"
+      | "loan"
+      | "termOffering"
+      | "borrower"
+      | "amortization"
+      | "hrStatus"
+      | "payments"
+    >
+  >,
+  string
+>({
+  key: "activeCreditsSelectorQuery",
+  get:
+    (companyId) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+
+      const { data }: { data: HRCreditsResponse[] } = await api.get("credit", {
+        params: {
+          fields: {
+            credits:
+              "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus,payments",
+          },
+          include: "borrower,termOffering.term,payments",
+          filter: {
+            status: "dispersed",
+            hrStatus: "approved",
+            company: companyId,
+          },
+        },
+      })
+
+      const map = new Map<
+        string,
+        Pick<
+          Credit,
+          | "id"
+          | "status"
+          | "updatedAt"
+          | "createdAt"
+          | "loan"
+          | "termOffering"
+          | "borrower"
+          | "amortization"
+          | "hrStatus"
+          | "payments"
+        >
+      >()
+      for (const credit of data) {
+        map.set(credit.id, {
+          ...credit,
+          borrower: credit.borrower.data,
+          termOffering: {
+            ...(credit.termOffering.data || {}),
+            term: credit.termOffering.data?.term.data,
+          },
+          payments: credit.payments.data || [],
+        })
+      }
+      return map
+    },
+})
+
 export const hrCreditsSelector = selectorFamily<
   | Pick<
       Credit,
@@ -138,6 +209,52 @@ export const hrCreditsSelector = selectorFamily<
     ({ get }) => {
       const credits = get(hrCreditsSelectorQuery("all"))
       return credits.get(creditId)
+    },
+})
+
+export const hrCreditSelectorQuery = selectorFamily<
+  | Pick<
+      Credit,
+      | "id"
+      | "status"
+      | "updatedAt"
+      | "createdAt"
+      | "loan"
+      | "termOffering"
+      | "borrower"
+      | "amortization"
+      | "hrStatus"
+    >
+  | undefined,
+  string
+>({
+  key: "hrCreditSelectorQuery",
+  get:
+    (creditId) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+      const { data }: { data: HRCreditsResponse } = await api.get(
+        `credits/${creditId}`,
+        {
+          params: {
+            fields: {
+              credits:
+                "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus,payments",
+            },
+            include: "borrower,termOffering.term,payments",
+          },
+        },
+      )
+
+      return {
+        ...data,
+        borrower: data.borrower.data,
+        termOffering: {
+          ...(data.termOffering.data || {}),
+          term: data.termOffering.data?.term.data,
+        },
+        payments: data.payments.data || [],
+      }
     },
 })
 

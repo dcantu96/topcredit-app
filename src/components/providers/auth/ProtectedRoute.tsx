@@ -15,6 +15,8 @@ interface ProtectedRouteProps {
   allowedRoles?: Role[]
 }
 
+export type CustomError = Error & { code?: number }
+
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   const maybeAuth = useRecoilValue(authState)
   const profile = useRecoilValue(myProfileState)
@@ -31,7 +33,9 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     )
 
     if (isNotAdmin && !isRoleAllowed) {
-      return <Navigate to="/not-allowed" />
+      const error: CustomError = new Error("Not Allowed")
+      error.code = 403
+      throw error
     }
   }
 

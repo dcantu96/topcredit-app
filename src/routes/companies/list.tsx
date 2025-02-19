@@ -13,6 +13,7 @@ import StatusIndicator from "components/atoms/status-indicator"
 
 import { companiesState } from "./loader"
 import { DURATION_TYPES } from "../../constants"
+import { UsersIcon } from "@heroicons/react/24/solid"
 
 const CompaniesList = () => {
   const companyData = useRecoilValue(companiesState)
@@ -37,8 +38,8 @@ const CompaniesList = () => {
             <div className="flex-1 min-w-60">
               <div className="flex items-center gap-x-3">
                 <StatusIndicator color="info" />
-                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0 flex">
-                  <a className="flex text-inherit decoration-inherit gap-x-2 mr-2">
+                <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0 flex gap-x-2">
+                  <a className="flex text-inherit decoration-inherit gap-x-2">
                     <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
                       {company.name}
                     </span>
@@ -58,6 +59,14 @@ const CompaniesList = () => {
                     >
                       <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
                     </svg>
+                  </ButtonLink>
+                  <ButtonLink
+                    size="sm"
+                    status="secondary"
+                    to={`/dashboard/hr/${company.id}`}
+                  >
+                    RH
+                    <UsersIcon className="h-4 w-4 text-gray-400 ml-2" />
                   </ButtonLink>
                 </h2>
               </div>

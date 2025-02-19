@@ -6,15 +6,15 @@ import Button from "components/atoms/button"
 import useCreditActions from "hooks/useCreditActions"
 import useCompanies from "hooks/useCompanies"
 
-import { hrCreditsSelector } from "./atoms"
+import { hrCreditSelectorQuery } from "./atoms"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
 import ButtonLink from "components/atoms/button-link"
 
 const ShowScreen = () => {
-  const { id } = useParams()
+  const { creditId } = useParams()
   const navigate = useNavigate()
-  if (!id || Number.isNaN(id)) throw new Error("Missing id param")
-  const credit = useRecoilValue(hrCreditsSelector(id))
+  if (!creditId || Number.isNaN(creditId)) throw new Error("Missing id param")
+  const credit = useRecoilValue(hrCreditSelectorQuery(creditId))
   if (!credit) throw new Error("Credit not found")
   const { updateHRStatus } = useCreditActions()
   const companiesMap = useCompanies()

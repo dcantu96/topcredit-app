@@ -17,8 +17,8 @@ const Dashboard = () => {
     return <Navigate to="pending-authorizations" />
   } else if (profile?.roles.includes("dispersions")) {
     return <Navigate to="dispersions" />
-  } else if (profile?.roles.includes("hr")) {
-    return <Navigate to="hr" />
+  } else if (profile?.roles.includes("hr") && profile.hrCompanyId) {
+    return <Navigate to={`hr/${profile.hrCompanyId}`} />
   } else {
     return <div>dashboard not found</div>
   }

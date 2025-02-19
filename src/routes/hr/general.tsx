@@ -8,15 +8,21 @@ import List from "components/atoms/list"
 import ListItem from "./list-item"
 import { DocumentIcon } from "@heroicons/react/24/solid"
 import ActivityContainer from "components/organisms/activity-container"
-import { hrCreditsSelectorQuery } from "./atoms"
+import { activeCreditsSelectorQuery } from "./atoms"
 import ButtonLink from "components/atoms/button-link"
 import { myProfileState } from "components/providers/auth/atoms"
 import { companySelectorQuery } from "../companies/loader"
+import { useParams } from "react-router-dom"
+import useIsRole from "hooks/useIsRole"
 
 const Screen = () => {
+  const { id } = useParams()
   const companyId = useRecoilValue(myProfileState)?.hrCompanyId
-  const company = useRecoilValue(companySelectorQuery(companyId!.toString()))
-  const credits = useRecoilValue(hrCreditsSelectorQuery("pending"))
+  const isAdmin = useIsRole("admin")
+  if (!id) throw new Error("Missing id param")
+  if (!isAdmin && Number(id) !== companyId) throw new Error("Unauthorized")
+  const company = useRecoilValue(companySelectorQuery(id))
+  const credits = useRecoilValue(activeCreditsSelectorQuery(id))
 
   return (
     <>
