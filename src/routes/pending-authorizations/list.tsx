@@ -8,6 +8,7 @@ import List from "components/atoms/list"
 import { pendingAuthorizationsState } from "./atoms"
 import ListItem from "./list-item"
 import ActivityContainer from "components/organisms/activity-container"
+import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const credits = useRecoilValue(pendingAuthorizationsState)
@@ -22,6 +23,7 @@ const Screen = () => {
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>
+        {credits.length === 0 && <EmptyList />}
         <List>
           {credits.map((credit) => (
             <ListItem key={credit.id} credit={credit} />
