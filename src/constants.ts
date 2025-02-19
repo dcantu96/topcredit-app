@@ -3,6 +3,7 @@ import {
   DurationType,
   HRStatus,
   Role,
+  SidebarRoutes,
   UserStatus,
 } from "./schema.types"
 
@@ -42,7 +43,7 @@ export const STATES_OF_MEXICO = [
 
 export const COUNTRIES = [{ value: "MX" as const, label: "México" }]
 
-export const ROLES: { value: Role; label: string; path: string }[] = [
+export const ROLES: { value: SidebarRoutes; label: string; path: string }[] = [
   { value: "requests", label: "Sol", path: "requests" },
   {
     value: "pre_authorizations",
@@ -55,7 +56,6 @@ export const ROLES: { value: Role; label: string; path: string }[] = [
     label: "Aut",
     path: "pending-authorizations",
   },
-  { value: "hr", label: "RH", path: "hr" },
   { value: "dispersions", label: "Disp", path: "dispersions" },
   { value: "payments", label: "Cobranza", path: "payments" },
   { value: "payments", label: "Bajas", path: "completed-credits" },
