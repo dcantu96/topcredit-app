@@ -18,6 +18,7 @@ import { DURATION_TYPES, MXNFormat } from "../../constants"
 import { useCallback } from "react"
 import dayjs from "dayjs"
 import { DocumentArrowUpIcon } from "@heroicons/react/24/solid"
+import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const { companyId } = useParams()
@@ -112,6 +113,7 @@ const Screen = () => {
             <BulkActionsButton companyId={companyId} />
           </ListHeader.Actions>
         </ListHeader>
+        {credits.length === 0 && <EmptyList />}
         <List>
           {credits.map((credit) => (
             <CreditListItem

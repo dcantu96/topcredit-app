@@ -9,6 +9,7 @@ import { companyCreditsWithPaymentsState } from "../../services/companies/atoms"
 import { fetchNextPayrollDate } from "../company-installations/utils"
 
 import ListItem from "./list-item"
+import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const companies = useRecoilValue(companyCreditsWithPaymentsState)
@@ -23,6 +24,7 @@ const Screen = () => {
             Proxima Instalación <b>{nextInstallationDueDate}</b>
           </h3>
         </ListHeader>
+        {companies.length === 0 && <EmptyList />}
         <List>
           {companies.map((company) => (
             <ListItem key={company.id} company={company} />
