@@ -11,6 +11,7 @@ import Button from "components/atoms/button"
 import { DocumentArrowDownIcon } from "@heroicons/react/24/solid"
 import ActivityContainer from "components/organisms/activity-container"
 import { exportToCSV } from "../../utils"
+import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const credits = useRecoilValue(dispersionsState)
@@ -45,6 +46,7 @@ const Screen = () => {
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>
+        {credits.length === 0 && <EmptyList />}
         <List>
           {credits.map((credit) => (
             <ListItem key={credit.id} credit={credit} />
