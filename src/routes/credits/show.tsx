@@ -1,5 +1,8 @@
+import { useMemo } from "react"
 import { useRecoilValue } from "recoil"
 import { useParams } from "react-router-dom"
+import dayjs from "dayjs"
+import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/24/solid"
 
 import Chip from "components/atoms/chip"
 import ButtonLink from "components/atoms/button-link"
@@ -7,9 +10,6 @@ import FileViewer from "components/atoms/file-viewer"
 
 import { creditDetailedWithPaymentsState } from "./atoms"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import { useMemo } from "react"
-import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/24/solid"
-import dayjs from "dayjs"
 import localizedFormat from "dayjs/plugin/localizedFormat"
 dayjs.extend(localizedFormat)
 import "dayjs/locale/es"
@@ -21,7 +21,7 @@ const Screen = () => {
   const credit = useRecoilValue(creditDetailedWithPaymentsState(id!))
   const company = credit.termOffering.company
 
-  const { status, installationStatus, hrStatus } = credit
+  const { status, hrStatus } = credit
 
   /**
    * Credit & hr status workflow:
@@ -45,11 +45,8 @@ const Screen = () => {
       if (hrStatus === "approved") return "Aprobado por RH"
       return "Autorizado"
     }
-    if (status === "dispersed") {
-      if (installationStatus === "installed") return "Instalado"
-      return "Dispersado"
-    }
-  }, [status, installationStatus, hrStatus])
+    if (status === "dispersed") return "Dispersado"
+  }, [status, hrStatus])
 
   return (
     <>
@@ -192,8 +189,8 @@ const Screen = () => {
             </label>
             {credit.termOffering?.term && (
               <p className="text-gray-900 font-medium">
-                {credit.installationDate
-                  ? dayjs(credit.installationDate).locale("es").format("LLL")
+                {credit.firstDiscountDate
+                  ? dayjs(credit.firstDiscountDate).locale("es").format("LLL")
                   : "--"}
               </p>
             )}

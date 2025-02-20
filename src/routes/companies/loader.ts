@@ -235,7 +235,7 @@ export const companyNewlyInstalledCreditsQuery = selectorFamily<
             credits: "id,creditAmount,updatedAt,createdAt",
           },
           filter: {
-            installationDateRange: filters.range,
+            firstDiscountDateRange: filters.range,
           },
         },
       })
@@ -244,10 +244,7 @@ export const companyNewlyInstalledCreditsQuery = selectorFamily<
 })
 
 export const companyInstalledCreditsQuery = selectorFamily<
-  Pick<
-    Credit,
-    "id" | "updatedAt" | "createdAt" | "amortization" | "nextExpectedPayment"
-  >[],
+  Pick<Credit, "id" | "updatedAt" | "createdAt" | "amortization">[],
   string
 >({
   key: "companyInstalledCreditsQuery",
@@ -258,21 +255,14 @@ export const companyInstalledCreditsQuery = selectorFamily<
       const {
         data,
       }: {
-        data: Pick<
-          Credit,
-          | "id"
-          | "updatedAt"
-          | "createdAt"
-          | "amortization"
-          | "nextExpectedPayment"
-        >[]
+        data: Pick<Credit, "id" | "updatedAt" | "createdAt" | "amortization">[]
       } = await api.get(`company/${id}/credits`, {
         params: {
           fields: {
-            credits: "id,updatedAt,createdAt,amortization,nextExpectedPayment",
+            credits: "id,updatedAt,createdAt,amortization,firstDiscountDate",
           },
           filter: {
-            installationStatus: "installed",
+            status: "dispersed",
           },
         },
       })

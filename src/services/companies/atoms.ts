@@ -17,12 +17,7 @@ export type CompanyCreditsResponse = Pick<
   credits: {
     data: (Pick<
       Credit,
-      | "id"
-      | "status"
-      | "installationStatus"
-      | "dispersedAt"
-      | "loan"
-      | "installationDate"
+      "id" | "status" | "firstDiscountDate" | "dispersedAt" | "loan"
     > & {
       payments: {
         data: Payment[]
@@ -37,13 +32,7 @@ export type CompanyCredits = Pick<
 > & {
   credits: Pick<
     Credit,
-    | "id"
-    | "status"
-    | "installationStatus"
-    | "dispersedAt"
-    | "loan"
-    | "installationDate"
-    | "payments"
+    "id" | "status" | "firstDiscountDate" | "dispersedAt" | "loan" | "payments"
   >[]
 }
 
@@ -61,8 +50,7 @@ export const companyCreditsWithPaymentsSelectorQuery = selector<
           fields: {
             companies:
               "id,name,domain,createdAt,credits,employeeSalaryFrequency,rate",
-            credits:
-              "id,status,installationStatus,dispersedAt,loan,installationDate,payments",
+            credits: "id,status,dispersedAt,loan,firstDiscountDate,payments",
           },
         },
       },
@@ -103,13 +91,13 @@ export type CompanyCreditDetailedResponse = Pick<
   Credit,
   | "id"
   | "status"
-  | "installationStatus"
+  | "firstDiscountDate"
   | "dispersedAt"
   | "loan"
-  | "installationDate"
   | "amortization"
   | "creditAmount"
   | "maxLoanAmount"
+  | "hrStatus"
 > & {
   borrower: {
     data: Pick<
@@ -118,7 +106,10 @@ export type CompanyCreditDetailedResponse = Pick<
     >
   }
   payments: {
-    data: Pick<Payment, "id" | "paidAt" | "amount" | "number">[] | null
+    data: Pick<
+      Payment,
+      "id" | "paidAt" | "amount" | "number" | "expectedAt" | "expectedAmount"
+    >[]
   }
   termOffering: {
     data: Pick<TermOffering, "id"> & {
@@ -136,19 +127,22 @@ export type CompanyCreditDetailed = Pick<
   Credit,
   | "id"
   | "status"
-  | "installationStatus"
+  | "firstDiscountDate"
   | "dispersedAt"
   | "loan"
-  | "installationDate"
   | "amortization"
   | "creditAmount"
   | "maxLoanAmount"
+  | "hrStatus"
 > & {
   borrower: Pick<
     Credit["borrower"],
     "id" | "firstName" | "lastName" | "employeeNumber"
   >
-  payments: Pick<Payment, "id" | "paidAt" | "amount" | "number">[]
+  payments: Pick<
+    Payment,
+    "id" | "paidAt" | "amount" | "number" | "expectedAt" | "expectedAmount"
+  >[]
   termOffering: Pick<TermOffering, "id"> & {
     term: Pick<Term, "id" | "durationType" | "duration">
     company: Pick<Company, "rate">
@@ -176,7 +170,7 @@ export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
               termOfferings: "id,term,company",
               users: "id,firstName,lastName,email,employeeNumber",
               credits:
-                "id,status,installationStatus,dispersedAt,loan,installationDate,borrower,payments,termOffering,amortization,creditAmount,maxLoanAmount",
+                "id,status,dispersedAt,hrStatus,loan,firstDiscountDate,borrower,payments,termOffering,amortization,creditAmount,maxLoanAmount",
             },
             include:
               "borrower,payments,termOffering,termOffering.term,termOffering.company",
@@ -189,10 +183,10 @@ export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
       )
 
       return data
-        .sort((a, b) => {
+        .toSorted((a, b) => {
           return (
-            new Date(a.installationDate!).getTime() -
-            new Date(b.installationDate!).getTime()
+            new Date(a.firstDiscountDate!).getTime() -
+            new Date(b.firstDiscountDate!).getTime()
           )
         })
         .map((credit) => ({
@@ -204,9 +198,7 @@ export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
             company: credit.termOffering.data.company.data,
           },
           payments:
-            credit.payments.data?.sort((a, b) => {
-              return new Date(a.paidAt).getTime() - new Date(b.paidAt).getTime()
-            }) ?? [],
+            credit.payments.data?.toSorted((a, b) => a.number - b.number) || [],
         }))
     },
 })

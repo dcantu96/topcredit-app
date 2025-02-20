@@ -6,14 +6,12 @@ export const mockInstalledCredits: Pick<
   | "createdAt"
   | "updatedAt"
   | "amortization"
-  | "nextExpectedPayment"
   | "creditAmount"
   | "status"
   | "loan"
   | "payments"
   | "termOffering"
-  | "installationDate"
-  | "installationStatus"
+  | "hrStatus"
 >[] = []
 
 // Helper function to generate random dates within the last 6 months
@@ -49,15 +47,11 @@ for (let i = 0; i < 100; i++) {
     createdAt: initial,
     updatedAt: initial,
     amortization: `${Number(getRandomAmount(1000, 10000))}`,
-    nextExpectedPayment: getRandomDate(),
     creditAmount: `${Number(getRandomAmount(5000, 50000))}`,
     status: creditStatuses[Math.floor(Math.random() * creditStatuses.length)],
     loan: Math.floor(Math.random() * 100000), // Random loan amount
-    // ... other properties from your Credit type, add them here with mock data
     payments: [], // Initialize as empty array, or add mock payments if needed
     termOffering: null, // Add mock termOffering data if needed
-    installationDate: getRandomDate(),
-    installationStatus: "installed",
-    // ... other properties from your Credit type
+    hrStatus: "approved",
   })
 }

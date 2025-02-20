@@ -14,6 +14,7 @@ import { myProfileState } from "components/providers/auth/atoms"
 import { companySelectorQuery } from "../companies/loader"
 import { useParams } from "react-router-dom"
 import useIsRole from "hooks/useIsRole"
+import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const { id } = useParams()
@@ -45,6 +46,7 @@ const Screen = () => {
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>
+        {credits.size === 0 && <EmptyList />}
         <List>
           {Array.from(credits).map(([id, credit]) => (
             <ListItem key={id} credit={credit} />

@@ -55,9 +55,9 @@ const CompanyOverview = () => {
           </h1>
           <div className="flex items-center gap-4">
             <ButtonLink to=".." size="sm">
-              Resumen
+              Regresar
             </ButtonLink>
-            <ButtonLink to="../credits" size="sm">
+            <ButtonLink to="credits" size="sm">
               Créditos
             </ButtonLink>
             {

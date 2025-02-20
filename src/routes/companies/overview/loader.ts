@@ -18,14 +18,22 @@ interface CompanyInstalledCreditResponseItem {
   updatedAt: Credit["updatedAt"]
   createdAt: Credit["createdAt"]
   amortization: Credit["amortization"]
-  nextExpectedPayment: Credit["nextExpectedPayment"]
   creditAmount: Credit["creditAmount"]
   status: Credit["status"]
   loan: Credit["loan"]
   dispersedAt: Credit["dispersedAt"]
-  installationDate: Credit["installationDate"]
+  firstDiscountDate: Credit["firstDiscountDate"]
   payments: {
-    data: Pick<Payment, "id" | "createdAt" | "amount" | "number">[]
+    data: Pick<
+      Payment,
+      | "id"
+      | "createdAt"
+      | "amount"
+      | "number"
+      | "paidAt"
+      | "expectedAt"
+      | "expectedAmount"
+    >[]
   } | null
   borrower: {
     data: Pick<User, "id" | "firstName" | "lastName" | "email">
@@ -44,14 +52,22 @@ type CompanyInstalledCredit = Pick<
   | "updatedAt"
   | "createdAt"
   | "amortization"
-  | "nextExpectedPayment"
   | "creditAmount"
   | "status"
   | "loan"
   | "dispersedAt"
-  | "installationDate"
+  | "firstDiscountDate"
 > & {
-  payments: Pick<Payment, "id" | "createdAt" | "amount" | "number" | "paidAt">[]
+  payments: Pick<
+    Payment,
+    | "id"
+    | "createdAt"
+    | "amount"
+    | "number"
+    | "paidAt"
+    | "expectedAt"
+    | "expectedAmount"
+  >[]
   borrower: Pick<User, "id" | "firstName" | "lastName" | "email"> | null
   termOffering:
     | (Pick<TermOffering, "id"> & {
@@ -76,14 +92,15 @@ export const companyInstalledCreditsQuery = selectorFamily<
           {
             params: {
               fields: {
-                payments: "id,createdAt,amount,number,paidAt",
+                payments:
+                  "id,createdAt,amount,number,paidAt,expectedAt,expectedAmount",
                 termOfferings: "id,term",
                 terms: "id,name,durationType,duration",
                 users: "id,firstName,lastName,email",
                 credits:
-                  "id,updatedAt,createdAt,amortization,nextExpectedPayment,creditAmount,status,loan,borrower,termOffering,payments,installationDate,dispersedAt",
+                  "id,updatedAt,createdAt,amortization,creditAmount,status,loan,borrower,termOffering,payments,firstDiscountDate,dispersedAt",
               },
-              include: "borrower,termOffering.term,payments", // Include related entities
+              include: "borrower,termOffering.term,payments",
               filter: {
                 status: "dispersed",
               },

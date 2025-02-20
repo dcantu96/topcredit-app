@@ -10,14 +10,15 @@ export const dispersedCreditsImportSelector = selector({
         include: "borrower,termOffering.term,payments",
         fields: {
           users: "id,employeeNumber",
-          credits: "id,borrower,installationDate,termOffering,payments",
+          credits:
+            "id,borrower,firstDiscountDate,hrStatus,termOffering,payments",
           payments: "id,amount,number,paidAt",
           termOfferings: "id,term",
           terms: "id,duration",
         },
         filter: {
           status: "dispersed",
-          installationStatus: "installed",
+          hrStatus: "approved",
         },
       },
     })

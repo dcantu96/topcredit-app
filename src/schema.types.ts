@@ -179,11 +179,9 @@ export interface Credit extends ObjectWithId, Timestamps {
   creditAmount: `${number}` | null
   dispersedAt: string | null
   hrStatus: HRStatus | null
-  installationDate: string | null
-  installationStatus: "installed" | null
+  firstDiscountDate: string | null
   loan: number | null
   maxLoanAmount: `${number}` | null
-  nextExpectedPayment: string | null
   payments: Payment[] | null
   payrollReceiptContentType: string | null
   payrollReceiptFilename: string | null
@@ -219,6 +217,8 @@ export interface Payment extends ObjectWithId, Timestamps {
   amount: number
   credit: Credit
   number: number
+  expectedAt: string
+  expectedAmount: number
 }
 
 export interface Notification extends ObjectWithId, Timestamps {

@@ -7,7 +7,6 @@ import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 
 import { companySelectorQuery } from "../companies/loader"
-import { fetchNextPayrollDate } from "../company-installations/utils"
 import ListItem from "./credit-list-item"
 import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
 import BulkActions from "./bulk-actions"
@@ -22,14 +21,10 @@ const Screen = () => {
   const credits = useRecoilValue(
     companyCreditsDetailedWithPaymentsState(companyId),
   )?.filter((credit) => {
-    const isInstalled = credit.installationStatus === "installed"
-    const arePaymentComplete =
-      credit.payments?.length === credit.termOffering.term.duration
-    return isInstalled && arePaymentComplete
+    const isHRApproved = credit.hrStatus === "approved"
+    const isMissingPayment = credit.payments.find((payment) => !payment.paidAt)
+    return isHRApproved && !isMissingPayment
   })
-  const nextPayrollDate = fetchNextPayrollDate(
-    company.employeeSalaryFrequency,
-  ).toLocaleDateString()
 
   if (!credits) return null
 
@@ -64,9 +59,6 @@ const Screen = () => {
             / <ListHeader.Title text={company.name} />
           </ListHeader.Title>
           <ListHeader.Actions>
-            <h3 className="text-sm">
-              Proxima Nómina <b>{nextPayrollDate}</b>
-            </h3>
             <Button size="sm" onClick={handleExport}>
               Exportar
               <DocumentArrowDownIcon className="w-4 h-4 ml-2" />

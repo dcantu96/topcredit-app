@@ -180,7 +180,8 @@ export const activeCreditsSelectorQuery = selectorFamily<
             ...(credit.termOffering.data || {}),
             term: credit.termOffering.data?.term.data,
           },
-          payments: credit.payments.data || [],
+          payments:
+            credit.payments.data?.toSorted((a, b) => a.number - b.number) || [],
         })
       }
       return map

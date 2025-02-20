@@ -71,7 +71,7 @@ export default function DispersedByFrequencyChart() {
       {} as Record<string, { loaned: number; label: string }>,
     )
 
-    const sortedPeriods = Object.keys(creditsByPeriod).sort()
+    const sortedPeriods = Object.keys(creditsByPeriod).toSorted()
 
     return sortedPeriods.map((period) => ({
       period,

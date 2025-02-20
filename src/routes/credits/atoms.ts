@@ -17,8 +17,7 @@ export type CreditDetailedResponse = Pick<
   | "dispersedAt"
   | "hrStatus"
   | "id"
-  | "installationDate"
-  | "installationStatus"
+  | "firstDiscountDate"
   | "loan"
   | "maxLoanAmount"
   | "status"
@@ -52,7 +51,17 @@ export type CreditDetailedResponse = Pick<
     >
   }
   payments: {
-    data: Pick<Payment, "id" | "paidAt" | "amount" | "number">[] | null
+    data:
+      | Pick<
+          Payment,
+          | "id"
+          | "paidAt"
+          | "amount"
+          | "number"
+          | "expectedAt"
+          | "expectedAmount"
+        >[]
+      | null
   }
   termOffering: {
     data: Pick<TermOffering, "id"> & {
@@ -73,8 +82,7 @@ export type CreditDetailed = Pick<
   | "dispersedAt"
   | "hrStatus"
   | "id"
-  | "installationDate"
-  | "installationStatus"
+  | "firstDiscountDate"
   | "loan"
   | "maxLoanAmount"
   | "status"
@@ -105,7 +113,10 @@ export type CreditDetailed = Pick<
     | "employeeNumber"
     | "salary"
   >
-  payments: Pick<Payment, "id" | "paidAt" | "amount" | "number">[]
+  payments: Pick<
+    Payment,
+    "id" | "paidAt" | "amount" | "number" | "expectedAt" | "expectedAmount"
+  >[]
   termOffering: Pick<TermOffering, "id"> & {
     term: Pick<Term, "id" | "durationType" | "duration">
     company: Pick<Company, "rate" | "employeeSalaryFrequency" | "name" | "id">
@@ -132,7 +143,7 @@ export const creditDetailedWithPaymentsSelector = selectorFamily<
               users:
                 "id,firstName,lastName,email,bankAccountNumber,employeeNumber,salary",
               credits:
-                "createdAt,amortization,borrower,creditAmount,dispersedAt,hrStatus,id,installationDate,installationStatus,loan,maxLoanAmount,payments,termOffering,status,payrollReceiptUrl,payrollReceiptContentType,payrollReceiptFilename,payrollReceiptSize,payrollReceiptUploadedAt,contractUrl,contractContentType,contractFilename,contractSize,contractUploadedAt,authorizationUrl,authorizationContentType,authorizationFilename,authorizationSize,authorizationUploadedAt",
+                "createdAt,amortization,borrower,creditAmount,dispersedAt,hrStatus,id,firstDiscountDate,loan,maxLoanAmount,payments,termOffering,status,payrollReceiptUrl,payrollReceiptContentType,payrollReceiptFilename,payrollReceiptSize,payrollReceiptUploadedAt,contractUrl,contractContentType,contractFilename,contractSize,contractUploadedAt,authorizationUrl,authorizationContentType,authorizationFilename,authorizationSize,authorizationUploadedAt",
             },
             include:
               "borrower,payments,termOffering,termOffering.term,termOffering.company",
@@ -149,9 +160,7 @@ export const creditDetailedWithPaymentsSelector = selectorFamily<
           company: data.termOffering.data.company.data,
         },
         payments:
-          data.payments.data?.sort((a, b) => {
-            return new Date(a.paidAt).getTime() - new Date(b.paidAt).getTime()
-          }) ?? [],
+          data.payments.data?.toSorted((a, b) => a.number - b.number) || [],
       }
     },
 })

@@ -21,7 +21,6 @@ import { useParams } from "react-router"
 import { useMemo } from "react"
 import { companySelectorQuery } from "../loader"
 import dayjs from "dayjs"
-import { amortizedTable } from "../../../routes/company-installations/utils"
 
 const chartConfig = {
   amount: {
@@ -42,51 +41,9 @@ export default function DeductedByFreqChart() {
 
   const dispersedAmountByFreq = useMemo(() => {
     const deductionsByPeriod = dispersedCredits.reduce(
-      (
-        acc,
-        { payments, amortization, termOffering, installationDate, dispersedAt },
-      ) => {
-        const amortized = amortizedTable(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          termOffering?.term.duration!,
-          company.employeeSalaryFrequency,
-          Number(amortization),
-          installationDate ?? dispersedAt!,
-        )
-
-        // Merge payments with amortized data
-        amortized.forEach(({ expected, dueDate }) => {
-          const date = new Date(dueDate) // Use due date for period calculation
-          let period
-          let label
-
-          if (company.employeeSalaryFrequency === "monthly") {
-            period = date.toISOString().slice(0, 7) // YYYY-MM
-            label = date.toLocaleString("default", {
-              month: "short",
-              year: "numeric",
-            })
-          } else {
-            const year = date.getFullYear()
-            const month = date.toLocaleString("default", { month: "2-digit" }) // MM
-            const day = date.toLocaleString("default", { day: "2-digit" }) // DD
-            const weekNumber = date.getDate() > 15 ? 2 : 1
-            period = `${year}-${month}-${day}` // YYYY-MM-DD
-            label = `${month}-Q${weekNumber}`
-          }
-
-          if (!acc[period]) {
-            acc[period] = {
-              expected: 0, // Initialize expected to 0
-              amount: 0,
-              label: label,
-            }
-          }
-          acc[period].expected += expected // Accumulate expected amount
-        })
-
-        payments.forEach(({ amount, paidAt }) => {
-          const date = new Date(paidAt)
+      (acc, { payments }) => {
+        for (const { paidAt, expectedAt, expectedAmount, amount } of payments) {
+          const date = new Date(paidAt ?? expectedAt)
           let period
           let label
 
@@ -112,20 +69,21 @@ export default function DeductedByFreqChart() {
               label: label, // Store the label with the period
             }
           }
+          acc[period].expected += expectedAmount ?? 0
           acc[period].amount += amount ?? 0
-        })
+        }
         return acc
       },
       {} as Record<string, { amount: number; label: string; expected: number }>,
     )
 
-    const sortedPeriods = Object.keys(deductionsByPeriod).sort()
+    const sortedPeriods = Object.keys(deductionsByPeriod).toSorted()
 
     return sortedPeriods.map((period) => ({
       period,
       amount: deductionsByPeriod[period].amount,
       label: deductionsByPeriod[period].label,
-      expected: deductionsByPeriod[period].expected, // Use the accumulated expected value
+      expected: deductionsByPeriod[period].expected,
     }))
   }, [dispersedCredits, company])
 

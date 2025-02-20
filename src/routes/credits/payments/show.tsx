@@ -6,9 +6,7 @@ import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 
 import ListItem from "../list-item"
-import { fetchNextPayrollDate } from "../../company-installations/utils"
 import { creditDetailedWithPaymentsState } from "../atoms"
-import { Payment } from "src/schema.types"
 import { MXNFormat } from "../../../constants"
 import { useMemo } from "react"
 import {
@@ -22,26 +20,14 @@ const Screen = () => {
   const { id } = useParams()
   const credit = useRecoilValue(creditDetailedWithPaymentsState(id!))
   const company = credit.termOffering.company
-  const nextPayrollDate = fetchNextPayrollDate(
-    credit.termOffering.company.employeeSalaryFrequency,
-  ).toLocaleDateString()
   const termDuration = credit.termOffering.term.duration
-  const creditPayments: (
-    | Pick<Payment, "number" | "id" | "paidAt" | "amount">
-    | undefined
-  )[] = []
-
-  for (let i = 0; i < termDuration; i++) {
-    const payment = credit.payments.find((payment) => payment.number === i + 1)
-    creditPayments.push(payment)
-  }
 
   const totalPaid = credit.payments.reduce(
     (acc, payment) => acc + payment.amount,
     0,
   )
 
-  const { status, installationStatus, hrStatus } = credit
+  const { status, hrStatus } = credit
 
   /**
    * Credit & hr status workflow:
@@ -61,15 +47,12 @@ const Screen = () => {
 
     if (status === "new") return "Nuevo"
     if (status === "pending") return "Pendiente"
-    if (status === "authorized") {
-      if (hrStatus === "approved") return "Aprobado por RH"
-      return "Autorizado"
-    }
+    if (status === "authorized") return "Autorizado"
     if (status === "dispersed") {
-      if (installationStatus === "installed") return "Instalado"
+      if (hrStatus === "approved") return "Aprobado por RH"
       return "Dispersado"
     }
-  }, [status, installationStatus, hrStatus])
+  }, [status, hrStatus])
 
   return (
     <>
@@ -87,11 +70,6 @@ const Screen = () => {
               />
             </ListHeader.Title>
           </ListHeader.Title>
-          <ListHeader.Actions>
-            <h3 className="text-sm">
-              Proxima Nómina <b>{nextPayrollDate}</b>
-            </h3>
-          </ListHeader.Actions>
         </ListHeader>
         <List>
           <List.Item>
@@ -151,15 +129,8 @@ const Screen = () => {
             </RowCard>
           </List.Item>
 
-          {creditPayments.map((maybePayment, index) => (
-            <ListItem
-              key={index}
-              number={index + 1}
-              payment={maybePayment}
-              installationDate={credit.installationDate!}
-              employeeSalaryFrequency={company.employeeSalaryFrequency}
-              amortization={Number(credit.amortization)!}
-            />
+          {credit.payments.map((payment, index) => (
+            <ListItem key={index} payment={payment} />
           ))}
         </List>
       </ListContainer>

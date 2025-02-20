@@ -17,22 +17,10 @@ import {
   readonlyProofOfAddressSelector,
 } from "../new-credit/components/steps/general-data/atoms"
 import dayjs from "dayjs"
-import { useMemo } from "react"
-import {
-  fetchNextPayrollDate,
-  getNextPaymentDate,
-} from "../company-installations/utils"
 import { ClockIcon } from "@heroicons/react/16/solid"
 import relativeTime from "dayjs/plugin/relativeTime"
 import "dayjs/locale/es"
 dayjs.extend(relativeTime)
-
-interface AmortizedTable {
-  amount: number
-  paidAt?: string
-  expectedPaidAt: string
-  number: number
-}
 
 const MyCredits = () => {
   const credit = useRecoilValue(userLatestAuthorizedCreditSelectorQuery)
@@ -41,38 +29,11 @@ const MyCredits = () => {
   const bankStatement = useRecoilValue(readonlyBankStatementSelector)
   const payrollReceipt = useRecoilValue(readonlyPayrollReceiptSelector)
   const proofOfAddress = useRecoilValue(readonlyProofOfAddressSelector)
-
-  const frequency =
-    credit?.termOffering.term.durationType === "months" ? "monthly" : "biweekly"
-  const nextPayrollDate = fetchNextPayrollDate(
-    frequency,
-    credit?.installationDate ?? undefined,
+  const sortedPayments = credit?.payments?.toSorted(
+    (a, b) => a.number - b.number,
   )
+  const nextPayrollDate = sortedPayments?.[0]?.expectedAt
 
-  const amortizedTable = useMemo(() => {
-    if (!credit) return []
-    const list: AmortizedTable[] = []
-
-    for (let i = 0; i < credit.termOffering.term.duration; i++) {
-      const payment = credit.payments?.find(
-        (payment) => payment.number === i + 1,
-      )
-      const prevExpectedPaidAt = list.at(i - 1)?.expectedPaidAt
-      const prevExpectedPaidAtDate = prevExpectedPaidAt
-        ? new Date(prevExpectedPaidAt)
-        : nextPayrollDate
-      list.push({
-        amount: payment?.amount ?? Number(credit.amortization),
-        expectedPaidAt: getNextPaymentDate(
-          prevExpectedPaidAtDate,
-          frequency,
-        ).toISOString(),
-        paidAt: payment?.paidAt,
-        number: i + 1,
-      })
-    }
-    return list
-  }, [credit, nextPayrollDate, frequency])
   return (
     <div className="flex flex-col h-screen grid-rows-[60px_1fr]">
       <div className="w-full">
@@ -137,11 +98,11 @@ const MyCredits = () => {
               ]}
             />
             <List.Body>
-              {amortizedTable?.map((payment) => (
+              {sortedPayments?.map((payment) => (
                 <List.Row key={payment.number}>
                   <List.Cell>{payment.amount} MXN</List.Cell>
                   <List.Cell>
-                    {dayjs(payment.expectedPaidAt).format("DD/MM/YYYY")}
+                    {dayjs(payment.expectedAt).format("DD/MM/YYYY")}
                   </List.Cell>
                   <List.Cell>
                     {payment.paidAt
@@ -150,14 +111,12 @@ const MyCredits = () => {
                   </List.Cell>
                   <List.Cell>
                     {payment.paidAt ? (
-                      dayjs(payment.paidAt).isAfter(payment.expectedPaidAt) ? (
+                      dayjs(payment.paidAt).isAfter(payment.expectedAt) ? (
                         <>
                           <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
                           Pagado Demorado
                         </>
-                      ) : dayjs(payment.paidAt).isBefore(
-                          payment.expectedPaidAt,
-                        ) ? (
+                      ) : dayjs(payment.paidAt).isBefore(payment.expectedAt) ? (
                         <>
                           <CheckBadgeIcon className="mr-2 w-6 h-6 text-green-500" />
                           Pagado Adelantado
@@ -168,7 +127,7 @@ const MyCredits = () => {
                           Pagado
                         </>
                       )
-                    ) : dayjs().isAfter(payment.expectedPaidAt) ? (
+                    ) : dayjs().isAfter(payment.expectedAt) ? (
                       <>
                         <ExclamationTriangleIcon className="mr-2 w-6 h-6 text-red-500" />
                         Pago Atrasado

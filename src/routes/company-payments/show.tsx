@@ -1,24 +1,22 @@
+import { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { useParams } from "react-router-dom"
+import dayjs from "dayjs"
 
 import NavLink from "components/atoms/nav-link"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
-
-import { companySelectorQuery } from "../companies/loader"
-import CreditListItem from "./credit-list-item"
-
-import { fetchNextPayrollDate } from "../company-installations/utils"
-import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
-import BulkActionsButton from "./bulk-actions-button"
 import Button from "components/atoms/button"
+import EmptyList from "components/atoms/empty-list"
+
+import CreditListItem from "./credit-list-item"
+import BulkActionsButton from "./bulk-actions-button"
+import { companySelectorQuery } from "../companies/loader"
+import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
 import { exportToCSV } from "../../utils"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import { useCallback } from "react"
-import dayjs from "dayjs"
 import { DocumentArrowUpIcon } from "@heroicons/react/24/solid"
-import EmptyList from "components/atoms/empty-list"
 
 const Screen = () => {
   const { companyId } = useParams()
@@ -27,16 +25,13 @@ const Screen = () => {
   const credits = useRecoilValue(
     companyCreditsDetailedWithPaymentsState(companyId),
   )?.filter((credit) => {
-    const isInstalled = credit.installationStatus === "installed"
-    // check if at least one payment is missing compared to the term duration
-    // ! Todo: this should also consider the amortization schedule not just the number of payments
-    const isMissingPayments =
-      credit.payments?.length !== credit.termOffering.term.duration
-    return isInstalled && isMissingPayments
+    const isHRApproved = credit.hrStatus === "approved"
+
+    const isMissingPayments = credit.payments?.find(
+      (payment) => !payment.paidAt,
+    )
+    return isHRApproved && isMissingPayments
   })
-  const nextPayrollDate = fetchNextPayrollDate(
-    company.employeeSalaryFrequency,
-  ).toLocaleDateString()
 
   const totalPaid = useCallback(
     (creditId: string) => {
@@ -103,9 +98,6 @@ const Screen = () => {
             / <ListHeader.Title text={company.name} />
           </ListHeader.Title>
           <ListHeader.Actions>
-            <h3 className="text-sm">
-              Proxima Nómina <b>{nextPayrollDate}</b>
-            </h3>
             <Button onClick={handleExport} size="sm" status="secondary">
               Exportar
               <DocumentArrowUpIcon className="h-4 w-4 ml-1" />
@@ -120,7 +112,6 @@ const Screen = () => {
               key={credit.id}
               credit={credit}
               employeeSalaryFrequency={company.employeeSalaryFrequency}
-              termDuration={credit.termOffering.term.duration}
             />
           ))}
         </List>

@@ -8,13 +8,12 @@ import {
   companyCreditsWithPaymentsSelectorQuery,
   companyCreditsWithPaymentsState,
 } from "../../services/companies/atoms"
+import { Payment } from "../../schema.types"
 
-interface NewPaymentResponse {
-  id: string
-  amount: number
-  number: number
-  paidAt: string
-}
+type UpdatePaymentResponse = Pick<
+  Payment,
+  "id" | "amount" | "number" | "paidAt" | "expectedAt" | "expectedAmount"
+>
 
 const usePaymentActions = () => {
   const toast = useToast()
@@ -34,28 +33,21 @@ const usePaymentActions = () => {
       },
   )
 
-  const registerPayment = useRecoilCallback(
+  const updatePayment = useRecoilCallback(
     ({ snapshot }) =>
       async (
-        creditId: string,
+        id: string,
         amount: number,
-        number: number,
-      ): Promise<NewPaymentResponse> => {
+        creditId: string,
+      ): Promise<UpdatePaymentResponse> => {
         const api = await snapshot.getPromise(apiSelector)
-        const { data } = await api.create(`payments`, {
+        const { data } = await api.update(`payments/${id}`, {
+          id,
           amount,
-          number,
-          paidAt: new Date().toISOString(),
-          credit: {
-            data: {
-              id: creditId,
-              type: "credits",
-            },
-          },
         })
         toast.success({
-          title: "Pago registrado",
-          message: "El pago ha sido registrado exitosamente",
+          title: "Pago actualizado",
+          message: "El pago ha sido actualizado exitosamente",
         })
         await resetOnSuccess(creditId)
 
@@ -64,57 +56,40 @@ const usePaymentActions = () => {
           amount: data.amount as number,
           number: data.number as number,
           paidAt: data.paidAt as string,
+          expectedAt: data.expectedAt as string,
+          expectedAmount: data.expectedAmount as number,
         }
       },
   )
 
-  const addNewPaymentToCredit = useRecoilCallback(
+  const updatePaymentFromCredit = useRecoilCallback(
     ({ set }) =>
-      (creditId: string, payment: NewPaymentResponse) => {
+      (creditId: string, payment: UpdatePaymentResponse) => {
         set(creditDetailedWithPaymentsState(creditId), (prev) => {
           if (!prev) return prev
           return {
             ...prev,
-            payments: [...prev.payments, payment],
-          }
-        })
-      },
-  )
-
-  const deletePayment = useRecoilCallback(
-    ({ snapshot, refresh }) =>
-      async (paymentId: string, creditId: string) => {
-        const api = await snapshot.getPromise(apiSelector)
-        await api.delete(`payments`, paymentId)
-        toast.success({
-          title: "Pago eliminado",
-          message: "El pago ha sido eliminado exitosamente",
-        })
-        refresh(companyCreditsWithPaymentsState)
-        await resetOnSuccess(creditId)
-      },
-  )
-
-  const deletePaymentFromCredit = useRecoilCallback(
-    ({ set }) =>
-      (creditId: string, paymentId: string) => {
-        set(creditDetailedWithPaymentsState(creditId), (prev) => {
-          if (!prev) return prev
-          return {
-            ...prev,
-            payments: prev.payments.filter(
-              (payment) => payment.id !== paymentId,
-            ),
+            payments: prev.payments.map((p) => {
+              if (p.id === payment.id) {
+                return {
+                  ...p,
+                  amount: payment.amount,
+                  number: payment.number,
+                  paidAt: payment.paidAt,
+                  expectedAt: payment.expectedAt,
+                  expectedAmount: payment.expectedAmount,
+                }
+              }
+              return p
+            }),
           }
         })
       },
   )
 
   return {
-    registerPayment,
-    addNewPaymentToCredit,
-    deletePayment,
-    deletePaymentFromCredit,
+    updatePayment,
+    updatePaymentFromCredit,
   }
 }
 

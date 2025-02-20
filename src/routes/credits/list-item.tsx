@@ -5,44 +5,31 @@ import List from "components/atoms/list"
 import { MXNFormat } from "../../constants"
 
 import type { CreditDetailed } from "./atoms"
-import { paymentOnTime } from "../company-installations/utils"
 import Button from "components/atoms/button"
 import { useParams } from "react-router-dom"
 import Modal from "components/molecules/modal"
-import Input from "components/atoms/input"
-import Tooltip from "components/atoms/tooltip"
 import usePaymentActions from "./actions"
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid"
+import { PlusIcon } from "@heroicons/react/24/solid"
 import { useRecoilValue } from "recoil"
 import { isUserAdminSelector } from "components/providers/auth/atoms"
+import dayjs from "dayjs"
+import Input from "components/atoms/input"
+import Tooltip from "components/atoms/tooltip"
 
 interface ListItemProps {
-  payment?: CreditDetailed["payments"][number]
-  number: number
-  employeeSalaryFrequency: "biweekly" | "monthly"
-  installationDate: string
-  amortization: number
+  payment: CreditDetailed["payments"][number]
 }
 
-const ListItem = ({
-  payment,
-  number,
-  employeeSalaryFrequency,
-  installationDate,
-  amortization,
-}: ListItemProps) => {
+const ListItem = ({ payment }: ListItemProps) => {
   const isAdmin = useRecoilValue(isUserAdminSelector)
-  const paidAt = payment?.paidAt
-  const paymentStatus = useMemo(
-    () =>
-      paymentOnTime({
-        paymentNumber: number,
-        installationDate,
-        employeeSalaryFrequency,
-        paidAt,
-      }),
-    [number, installationDate, employeeSalaryFrequency, paidAt],
-  )
+  const isPaid = Boolean(payment.paidAt)
+  const isDelayed = useMemo(() => {
+    if (!payment.paidAt) {
+      return dayjs().isAfter(dayjs(payment.expectedAt))
+    } else {
+      return dayjs(payment.paidAt).isAfter(dayjs(payment.expectedAt))
+    }
+  }, [payment.paidAt, payment.expectedAt])
 
   return (
     <List.Item>
@@ -51,28 +38,29 @@ const ListItem = ({
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Pago #{number}
+                Pago #{payment.number}
               </span>
               <span className="text-gray-400">/</span>
               <span className="whitespace-nowrap">
-                Para el {paymentStatus.expectedPaymentDate.toLocaleDateString()}
+                Para el {dayjs(payment.expectedAt).locale("es").format("LL")}
               </span>
             </a>
           </h2>
         </div>
         <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
-          {payment ? (
-            paymentStatus.onTime ? (
-              <p className="whitespace-nowrap">
-                Pagado el <b>{new Date(payment.paidAt).toLocaleDateString()}</b>
-              </p>
-            ) : (
+          {isPaid ? (
+            isDelayed ? (
               <p className="text-red-600 whitespace-nowrap">
                 Pagado tarde el{" "}
-                <b>{new Date(payment.paidAt).toLocaleDateString()}</b>
+                <b>{dayjs(payment.paidAt).locale("es").format("LL")}</b>
+              </p>
+            ) : (
+              <p className="whitespace-nowrap">
+                Pagado el{" "}
+                <b>{dayjs(payment.paidAt).locale("es").format("LL")}</b>
               </p>
             )
-          ) : paymentStatus.onTime ? (
+          ) : isDelayed ? (
             <p className="whitespace-nowrap">Pendiente</p>
           ) : (
             <p className="text-red-600 whitespace-nowrap">Demorado</p>
@@ -93,86 +81,43 @@ const ListItem = ({
           {payment ? `${MXNFormat.format(payment.amount)} MXN` : "Sin pago"}
         </p>
       </div>
-      <div className="flex-1 flex justify-end self-center">
-        {payment ? (
-          isAdmin ? (
-            <DeletePayment
-              id={payment.id}
-              number={number}
-              amount={payment.amount}
-              paidAt={payment.paidAt}
-            />
-          ) : null
-        ) : (
-          <NewPayment number={number} initialAmount={amortization} />
-        )}
-      </div>
+      {isAdmin && (
+        <div className="flex-1 flex justify-end self-center">
+          <UpdatePayment
+            id={payment.id}
+            number={payment.number}
+            amount={payment.amount}
+            expectedAmount={payment.expectedAmount}
+          />
+        </div>
+      )}
     </List.Item>
   )
 }
 
-interface NewPaymentProps {
-  number: number
-  initialAmount: number
-}
-
-interface DeletePaymentProps {
-  number: number
-  amount: number
-  paidAt: string
+interface UpdatePaymentProps {
   id: string
+  number: number | null
+  amount: number
+  expectedAmount: number
 }
 
-const DeletePayment = ({ number, amount, paidAt, id }: DeletePaymentProps) => {
+const UpdatePayment = ({
+  number,
+  amount,
+  id,
+  expectedAmount,
+}: UpdatePaymentProps) => {
   const { id: creditId } = useParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { deletePayment, deletePaymentFromCredit } = usePaymentActions()
+  const [newAmount, setNewAmount] = useState<number | null>(amount)
+  const { updatePayment, updatePaymentFromCredit } = usePaymentActions()
   const open = () => setIsModalOpen(true)
   const close = () => setIsModalOpen(false)
 
-  const handleDeletePayment = async () => {
-    await deletePayment(id, creditId!)
-    deletePaymentFromCredit(creditId!, id)
-    close()
-  }
-
-  return (
-    <>
-      <Button variant="danger" onClick={open}>
-        Eliminar <TrashIcon className="w-4 h-4 ml-1" />
-      </Button>
-      {isModalOpen && (
-        <Modal>
-          <Modal.Header title={"Eliminar Pago #" + number} onClose={close} />
-          <Modal.Body>
-            <div className="p-3">
-              <p className="mb-4">
-                ¿Estás seguro que deseas eliminar el pago de{" "}
-                <b>${amount} MXN</b> realizado el{" "}
-                <b>{new Date(paidAt).toLocaleDateString()}</b>?
-              </p>
-              <Button fullWidth variant="danger" onClick={handleDeletePayment}>
-                Eliminar <TrashIcon className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
-          </Modal.Body>
-        </Modal>
-      )}
-    </>
-  )
-}
-
-const NewPayment = ({ number, initialAmount }: NewPaymentProps) => {
-  const { id: creditId } = useParams()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [amount, setAmount] = useState<number | null>(initialAmount)
-  const { registerPayment, addNewPaymentToCredit } = usePaymentActions()
-  const open = () => setIsModalOpen(true)
-  const close = () => setIsModalOpen(false)
-
-  const handleCreatePayment = async () => {
-    const newPayment = await registerPayment(creditId!, amount!, number)
-    addNewPaymentToCredit(creditId!, newPayment)
+  const handleUpdatePayment = async () => {
+    const updatedPayment = await updatePayment(id, newAmount!, creditId!)
+    updatePaymentFromCredit(creditId!, updatedPayment)
     close()
   }
 
@@ -189,27 +134,29 @@ const NewPayment = ({ number, initialAmount }: NewPaymentProps) => {
               <Input
                 id="amount"
                 label="Cantidad"
-                placeholder={`Monto estimado: $${initialAmount}`}
+                placeholder={`Monto estimado: $${expectedAmount}`}
                 type="number"
                 required
                 value={amount?.toString() ?? ""}
                 onChange={({ target }) =>
-                  setAmount(target.value === "" ? null : Number(target.value))
+                  setNewAmount(
+                    target.value === "" ? null : Number(target.value),
+                  )
                 }
               />
               <Tooltip
                 content={
                   <>
-                    El monto <b>${amount}</b> es diferente al monto estimado{" "}
-                    <b>${initialAmount}</b>
+                    El monto <b>${newAmount}</b> es diferente al monto estimado{" "}
+                    <b>${expectedAmount}</b>
                   </>
                 }
-                cond={amount !== initialAmount}
+                cond={newAmount !== expectedAmount}
               >
                 <Button
                   fullWidth
-                  disabled={!amount}
-                  onClick={handleCreatePayment}
+                  disabled={!newAmount}
+                  onClick={handleUpdatePayment}
                 >
                   Registrar <PlusIcon className="w-4 h-4 ml-1" />
                 </Button>

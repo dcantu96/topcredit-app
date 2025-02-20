@@ -5,30 +5,36 @@ import { useRecoilState } from "recoil"
 import { installedCreditWithPaymentSelectedState } from "./atoms"
 import { MXNFormat } from "../../constants"
 import SmallDot from "components/atoms/small-dot"
-import { hasDelayedPayment } from "../company-installations/utils"
 import { ChevronRightIcon } from "@heroicons/react/16/solid"
 import { useNavigate } from "react-router-dom"
 import { CompanyCreditDetailed } from "../../services/companies/atoms"
+import dayjs from "dayjs"
 
 const ListItem = ({
   credit,
   employeeSalaryFrequency,
-  termDuration,
 }: {
   credit: CompanyCreditDetailed
   employeeSalaryFrequency: "biweekly" | "monthly"
-  termDuration: number
 }) => {
   const navigate = useNavigate()
   const [pressed, setPressed] = useRecoilState(
     installedCreditWithPaymentSelectedState(credit.id),
   )
+
+  const delayedPayment = useMemo(() => {
+    return !!credit.payments.find(
+      (payment) =>
+        !payment.paidAt && dayjs(payment.expectedAt).isBefore(dayjs()),
+    )
+  }, [credit.payments])
+
   const status = useMemo(() => {
-    if (hasDelayedPayment(credit, employeeSalaryFrequency, termDuration)) {
+    if (delayedPayment) {
       return "delayed"
     }
     return "pending"
-  }, [credit, employeeSalaryFrequency, termDuration])
+  }, [delayedPayment])
 
   const lastPayment = credit.payments.at(-1)?.paidAt
 
@@ -76,8 +82,8 @@ const ListItem = ({
           <p className="whitespace-nowrap">
             Instalado el{" "}
             <b>
-              {credit.installationDate
-                ? new Date(credit.installationDate).toLocaleDateString()
+              {credit.firstDiscountDate
+                ? new Date(credit.firstDiscountDate).toLocaleDateString()
                 : ""}
             </b>
           </p>

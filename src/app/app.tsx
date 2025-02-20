@@ -21,7 +21,6 @@ const EditStaff = lazy(() => import("../routes/staff/edit"))
 const NewStaff = lazy(() => import("../routes/staff/new"))
 const NewCompany = lazy(() => import("../routes/companies/new"))
 const EditCompany = lazy(() => import("../routes/companies/edit"))
-const ShowCompany = lazy(() => import("../routes/companies/show"))
 const RequestsList = lazy(() => import("../routes/requests/list/list"))
 const ShowRequest = lazy(() => import("../routes/requests/show"))
 const CreditScreen = lazy(() => import("../routes/new-credit"))
@@ -111,12 +110,11 @@ function App() {
                 index
                 element={
                   <ProtectedRoute allowedRoles={["companies", "hr"]}>
-                    <ShowCompany />
+                    <CompanyOverview />
                   </ProtectedRoute>
                 }
               />
               <Route path="credits" element={<ShowCompanyCredits />} />
-              <Route path="overview" element={<CompanyOverview />} />
               <Route
                 path="edit"
                 element={

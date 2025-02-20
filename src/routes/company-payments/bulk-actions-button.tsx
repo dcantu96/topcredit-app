@@ -60,7 +60,7 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
           if (!credit || !credit.amortization) continue
           const paymentNumbers = credit.payments
             .map((payment) => payment.number)
-            .sort()
+            .toSorted()
           const lastPaymentNumber = paymentNumbers[paymentNumbers.length - 1]
           const resp = await api.create("payments", {
             credit: {
@@ -89,6 +89,8 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
                           amount: resp.data.amount,
                           paidAt: resp.data.paidAt,
                           number: resp.data.number,
+                          expectedAt: resp.data.expectedAt,
+                          expectedAmount: resp.data.expectedAmount,
                         },
                       ],
                     }
