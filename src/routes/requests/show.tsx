@@ -169,7 +169,7 @@ const ShowRequest = () => {
           <label className="text-gray-500 font-medium text-sm">Ingresos</label>
           <p className="text-gray-900 font-medium">
             {user.salary ? MXNFormat.format(user.salary) : "--"} MXN{" "}
-            {employeeSalaryFrequency === "biweekly"
+            {employeeSalaryFrequency === "bi-monthly"
               ? "Quincenales"
               : "Mensuales"}
           </p>

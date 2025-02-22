@@ -44,7 +44,7 @@ export type CreditStatus =
 
 export type HRStatus = "approved" | "denied"
 
-export type DurationType = "years" | "months" | "two-weeks"
+export type DurationType = "bi-monthly" | "monthly"
 
 export interface TokenResponse {
   access_token: string
@@ -206,7 +206,7 @@ export interface Company extends ObjectWithId, Timestamps {
   name: string
   rate: number
   borrowingCapacity: number | null
-  employeeSalaryFrequency: "biweekly" | "monthly"
+  employeeSalaryFrequency: "bi-monthly" | "monthly"
   terms: Term[] | null
   termOfferings: TermOffering[] | null
   credits: Credit[] | null

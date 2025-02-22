@@ -18,7 +18,7 @@ const NewCompany = () => {
   const [rate, setRate] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [employeeSalaryFrequency, setEmployeeSalaryFrequency] = useState<
-    "biweekly" | "monthly" | undefined
+    "bi-monthly" | "monthly" | undefined
   >(undefined)
   const [borrowingCapacity, setBorrowingCapacity] = useState<number>(0)
   const { clearErrors, handleErrors, errors } = useFormErrors()

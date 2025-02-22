@@ -106,7 +106,7 @@ type CompanyFilters = {
   name?: string
   rate?: number
   borrowingCapacity?: number | null
-  employeeSalaryFrequency?: "biweekly" | "monthly"
+  employeeSalaryFrequency?: "bi-monthly" | "monthly"
 }
 
 type CompanyDataParams = {

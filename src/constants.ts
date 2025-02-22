@@ -109,9 +109,8 @@ export const MXNFormat = new Intl.NumberFormat("es-MX", {
 })
 
 export const DURATION_TYPES = new Map<DurationType, string>([
-  ["two-weeks", "Quincenas"],
-  ["months", "Meses"],
-  ["years", "Años"],
+  ["bi-monthly", "Quincenal"],
+  ["monthly", "Mensual"],
 ])
 
 export const SALARY_FREQUENCIES = new Map<"Q" | "M", "Quincenas" | "Meses">([
@@ -121,7 +120,7 @@ export const SALARY_FREQUENCIES = new Map<"Q" | "M", "Quincenas" | "Meses">([
 
 export const FREQUENCY_OPTIONS = [
   { value: "monthly" as const, label: "Mensual" },
-  { value: "biweekly" as const, label: "Quincenal" },
+  { value: "bi-monthly" as const, label: "Quincenal" },
 ]
 
 export const CREDIT_STATUS = new Map<CreditStatus, string>([

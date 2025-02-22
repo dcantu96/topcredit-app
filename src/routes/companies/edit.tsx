@@ -25,7 +25,9 @@ const EditCompany = () => {
   if (!id) throw new Error("Missing id param")
   const companyData = useRecoilValue(companyState(id))
   const companyDurationType =
-    companyData.employeeSalaryFrequency === "biweekly" ? "two-weeks" : "months"
+    companyData.employeeSalaryFrequency === "bi-monthly"
+      ? "bi-monthly"
+      : "monthly"
   const [name, setName] = useState<string>(companyData.name)
   const [domain, setDomain] = useState<string>(companyData.domain || "")
   const [rate, setRate] = useState<number>(

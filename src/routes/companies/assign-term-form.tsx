@@ -21,7 +21,9 @@ const AssignTermForm = ({ companyId }: AssignTermFormProps) => {
   const { assignTermToCompany } = useTermActions()
   const companyData = useRecoilValue(companyState(companyId))
   const companyDurationType =
-    companyData.employeeSalaryFrequency === "biweekly" ? "two-weeks" : "months"
+    companyData.employeeSalaryFrequency === "bi-monthly"
+      ? "bi-monthly"
+      : "monthly"
   const termOptions = Array.from(termsMap.values())
     .filter(
       ({ id, durationType }) =>

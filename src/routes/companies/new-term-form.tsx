@@ -17,7 +17,9 @@ interface NewTermFormProps {
 export const NewTermForm = ({ companyId }: NewTermFormProps) => {
   const companyData = useRecoilValue(companyState(companyId))
   const companyDurationType =
-    companyData.employeeSalaryFrequency === "biweekly" ? "two-weeks" : "months"
+    companyData.employeeSalaryFrequency === "bi-monthly"
+      ? "bi-monthly"
+      : "monthly"
   const invalidTerms = companyData.termOfferings?.filter(
     (termOffering) => termOffering.term.durationType !== companyDurationType,
   )

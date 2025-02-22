@@ -128,7 +128,7 @@ const PreAuthorizationListItem = ({ user }: PreAuthorizationListItemProps) => {
   }
 
   const frequency =
-    companies?.[0].employeeSalaryFrequency === "biweekly"
+    companies?.[0].employeeSalaryFrequency === "bi-monthly"
       ? "Quincenales"
       : "Mensuales"
 

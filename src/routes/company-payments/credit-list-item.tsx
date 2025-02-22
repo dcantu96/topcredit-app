@@ -15,7 +15,7 @@ const ListItem = ({
   employeeSalaryFrequency,
 }: {
   credit: CompanyCreditDetailed
-  employeeSalaryFrequency: "biweekly" | "monthly"
+  employeeSalaryFrequency: "bi-monthly" | "monthly"
 }) => {
   const navigate = useNavigate()
   const [pressed, setPressed] = useRecoilState(
@@ -107,7 +107,7 @@ const ListItem = ({
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
                 Descuento{" "}
-                {employeeSalaryFrequency === "biweekly"
+                {employeeSalaryFrequency === "bi-monthly"
                   ? "Quincenal"
                   : "Mensual"}
               </span>

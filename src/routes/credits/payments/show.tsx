@@ -103,7 +103,7 @@ const Screen = () => {
               </RowCard.Outline>
               <RowCard.Text>
                 {termDuration}{" "}
-                {credit.termOffering.term.durationType === "two-weeks"
+                {credit.termOffering.term.durationType === "bi-monthly"
                   ? "Quincenas"
                   : "Meses"}
               </RowCard.Text>
