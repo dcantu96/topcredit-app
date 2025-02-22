@@ -150,7 +150,6 @@ export const activeCreditsSelectorQuery = selectorFamily<
           include: "borrower,termOffering.term,payments",
           filter: {
             status: "dispersed",
-            hrStatus: "approved",
             company: companyId,
           },
         },
