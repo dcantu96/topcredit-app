@@ -10,6 +10,7 @@ import Chip from "components/atoms/chip"
 import dayjs from "dayjs"
 import { useMemo } from "react"
 import LocalizedFormat from "dayjs/plugin/localizedFormat"
+import "dayjs/locale/es"
 
 dayjs.extend(LocalizedFormat)
 

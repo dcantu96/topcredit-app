@@ -15,6 +15,10 @@ import { isUserAdminSelector } from "components/providers/auth/atoms"
 import dayjs from "dayjs"
 import Input from "components/atoms/input"
 import Tooltip from "components/atoms/tooltip"
+import LocalizedFormat from "dayjs/plugin/localizedFormat"
+import "dayjs/locale/es"
+
+dayjs.extend(LocalizedFormat)
 
 interface ListItemProps {
   payment: CreditDetailed["payments"][number]
@@ -38,7 +42,7 @@ const ListItem = ({ payment }: ListItemProps) => {
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Pago #{payment.number}
+                Descuento #{payment.number}
               </span>
               <span className="text-gray-400">/</span>
               <span className="whitespace-nowrap">
@@ -72,7 +76,7 @@ const ListItem = ({ payment }: ListItemProps) => {
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Pago
+                Monto
               </span>
             </a>
           </h2>
@@ -128,7 +132,10 @@ const UpdatePayment = ({
       </Button>
       {isModalOpen && (
         <Modal>
-          <Modal.Header title={"Registrar Pago #" + number} onClose={close} />
+          <Modal.Header
+            title={"Registrar Descuento #" + number}
+            onClose={close}
+          />
           <Modal.Body>
             <div className="p-3">
               <Input
