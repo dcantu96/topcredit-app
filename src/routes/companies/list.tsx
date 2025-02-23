@@ -43,8 +43,6 @@ const CompaniesList = () => {
                     <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
                       {company.name}
                     </span>
-                    <span className="text-gray-400">/</span>
-                    <span className="whitespace-nowrap">{company.domain}</span>
                   </a>
                   <ButtonLink
                     size="sm"
