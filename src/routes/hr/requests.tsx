@@ -1,40 +1,45 @@
+import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
+import { UsersIcon } from "@heroicons/react/24/solid"
 
 import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
-
-import ListItem from "./list-item"
-import { DocumentIcon } from "@heroicons/react/24/solid"
 import ActivityContainer from "components/organisms/activity-container"
-import { hrCreditsSelectorQuery } from "./atoms"
 import ButtonLink from "components/atoms/button-link"
+import EmptyList from "components/atoms/empty-list"
+import useIsRole from "hooks/useIsRole"
 import { myProfileState } from "components/providers/auth/atoms"
+
+import ListItem from "./requests-list-item"
+import { hrRequestCreditsSelectorQuery } from "./atoms"
 import { companySelectorQuery } from "../companies/loader"
 
 const Screen = () => {
+  const { id } = useParams()
   const companyId = useRecoilValue(myProfileState)?.hrCompanyId
-  const company = useRecoilValue(companySelectorQuery(companyId!.toString()))
-  const credits = useRecoilValue(hrCreditsSelectorQuery("denied"))
+  const isAdmin = useIsRole("admin")
+  if (!id) throw new Error("Missing id param")
+  if (!isAdmin && !companyId) throw new Error("Empresa no asignada al usuario")
+  if (!isAdmin && Number(id) !== companyId) throw new Error("No autorizado")
+  const company = useRecoilValue(companySelectorQuery(id))
+  const credits = useRecoilValue(hrRequestCreditsSelectorQuery(id))
 
   return (
     <>
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text={"Empleados Inactivos de " + company?.name} />
+          <ListHeader.Title text={"Empleados Activos: " + company?.name} />
           <ListHeader.Actions>
-            <ButtonLink size="sm" status="secondary" to="/dashboard/hr">
-              Pendientes
-              <DocumentIcon className="w-4 h-4 ml-2" />
-            </ButtonLink>
-            <ButtonLink size="sm" status="secondary" to="/dashboard/hr/active">
+            <ButtonLink size="sm" status="secondary" to="..">
               Activos
-              <DocumentIcon className="w-4 h-4 ml-2" />
+              <UsersIcon className="w-4 h-4 ml-2" />
             </ButtonLink>
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>
+        {credits.size === 0 && <EmptyList />}
         <List>
           {Array.from(credits).map(([id, credit]) => (
             <ListItem key={id} credit={credit} />

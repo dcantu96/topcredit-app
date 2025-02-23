@@ -187,6 +187,103 @@ export const activeCreditsSelectorQuery = selectorFamily<
     },
 })
 
+export type HRRequestsCreditsResponse = Pick<
+  Credit,
+  | "id"
+  | "status"
+  | "updatedAt"
+  | "createdAt"
+  | "loan"
+  | "amortization"
+  | "hrStatus"
+  | "firstDiscountDate"
+> & {
+  borrower: {
+    data: Credit["borrower"]
+  }
+  termOffering: {
+    data: Credit["termOffering"] & {
+      term: {
+        data: Term
+      }
+    }
+  }
+}
+
+export type HRRequestCredit = Pick<
+  Credit,
+  | "id"
+  | "status"
+  | "updatedAt"
+  | "createdAt"
+  | "termOffering"
+  | "borrower"
+  | "hrStatus"
+> & {
+  firstDiscountDate: NonNullable<Credit["firstDiscountDate"]>
+  amortization: NonNullable<Credit["amortization"]>
+  loan: NonNullable<Credit["loan"]>
+}
+
+export type HRRequestCreditMap = Map<string, HRRequestCredit>
+
+export const hrRequestCreditsSelectorQuery = selectorFamily<
+  HRRequestCreditMap,
+  string
+>({
+  key: "hrRequestCreditsSelectorQuery",
+  get:
+    (companyId) =>
+    async ({ get }) => {
+      const api = get(apiSelector)
+
+      const { data }: { data: HRRequestsCreditsResponse[] } = await api.get(
+        "credit",
+        {
+          params: {
+            fields: {
+              credits:
+                "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus,firstDiscountDate",
+            },
+            include: "borrower,termOffering.term",
+            filter: {
+              status: "authorized",
+              company: companyId,
+            },
+          },
+        },
+      )
+
+      const map = new Map<string, HRRequestCredit>()
+      for (const credit of data) {
+        const amortization = credit.amortization
+        const loan = credit.loan
+        const firstDiscountDate = credit.firstDiscountDate
+        if (!firstDiscountDate) {
+          throw new Error("First discount date should not be null")
+        }
+        if (!amortization) {
+          throw new Error("Amortization should not be null")
+        }
+        if (!loan) {
+          throw new Error("Loan should not be null")
+        }
+        map.set(credit.id, {
+          ...credit,
+          loan,
+          amortization,
+          firstDiscountDate,
+          borrower: credit.borrower.data,
+          termOffering: {
+            ...(credit.termOffering.data || {}),
+            term: credit.termOffering.data?.term.data,
+          },
+        })
+      }
+      return map
+    },
+})
+
 export const hrCreditsSelector = selectorFamily<
   | Pick<
       Credit,

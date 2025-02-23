@@ -53,6 +53,7 @@ const GeneratePassword = lazy(() => import("../routes/generate-password"))
 const ConfirmationFailure = lazy(() => import("../routes/confirmation-failure"))
 const SendConfirmation = lazy(() => import("../routes/send-confirmation"))
 const HR = lazy(() => import("../routes/hr/general"))
+const RequestsHR = lazy(() => import("../routes/hr/requests"))
 const ShowHR = lazy(() => import("../routes/hr/show"))
 const ShowUser = lazy(() => import("../routes/users/show"))
 const ShowCompanyCredits = lazy(
@@ -213,7 +214,7 @@ function App() {
             element={<ProtectedRoute allowedRoles={["hr"]} />}
           >
             <Route index element={<HR />} />
-            <Route path="requests" element={<>solicitudes</>} />
+            <Route path="requests" element={<RequestsHR />} />
             <Route path=":creditId" element={<ShowHR />} />
           </Route>
         </Route>
