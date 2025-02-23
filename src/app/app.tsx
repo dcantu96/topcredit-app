@@ -213,6 +213,7 @@ function App() {
             element={<ProtectedRoute allowedRoles={["hr"]} />}
           >
             <Route index element={<HR />} />
+            <Route path="requests" element={<>solicitudes</>} />
             <Route path=":creditId" element={<ShowHR />} />
           </Route>
         </Route>
