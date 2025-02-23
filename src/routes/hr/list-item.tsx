@@ -4,36 +4,21 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline"
 import List from "components/atoms/list"
 import SmallDot from "components/atoms/small-dot"
 
-import { Credit } from "src/schema.types"
 import { MXNFormat } from "../../constants"
 import Chip from "components/atoms/chip"
 import dayjs from "dayjs"
 import { useMemo } from "react"
 import LocalizedFormat from "dayjs/plugin/localizedFormat"
+import { ActiveCredit } from "./atoms"
 import "dayjs/locale/es"
 
 dayjs.extend(LocalizedFormat)
 
-const ListItem = ({
-  credit,
-}: {
-  credit: Pick<
-    Credit,
-    | "id"
-    | "status"
-    | "updatedAt"
-    | "createdAt"
-    | "loan"
-    | "termOffering"
-    | "borrower"
-    | "amortization"
-    | "hrStatus"
-  > & { payments: NonNullable<Credit["payments"]> }
-}) => {
+const ListItem = ({ credit }: { credit: ActiveCredit }) => {
   const navigate = useNavigate()
 
   const lastMissingPaymentIndex = useMemo(
-    () => credit.payments?.findIndex((payment) => !payment.paidAt),
+    () => credit.payments.findIndex((payment) => !payment.paidAt),
     [credit.payments],
   )
 
@@ -42,10 +27,10 @@ const ListItem = ({
     if (lastMissingPaymentIndex === undefined) return undefined
     if (lastMissingPaymentIndex === -1) {
       // if all payments are paid get the last one
-      return credit.payments?.at(-1)?.paidAt
+      return credit.payments.at(-1)?.paidAt
     }
     // if there are missing payments
-    return credit.payments?.at(lastMissingPaymentIndex - 1)?.paidAt
+    return credit.payments.at(lastMissingPaymentIndex - 1)?.paidAt
   }, [credit.payments, lastMissingPaymentIndex])
 
   const delayedPayments = useMemo(
@@ -91,9 +76,6 @@ const ListItem = ({
                   ? "Aprobado por RH"
                   : "Pendiente"}
             </Chip>
-            <span className="hidden md:block">
-              <SmallDot />
-            </span>
             <span className="overflow-ellipsis overflow-hidden whitespace-nowrap hidden md:block">
               {credit.borrower.phone}
             </span>

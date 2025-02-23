@@ -116,22 +116,25 @@ export const hrCreditsSelectorQuery = selectorFamily<
     },
 })
 
+export type ActiveCredit = Pick<
+  Credit,
+  | "id"
+  | "status"
+  | "updatedAt"
+  | "createdAt"
+  | "termOffering"
+  | "borrower"
+  | "hrStatus"
+> & {
+  payments: NonNullable<Credit["payments"]>
+  amortization: NonNullable<Credit["amortization"]>
+  loan: NonNullable<Credit["loan"]>
+}
+
+export type ActiveCreditsMap = Map<string, ActiveCredit>
+
 export const activeCreditsSelectorQuery = selectorFamily<
-  Map<
-    string,
-    Pick<
-      Credit,
-      | "id"
-      | "status"
-      | "updatedAt"
-      | "createdAt"
-      | "loan"
-      | "termOffering"
-      | "borrower"
-      | "amortization"
-      | "hrStatus"
-    > & { payments: NonNullable<Credit["payments"]> }
-  >,
+  ActiveCreditsMap,
   string
 >({
   key: "activeCreditsSelectorQuery",
@@ -154,35 +157,30 @@ export const activeCreditsSelectorQuery = selectorFamily<
         },
       })
 
-      const map = new Map<
-        string,
-        Pick<
-          Credit,
-          | "id"
-          | "status"
-          | "updatedAt"
-          | "createdAt"
-          | "loan"
-          | "termOffering"
-          | "borrower"
-          | "amortization"
-          | "hrStatus"
-        > & { payments: NonNullable<Credit["payments"]> }
-      >()
+      const map = new Map<string, ActiveCredit>()
       for (const credit of data) {
-        if (!credit.payments.data) {
+        const payments = credit.payments.data
+        const amortization = credit.amortization
+        const loan = credit.loan
+        if (!payments) {
           throw new Error("Payments should not be null")
+        }
+        if (!amortization) {
+          throw new Error("Amortization should not be null")
+        }
+        if (!loan) {
+          throw new Error("Loan should not be null")
         }
         map.set(credit.id, {
           ...credit,
+          loan,
+          amortization,
           borrower: credit.borrower.data,
           termOffering: {
             ...(credit.termOffering.data || {}),
             term: credit.termOffering.data?.term.data,
           },
-          payments: credit.payments.data.toSorted(
-            (a, b) => a.number - b.number,
-          ),
+          payments: payments.toSorted((a, b) => a.number - b.number),
         })
       }
       return map
