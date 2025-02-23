@@ -130,8 +130,7 @@ export const activeCreditsSelectorQuery = selectorFamily<
       | "borrower"
       | "amortization"
       | "hrStatus"
-      | "payments"
-    >
+    > & { payments: NonNullable<Credit["payments"]> }
   >,
   string
 >({
@@ -168,10 +167,12 @@ export const activeCreditsSelectorQuery = selectorFamily<
           | "borrower"
           | "amortization"
           | "hrStatus"
-          | "payments"
-        >
+        > & { payments: NonNullable<Credit["payments"]> }
       >()
       for (const credit of data) {
+        if (!credit.payments.data) {
+          throw new Error("Payments should not be null")
+        }
         map.set(credit.id, {
           ...credit,
           borrower: credit.borrower.data,
@@ -179,8 +180,9 @@ export const activeCreditsSelectorQuery = selectorFamily<
             ...(credit.termOffering.data || {}),
             term: credit.termOffering.data?.term.data,
           },
-          payments:
-            credit.payments.data?.toSorted((a, b) => a.number - b.number) || [],
+          payments: credit.payments.data.toSorted(
+            (a, b) => a.number - b.number,
+          ),
         })
       }
       return map

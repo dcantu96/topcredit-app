@@ -28,18 +28,12 @@ const ListItem = ({
     | "borrower"
     | "amortization"
     | "hrStatus"
-    | "payments"
-  >
+  > & { payments: NonNullable<Credit["payments"]> }
 }) => {
   const navigate = useNavigate()
 
   const lastMissingPaymentIndex = useMemo(
     () => credit.payments?.findIndex((payment) => !payment.paidAt),
-    [credit.payments],
-  )
-
-  const totalMissingPayments = useMemo(
-    () => credit.payments?.filter((payment) => !payment.paidAt).length,
     [credit.payments],
   )
 
@@ -54,7 +48,16 @@ const ListItem = ({
     return credit.payments?.at(lastMissingPaymentIndex - 1)?.paidAt
   }, [credit.payments, lastMissingPaymentIndex])
 
-  console.log({ lastPaidAt })
+  const delayedPayments = useMemo(
+    () =>
+      credit.payments.filter(
+        (payment) =>
+          !!payment.expectedAt &&
+          new Date(payment.expectedAt) < new Date() &&
+          !payment.paidAt,
+      ).length,
+    [credit.payments],
+  )
 
   // set last paid at or a text saying waiting for first payment
   const lastPaidAtText = lastPaidAt
@@ -72,14 +75,18 @@ const ListItem = ({
             <Chip
               status={
                 credit.status === "dispersed"
-                  ? "success"
+                  ? delayedPayments > 0
+                    ? "error"
+                    : "success"
                   : credit.hrStatus
                     ? "info"
                     : "error"
               }
             >
               {credit.status === "dispersed"
-                ? "Activo"
+                ? delayedPayments > 0
+                  ? "Tarde"
+                  : "Activo"
                 : credit.hrStatus
                   ? "Aprobado por RH"
                   : "Pendiente"}
@@ -106,7 +113,9 @@ const ListItem = ({
         <div className="flex items-center gap-x-3">
           <h2 className="text-gray-900 items-center leading-6 font-medium text-sm min-w-0 flex text-inherit decoration-inherit gap-x-2">
             <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-              {totalMissingPayments} descuentos pendientes
+              {delayedPayments
+                ? `${delayedPayments} descuentos pendientes`
+                : "Al corriente"}
             </span>
           </h2>
         </div>
