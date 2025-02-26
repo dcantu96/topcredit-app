@@ -6,7 +6,7 @@ import SmallDot from "components/atoms/small-dot"
 import StatusIndicator from "components/atoms/status-indicator"
 
 import { Credit } from "src/schema.types"
-import { DURATION_TYPES, MXNFormat } from "../../constants"
+import { MXNFormat } from "../../constants"
 
 const ListItem = ({
   credit,
@@ -45,10 +45,11 @@ const ListItem = ({
             {new Date(credit.createdAt).toLocaleDateString()}
           </p>
           <SmallDot />
-          <p className="whitespace-nowrap">Monto</p>
-          <SmallDot />
           <p className="whitespace-nowrap font-semibold">
-            {credit.loan ? MXNFormat.format(credit.loan) : 0}
+            {credit.termOffering!.term.duration}{" "}
+            {credit.termOffering!.term.durationType === "bi-monthly"
+              ? "Quincenas"
+              : "Meses"}
           </p>
         </div>
       </div>
@@ -71,15 +72,14 @@ const ListItem = ({
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Plazo
+                Monto
               </span>
             </a>
           </h2>
         </div>
         {credit.termOffering && (
           <span className="whitespace-nowrap">
-            {credit.termOffering.term.duration}{" "}
-            {DURATION_TYPES.get(credit.termOffering.term.durationType)}
+            {credit.loan ? MXNFormat.format(credit.loan) : 0}
           </span>
         )}
       </div>

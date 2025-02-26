@@ -13,8 +13,8 @@ import {
 } from "../../routes/pending-authorizations/atoms"
 import { editableDispersionReceiptFieldState } from "../../routes/dispersions/atoms"
 import {
-  hrCreditsSelector,
-  hrCreditsSelectorQuery,
+  hrCreditSelectorQuery,
+  hrRequestCreditsSelectorQuery,
 } from "../../routes/hr/atoms"
 
 export interface CreateCreditProps {
@@ -145,28 +145,31 @@ const useCreditActions = () => {
 
   const updateHRStatus = useRecoilCallback(
     ({ snapshot, refresh }) =>
-      async (creditId: string, status: HRStatus) => {
+      async (
+        creditId: string,
+        companyId: string,
+        hrStatus: HRStatus,
+        firstDiscountDate: string,
+      ) => {
         const api = await snapshot.getPromise(apiSelector)
         try {
           await api.update(`credits`, {
             id: creditId,
-            hrStatus: status,
+            hrStatus,
+            firstDiscountDate,
           })
-          const message = HR_SUCCESS_MESSAGES.get(status)
+          const message = HR_SUCCESS_MESSAGES.get(hrStatus)
           const defaultMessage = "Usuario actualizado"
           toast.success({
             title: "Usuario actualizado",
             message: message ?? defaultMessage,
           })
-          refresh(hrCreditsSelectorQuery("all"))
-          refresh(hrCreditsSelectorQuery("approved"))
-          refresh(hrCreditsSelectorQuery("denied"))
-          refresh(hrCreditsSelectorQuery("pending"))
-          refresh(hrCreditsSelector(creditId))
           // update all states
+          refresh(hrCreditSelectorQuery(creditId))
+          refresh(hrRequestCreditsSelectorQuery(companyId))
         } catch {
           const defaultMessage = "Ocurrió un error al actualizar el crédito"
-          const message = HR_ERROR_MESSAGES.get(status)
+          const message = HR_ERROR_MESSAGES.get(hrStatus)
           toast.error({
             title: "Error al actualizar",
             message: message ?? defaultMessage,

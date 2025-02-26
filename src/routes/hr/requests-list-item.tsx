@@ -9,6 +9,7 @@ import dayjs from "dayjs"
 import LocalizedFormat from "dayjs/plugin/localizedFormat"
 import { HRRequestCredit } from "./atoms"
 import "dayjs/locale/es"
+import Chip from "components/atoms/chip"
 
 dayjs.extend(LocalizedFormat)
 
@@ -23,6 +24,11 @@ const ListItem = ({ credit }: { credit: HRRequestCredit }) => {
             <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
               {credit.borrower.firstName} {credit.borrower.lastName}
             </span>
+            <Chip status={credit.hrStatus === "approved" ? "info" : "warning"}>
+              {credit.hrStatus === "approved"
+                ? "Esperando Dispersión"
+                : "Pendiente"}
+            </Chip>
           </h2>
         </div>
         <div className="mt-2 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-500">
@@ -35,20 +41,22 @@ const ListItem = ({ credit }: { credit: HRRequestCredit }) => {
           </p>
         </div>
       </div>
-      <div className="min-w-32 self-end">
-        <div className="flex items-center gap-x-3">
-          <h2 className="text-gray-900 items-center leading-6 font-medium text-sm min-w-0 flex text-inherit decoration-inherit gap-x-2">
+      {credit.firstDiscountDate && (
+        <div className="min-w-32 self-end">
+          <div className="flex items-center gap-x-3">
+            <h2 className="text-gray-900 items-center leading-6 font-medium text-sm min-w-0 flex text-inherit decoration-inherit gap-x-2">
+              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                Fecha aprobada primer descuento
+              </span>
+            </h2>
+          </div>
+          <div className="mt-2 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-500">
             <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-              Fecha est. primer descuento
+              {dayjs(credit.firstDiscountDate).locale("es").format("LL")}
             </span>
-          </h2>
+          </div>
         </div>
-        <div className="mt-2 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-500">
-          <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-            {dayjs(credit.firstDiscountDate).format("LL")}
-          </span>
-        </div>
-      </div>
+      )}
       <button
         onClick={() => navigate(credit.id)}
         className="btn btn-small btn-transparent group text-gray-900 leading-7 text-sm font-medium"

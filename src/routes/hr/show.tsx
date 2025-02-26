@@ -1,37 +1,44 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { CheckIcon, EyeIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { useNavigate, useParams } from "react-router-dom"
+import { CheckIcon, EyeIcon } from "@heroicons/react/24/solid"
 
 import Button from "components/atoms/button"
-import useCreditActions from "hooks/useCreditActions"
-import useCompanies from "hooks/useCompanies"
-
-import { hrCreditSelectorQuery } from "./atoms"
-import { DURATION_TYPES, MXNFormat } from "../../constants"
 import ButtonLink from "components/atoms/button-link"
+import Modal from "components/molecules/modal"
+import useCreditActions from "hooks/useCreditActions"
+
+import { MXNFormat } from "../../constants"
+import { hrCreditSelectorQuery } from "./atoms"
+import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
+import { Button as CalendarButton } from "components/ui/button"
+import { Calendar } from "components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { cn } from "../../lib/utils"
+import { format } from "date-fns"
+import { firstExpectedPaymentDate } from "../../utils"
+import type { DurationType } from "../../schema.types"
+import { companySelectorQuery } from "../companies/loader"
+import { es } from "date-fns/locale/es"
 
 const ShowScreen = () => {
-  const { creditId } = useParams()
-  const navigate = useNavigate()
-  if (!creditId || Number.isNaN(creditId)) throw new Error("Missing id param")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { creditId, id } = useParams()
+  if (!creditId || Number.isNaN(creditId))
+    throw new Error("Missing creditId param")
+  if (!id || Number.isNaN(id)) throw new Error("Missing company id param")
   const credit = useRecoilValue(hrCreditSelectorQuery(creditId))
+  const company = useRecoilValue(companySelectorQuery(id))
   if (!credit) throw new Error("Credit not found")
-  const { updateHRStatus } = useCreditActions()
-  const companiesMap = useCompanies()
-
-  const userDomain = credit?.borrower.email.split("@")[1]
-  const company = userDomain ? companiesMap.get(userDomain) : undefined
 
   if (!credit) return null
 
   const handleApproveCredit = () => {
-    updateHRStatus(credit.id, "approved")
-    navigate("..")
+    setIsModalOpen(true)
   }
 
-  const handleDenyCredit = () => {
-    updateHRStatus(credit.id, "denied")
-    navigate("..")
+  const onClose = () => {
+    setIsModalOpen(false)
   }
 
   return (
@@ -100,17 +107,7 @@ const ShowScreen = () => {
                 }
               >
                 <CheckIcon className="h-5 w-5 text-white mr-1.5" />
-                Activar
-              </Button>
-              <Button
-                status="secondary"
-                onClick={handleDenyCredit}
-                disabled={
-                  credit.status === "dispersed" || credit.hrStatus === "denied"
-                }
-              >
-                <XMarkIcon className="h-5 w-5 mr-1.5" />
-                Rechazar
+                Aprobar
               </Button>
             </span>
           </div>
@@ -163,34 +160,172 @@ const ShowScreen = () => {
             <label className="text-gray-500 font-medium text-sm">Plazo</label>
             {credit.termOffering?.term && (
               <p className="text-gray-900 font-medium">
-                {DURATION_TYPES.get(credit.termOffering.term.durationType)}
+                {credit.termOffering.term.duration}{" "}
+                {credit.termOffering.term.durationType === "bi-monthly"
+                  ? "Quincenas"
+                  : "Meses"}
               </p>
             )}
           </div>
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">Empresa</label>
-            <p className="text-gray-900 font-medium">{credit.borrower.city}</p>
+            <p className="text-gray-900 font-medium">{company.name}</p>
           </div>
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">Taza</label>
             <p className="text-gray-900 font-medium">
-              {(company?.rate ? company.rate * 100 : 0).toFixed(2)}%
+              {(company?.rate ? company.rate * 100 : 0).toFixed(2)}% Anual
             </p>
           </div>
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">
-              Amortización
+              Descuento
             </label>
             <p className="text-gray-900 font-medium">
               {credit.amortization
                 ? MXNFormat.format(Number(credit.amortization))
                 : 0}{" "}
-              Mensuales
+              {credit?.termOffering?.term?.durationType === "bi-monthly"
+                ? "Quincenales"
+                : "Mensuales"}
             </p>
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <ConfirmationModal
+          creditId={credit.id}
+          companyId={company.id}
+          onClose={onClose}
+          durationType={credit.termOffering!.term.durationType}
+        />
+      )}
     </>
+  )
+}
+
+interface ConfirmationModalProps {
+  creditId: string
+  companyId: string
+  onClose: () => void
+  durationType: DurationType
+}
+
+const ConfirmationModal = ({
+  creditId,
+  companyId,
+  onClose,
+  durationType,
+}: ConfirmationModalProps) => {
+  const firstExpectedPayment = useMemo(
+    () => firstExpectedPaymentDate(durationType),
+    [durationType],
+  )
+  const [date, setDate] = useState<Date | undefined>(firstExpectedPayment)
+  const { updateHRStatus } = useCreditActions()
+  const navigate = useNavigate()
+
+  const handleApproveCredit = () => {
+    if (!date) return
+    // set date to noon utc
+    const firstDiscountDate = new Date(date)
+    firstDiscountDate.setUTCHours(12)
+    updateHRStatus(
+      creditId,
+      companyId,
+      "approved",
+      firstDiscountDate.toISOString(),
+    )
+    navigate("..")
+  }
+
+  return (
+    <Modal>
+      <Modal.Header title="Aprobar Crédito" onClose={onClose} />
+      <Modal.Body>
+        <div className="p-3">
+          <p className="mb-2">
+            Selecciona la fecha en la que se realizará el primer descuento.
+          </p>
+          <p className="text-sm text-gray-500 mb-1">
+            Plazo de descuento:{" "}
+            {durationType === "bi-monthly" ? "Quincenal" : "Mensual"}
+          </p>
+          <ExpectedPaymentPicker
+            firstExpectedPayment={firstExpectedPayment}
+            date={date}
+            setDate={setDate}
+            durationType={durationType}
+          />
+        </div>
+        <div className="flex gap-2 p-3">
+          <Button onClick={handleApproveCredit}>Confirmar</Button>
+
+          <Button status="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
+  )
+}
+
+function ExpectedPaymentPicker({
+  firstExpectedPayment,
+  durationType,
+  date,
+  setDate,
+}: {
+  firstExpectedPayment: Date
+  date?: Date
+  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>
+  durationType: DurationType
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <CalendarButton
+          variant={"outline"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal",
+            !date && "text-muted-foreground",
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? (
+            format(date, "PPP", { locale: es })
+          ) : (
+            <span>Elige una fecha</span>
+          )}
+        </CalendarButton>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          fromDate={firstExpectedPayment}
+          locale={es}
+          disabled={[
+            (date) =>
+              durationType === "bi-monthly"
+                ? date.getDate() !== 15 &&
+                  date.getDate() !==
+                    new Date(
+                      date.getFullYear(),
+                      date.getMonth() + 1,
+                      0,
+                    ).getDate()
+                : date.getDate() !==
+                  new Date(
+                    date.getFullYear(),
+                    date.getMonth() + 1,
+                    0,
+                  ).getDate(),
+          ]}
+        />
+      </PopoverContent>
+    </Popover>
   )
 }
 

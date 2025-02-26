@@ -30,7 +30,7 @@ const Screen = () => {
     <>
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text={"Empleados Activos: " + company?.name} />
+          <ListHeader.Title text={"Empleados Pendientes: " + company?.name} />
           <ListHeader.Actions>
             <ButtonLink size="sm" status="secondary" to="..">
               Activos

@@ -16,7 +16,11 @@ import { DURATION_TYPES, HR_STATUS, MXNFormat } from "../../constants"
 import { useState } from "react"
 import Modal from "components/molecules/modal"
 import FileField from "components/atoms/file-field"
-import Tooltip from "components/atoms/tooltip"
+import dayjs from "dayjs"
+import "dayjs/locale/es"
+import LocalizedFormat from "dayjs/plugin/localizedFormat"
+
+dayjs.extend(LocalizedFormat)
 
 const ShowScreen = () => {
   const { id } = useParams()
@@ -105,31 +109,12 @@ const ShowScreen = () => {
           </div>
           <div className="mt-5 flex lg:ml-4 lg:mt-0">
             <span className="flex gap-2">
-              <Tooltip
-                content={
-                  credit.dispersedAt
-                    ? "El crédito ya ha sido dispersado"
-                    : credit.hrStatus !== "approved"
-                      ? "El crédito debe estar autorizado por RH para poder dispersarlo"
-                      : undefined
-                }
-                cond={!!credit.dispersedAt || credit.hrStatus !== "approved"}
-              >
-                <Button
-                  onClick={openDisperseModal}
-                  disabled={
-                    credit.hrStatus !== "approved" || !!credit.dispersedAt
-                  }
-                >
-                  <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
-                  Dispersar
-                </Button>
-              </Tooltip>
-              <Button
-                status="secondary"
-                onClick={handleDenyCredit}
-                disabled={!!credit.dispersedAt}
-              >
+              <Button onClick={openDisperseModal}>
+                <CurrencyDollarIcon className="h-5 w-5 text-white mr-1.5" />
+                Dispersar
+              </Button>
+
+              <Button status="secondary" onClick={handleDenyCredit}>
                 <XMarkIcon className="h-5 w-5 mr-1.5" />
                 Rechazar
               </Button>
@@ -139,7 +124,15 @@ const ShowScreen = () => {
         <div className="grid grid-cols-2 gap-x-6 gap-y-8">
           <div className="col-span-1">
             <label className="text-gray-500 font-medium text-sm">
-              Numero de Nomina
+              Fecha aprobada de primer descuento
+            </label>
+            <p className="text-gray-900 font-bold">
+              {dayjs(credit.firstDiscountDate).locale("es").format("LL")}
+            </p>
+          </div>
+          <div className="col-span-1">
+            <label className="text-gray-500 font-medium text-sm">
+              Número de Nómina
             </label>
             <p className="text-gray-900 font-medium">
               {credit.borrower.employeeNumber}
@@ -265,10 +258,34 @@ const ShowScreen = () => {
           />
           <Modal.Body>
             <div className="p-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 mb-2">
+                <p className="text-gray-500 text-sm">
+                  Primer descuento:{" "}
+                  <b>
+                    {dayjs(credit.firstDiscountDate).locale("es").format("LL")}
+                  </b>
+                </p>
+                <p className="text-gray-900 text-sm sm:text-right">
+                  Monto:{" "}
+                  <b>{credit.loan ? MXNFormat.format(credit.loan) : 0}</b>
+                </p>
+                <p className="text-gray-900 text-sm">
+                  RFC: <b>{credit.borrower.rfc}</b>
+                </p>
+                <p className="text-gray-900 text-sm sm:text-right">
+                  CLABE: <b>{credit.borrower.bankAccountNumber}</b>
+                </p>
+                <p className="text-gray-900 text-sm">
+                  Nombre:{" "}
+                  <b>
+                    {credit.borrower.firstName} {credit.borrower.lastName}
+                  </b>
+                </p>
+              </div>
               <FileField
                 required
                 id="dispersion-receipt"
-                label="Recibo de dispersión"
+                label="Comprobante"
                 onRemove={() => setDispersionReceiptId(null)}
                 handleFileUpload={({ signedId }) => {
                   if (!signedId) return
@@ -277,19 +294,13 @@ const ShowScreen = () => {
               />
             </div>
             <div className="flex gap-2 p-3">
-              <Tooltip
-                content="El crédito debe estar autorizado por RH para poder dispersarlo"
-                cond={credit.hrStatus !== "approved"}
+              <Button
+                onClick={handleApproveCredit}
+                disabled={!dispersionReceiptId}
               >
-                <Button
-                  onClick={handleApproveCredit}
-                  disabled={
-                    !dispersionReceiptId || credit.hrStatus !== "approved"
-                  }
-                >
-                  Dispersar
-                </Button>
-              </Tooltip>
+                Dispersar
+              </Button>
+
               <Button status="secondary" onClick={() => setIsModalOpen(false)}>
                 Cancelar
               </Button>
