@@ -19,6 +19,8 @@ const Dashboard = () => {
     return <Navigate to="dispersions" />
   } else if (profile?.roles.includes("hr") && profile.hrCompanyId) {
     return <Navigate to={`hr/${profile.hrCompanyId}`} />
+  } else if (profile?.roles.includes("payments")) {
+    return <Navigate to={`payments`} />
   } else {
     return <div>dashboard not found</div>
   }
