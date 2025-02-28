@@ -213,8 +213,8 @@ export interface Company extends ObjectWithId, Timestamps {
 }
 
 export interface Payment extends ObjectWithId, Timestamps {
-  paidAt: string
-  amount: number
+  paidAt: string | null
+  amount: number | null
   credit: Credit
   number: number
   expectedAt: string
