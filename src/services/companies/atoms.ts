@@ -1,4 +1,4 @@
-import { atom, atomFamily, selector, selectorFamily } from "recoil"
+import { atom, selector, selectorFamily } from "recoil"
 
 import { apiSelector } from "components/providers/api/atoms"
 
@@ -150,15 +150,13 @@ export type CompanyCreditDetailed = Pick<
 }
 
 export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
-  CompanyCreditDetailed[] | undefined,
-  string | undefined
+  CompanyCreditDetailed[],
+  string
 >({
   key: "companyCreditsDetailedWithPaymentsSelector",
   get:
-    (id) =>
+    (companyId) =>
     async ({ get }) => {
-      if (!id) return undefined
-
       const api = get(apiSelector)
       const { data }: { data: CompanyCreditDetailedResponse[] } = await api.get(
         "credits",
@@ -175,7 +173,7 @@ export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
             include:
               "borrower,payments,termOffering,termOffering.term,termOffering.company",
             filter: {
-              company: id,
+              company: companyId,
               status: "dispersed",
             },
           },
@@ -201,9 +199,4 @@ export const companyCreditsDetailedWithPaymentsSelector = selectorFamily<
             credit.payments.data?.toSorted((a, b) => a.number - b.number) || [],
         }))
     },
-})
-
-export const companyCreditsDetailedWithPaymentsState = atomFamily({
-  key: "companyCreditsDetailedWithPaymentsState",
-  default: companyCreditsDetailedWithPaymentsSelector,
 })

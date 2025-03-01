@@ -21,7 +21,7 @@ const CompanyOverview = () => {
     () =>
       installedCredits.reduce(
         (acc, { payments }) =>
-          acc + payments.reduce((acc, { amount }) => acc + amount, 0),
+          acc + payments.reduce((acc, { amount }) => acc + (amount ?? 0), 0),
         0,
       ),
     [installedCredits],

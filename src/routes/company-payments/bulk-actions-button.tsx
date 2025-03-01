@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import { useRecoilValue, useRecoilCallback } from "recoil"
 
 import Button from "components/atoms/button"
@@ -7,7 +7,7 @@ import Dialog from "components/molecules/dialog"
 import { apiSelector } from "components/providers/api/atoms"
 import useToast from "components/providers/toaster/useToast"
 
-import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
+import { companyCreditsDetailedWithPaymentsSelector } from "../../services/companies/atoms"
 import {
   selectedInstalledCreditWithPaymentsIdsState,
   installedCreditWithPaymentSelectedState,
@@ -21,6 +21,7 @@ interface BulkActionsButtonProps {
 
 const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
   const toast = useToast()
+  if (!companyId) throw new Error("companyId is required")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const selectedCredits = useRecoilValue(
     selectedInstalledCreditWithPaymentsIdsState(companyId),
@@ -29,27 +30,16 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
   const closeModal = () => setIsModalOpen(false)
 
   const downloadTemplate = () => {
-    const headers = [
-      "Empleado",
-      "Cliente",
-      "Año",
-      "Mes",
-      "Quincena",
-      "Descuento",
-    ]
-    exportToCSV(
-      headers,
-      [["JP3424", "Soriana", "2025", "01", "1", "100.59"]],
-      "pagos.csv",
-    )
+    const headers = ["Empleado", "Cliente", "Descuento"]
+    exportToCSV(headers, [["JP3424", "Soriana", "100.59"]], "pagos.csv")
   }
 
-  const handleRegisterPayments = useRecoilCallback(
-    ({ snapshot, set, reset }) =>
+  const handleUpdatePayments = useRecoilCallback(
+    ({ snapshot, refresh, reset }) =>
       async () => {
         const api = await snapshot.getPromise(apiSelector)
         const credits = await snapshot.getPromise(
-          companyCreditsDetailedWithPaymentsState(companyId),
+          companyCreditsDetailedWithPaymentsSelector(companyId),
         )
         const selectedCredits = await snapshot.getPromise(
           selectedInstalledCreditWithPaymentsIdsState(companyId),
@@ -58,50 +48,22 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
         for (const creditId of selectedCredits) {
           const credit = credits?.find((credit) => credit.id === creditId)
           if (!credit || !credit.amortization) continue
-          const paymentNumbers = credit.payments
-            .map((payment) => payment.number)
-            .toSorted()
-          const lastPaymentNumber = paymentNumbers[paymentNumbers.length - 1]
-          const resp = await api.create("payments", {
-            credit: {
-              data: {
-                id: creditId,
-                type: "credits",
-              },
-            },
+
+          const nextPayment = credit.payments
+            .toSorted((a, b) => a.number - b.number)
+            .find((payment) => !payment.paidAt)
+
+          if (!nextPayment) continue
+
+          await api.update("payments", {
+            id: nextPayment.id,
             amount: credit.amortization,
             paidAt: new Date().toISOString(),
-            number: lastPaymentNumber + 1,
           })
           reset(installedCreditWithPaymentSelectedState(creditId))
-          set(
-            companyCreditsDetailedWithPaymentsState(companyId),
-            (oldCredits) => {
-              return (
-                oldCredits?.map((credit) => {
-                  if (credit.id === creditId) {
-                    return {
-                      ...credit,
-                      payments: [
-                        ...credit.payments,
-                        {
-                          id: resp.data.id,
-                          amount: resp.data.amount,
-                          paidAt: resp.data.paidAt,
-                          number: resp.data.number,
-                          expectedAt: resp.data.expectedAt,
-                          expectedAmount: resp.data.expectedAmount,
-                        },
-                      ],
-                    }
-                  } else {
-                    return credit
-                  }
-                }) ?? []
-              )
-            },
-          )
         }
+
+        refresh(companyCreditsDetailedWithPaymentsSelector(companyId))
 
         toast.success({
           title: "Pagos registrados",
@@ -116,7 +78,9 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
 
   return (
     <>
-      <ImportDocumentModal />
+      <Suspense fallback={null}>
+        <ImportDocumentModal companyId={companyId} />
+      </Suspense>
       {selectedCredits.length ? (
         <Button size="sm" onClick={openModal}>
           Registrar pagos ({selectedCredits.length})
@@ -131,7 +95,7 @@ const BulkActionsButton = ({ companyId }: BulkActionsButtonProps) => {
           message={modalMessage}
           onCancel={closeModal}
           onClose={async (input) => {
-            if (input === "registrar") await handleRegisterPayments()
+            if (input === "registrar") await handleUpdatePayments()
           }}
           title="Registrar pagos"
           inputLabel="Escribe 'registrar' para confirmar"

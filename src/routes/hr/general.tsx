@@ -40,7 +40,10 @@ const Screen = () => {
     (creditId: string) => {
       const credit = credits.get(creditId)
       if (!credit) throw new Error("Credit not found")
-      return credit.payments.reduce((acc, payment) => acc + payment.amount, 0)
+      return credit.payments.reduce(
+        (acc, payment) => acc + (payment.amount ?? 0),
+        0,
+      )
     },
     [credits],
   )

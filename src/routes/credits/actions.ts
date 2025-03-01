@@ -4,7 +4,6 @@ import { useRecoilCallback } from "recoil"
 import { creditDetailedWithPaymentsState } from "./atoms"
 import {
   companyCreditsDetailedWithPaymentsSelector,
-  companyCreditsDetailedWithPaymentsState,
   companyCreditsWithPaymentsSelectorQuery,
   companyCreditsWithPaymentsState,
 } from "../../services/companies/atoms"
@@ -28,7 +27,6 @@ const usePaymentActions = () => {
           creditDetailedWithPaymentsState(creditId),
         )
         const companyId = credit.termOffering.company.id
-        reset(companyCreditsDetailedWithPaymentsState(companyId))
         refresh(companyCreditsDetailedWithPaymentsSelector(companyId))
       },
   )
@@ -41,9 +39,10 @@ const usePaymentActions = () => {
         creditId: string,
       ): Promise<UpdatePaymentResponse> => {
         const api = await snapshot.getPromise(apiSelector)
-        const { data } = await api.update(`payments/${id}`, {
+        const { data } = await api.update(`payments`, {
           id,
           amount,
+          paidAt: new Date().toISOString(),
         })
         toast.success({
           title: "Pago actualizado",

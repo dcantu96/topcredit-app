@@ -41,6 +41,8 @@ export type CreditStatus =
   | "authorized"
   | "denied"
   | "dispersed"
+  | "settled"
+  | "defaulted"
 
 export type HRStatus = "approved" | "denied"
 

@@ -113,3 +113,26 @@ export function firstExpectedPaymentDate(
     ) // Handle invalid input
   }
 }
+
+export function nextExpectedPaymentDate(
+  termDurationType: "bi-monthly" | "monthly",
+): Date {
+  const today = new Date() // Get today's date and time
+
+  if (termDurationType === "bi-monthly") {
+    if (today.getDate() < 15) {
+      // Next payment is the 15th of the current month
+      return new Date(today.getFullYear(), today.getMonth(), 15, 12)
+    } else {
+      // Next payment is the end of the current month
+      return new Date(today.getFullYear(), today.getMonth() + 1, 0, 12)
+    }
+  } else if (termDurationType === "monthly") {
+    // Next payment is the end of the current month
+    return new Date(today.getFullYear(), today.getMonth() + 1, 0, 12)
+  } else {
+    throw new Error(
+      "Invalid term duration type. Must be 'bi-monthly' or 'monthly'.",
+    )
+  }
+}

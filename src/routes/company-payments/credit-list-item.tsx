@@ -4,39 +4,37 @@ import Chip from "components/atoms/chip"
 import { useRecoilState } from "recoil"
 import { installedCreditWithPaymentSelectedState } from "./atoms"
 import { MXNFormat } from "../../constants"
-import SmallDot from "components/atoms/small-dot"
 import { ChevronRightIcon } from "@heroicons/react/16/solid"
 import { useNavigate } from "react-router-dom"
 import { CompanyCreditDetailed } from "../../services/companies/atoms"
 import dayjs from "dayjs"
+import LocalizedFormat from "dayjs/plugin/localizedFormat"
+import "dayjs/locale/es"
+dayjs.extend(LocalizedFormat)
 
-const ListItem = ({
-  credit,
-  employeeSalaryFrequency,
-}: {
-  credit: CompanyCreditDetailed
-  employeeSalaryFrequency: "bi-monthly" | "monthly"
-}) => {
+const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
   const navigate = useNavigate()
   const [pressed, setPressed] = useRecoilState(
     installedCreditWithPaymentSelectedState(credit.id),
   )
 
-  const delayedPayment = useMemo(() => {
-    return !!credit.payments.find(
+  const delayedPayments = useMemo(() => {
+    return credit.payments.filter(
       (payment) =>
         !payment.paidAt && dayjs(payment.expectedAt).isBefore(dayjs()),
-    )
+    ).length
   }, [credit.payments])
 
   const status = useMemo(() => {
-    if (delayedPayment) {
+    if (delayedPayments > 0) {
       return "delayed"
     }
     return "pending"
-  }, [delayedPayment])
+  }, [delayedPayments])
 
-  const lastPayment = credit.payments.at(-1)?.paidAt
+  const lastPayment = credit.payments.findLast(
+    (payment) => !!payment.paidAt,
+  )?.paidAt
 
   return (
     <List.Item>
@@ -59,41 +57,31 @@ const ListItem = ({
               />
             </div>
           </label>
-          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0 inline-flex">
             <label
               htmlFor={credit.id}
-              className="cursor-pointer hover:text-gray-700"
+              className="cursor-pointer hover:text-gray-700 mr-2"
             >
               <a className="flex text-inherit decoration-inherit gap-x-2">
                 <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
                   {credit.borrower.firstName} {credit.borrower.lastName} ·{" "}
                   {credit.borrower.employeeNumber}
                 </span>
-                <span className="text-gray-400">/</span>
-                <span className="whitespace-nowrap">
-                  {credit.payments.length} de{" "}
-                  {credit.termOffering.term.duration} pagos
-                </span>
               </a>
             </label>
+            <Chip status={status === "delayed" ? "error" : "info"}>
+              {status === "delayed" ? "Demorado" : "Al Corriente"}
+            </Chip>
           </h2>
         </div>
         <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
-          <p className="whitespace-nowrap">
-            Instalado el{" "}
-            <b>
-              {credit.firstDiscountDate
-                ? new Date(credit.firstDiscountDate).toLocaleDateString()
-                : ""}
-            </b>
-          </p>
-          <SmallDot />
           <p
             className={`whitespace-nowrap ${status === "pending" ? "" : "text-red-600"}`}
           >
             {lastPayment ? (
               <>
-                Ultimo pago <b>{new Date(lastPayment).toLocaleDateString()}</b>
+                Último descuento{" "}
+                <b>{dayjs(lastPayment).locale("es").format("LL")}</b>
               </>
             ) : (
               "Sin pagos"
@@ -101,15 +89,28 @@ const ListItem = ({
           </p>
         </div>
       </div>
-      <div className="min-w-32">
+      {delayedPayments > 0 && (
+        <div className="min-w-28">
+          <div className="flex items-center gap-x-3">
+            <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
+              <a className="flex text-inherit decoration-inherit gap-x-2">
+                <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
+                  Demorados
+                </span>
+              </a>
+            </h2>
+          </div>
+          <p className="whitespace-nowrap text-sm mt-3">
+            {delayedPayments} descuento(s)
+          </p>
+        </div>
+      )}
+      <div className="min-w-28">
         <div className="flex items-center gap-x-3">
           <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
             <a className="flex text-inherit decoration-inherit gap-x-2">
               <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Descuento{" "}
-                {employeeSalaryFrequency === "bi-monthly"
-                  ? "Quincenal"
-                  : "Mensual"}
+                Descuento
               </span>
             </a>
           </h2>
@@ -120,20 +121,6 @@ const ListItem = ({
             : 0}{" "}
           MXN
         </p>
-      </div>
-      <div className="min-w-32">
-        <div className="flex items-center gap-x-3">
-          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0">
-            <a className="flex text-inherit decoration-inherit gap-x-2">
-              <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-                Estatus
-              </span>
-            </a>
-          </h2>
-        </div>
-        <Chip status={status === "delayed" ? "error" : "info"}>
-          {status === "delayed" ? "Demorado" : "Activo"}
-        </Chip>
       </div>
       <button
         onClick={() => navigate("/dashboard/credits/" + credit.id)}

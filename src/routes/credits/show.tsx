@@ -46,6 +46,8 @@ const Screen = () => {
       return "Autorizado"
     }
     if (status === "dispersed") return "Dispersado"
+    if (status === "settled") return "Liquidado"
+    if (status === "defaulted") return "Incumplido"
   }, [status, hrStatus])
 
   return (

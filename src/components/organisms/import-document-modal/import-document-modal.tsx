@@ -1,55 +1,44 @@
 import { useCallback, useState } from "react"
-import { useRecoilCallback, useRecoilValue } from "recoil"
+import {
+  useRecoilCallback,
+  useRecoilRefresher_UNSTABLE,
+  useRecoilValue,
+} from "recoil"
 import ImportDocumentButton from "components/molecules/import-document-button"
 import Modal from "components/molecules/modal"
 import { CSVRow, readFile } from "components/atoms/utils"
 import Button from "components/atoms/button"
 import { apiSelector } from "components/providers/api/atoms"
 import useToast from "components/providers/toaster/useToast"
-import { XMarkIcon } from "@heroicons/react/24/solid"
-import Tooltip from "components/atoms/tooltip"
 import { dispersedCreditsImportSelector } from "./atoms"
-import { companiesSelectorQuery } from "hooks/useCompanies/atoms"
 import List from "../list"
+import { companySelectorQuery } from "../../../routes/companies/loader"
+import { MXNFormat } from "../../../constants"
+import dayjs from "dayjs"
+import LocalizedFormat from "dayjs/plugin/localizedFormat"
+import "dayjs/locale/es"
+dayjs.extend(LocalizedFormat)
 
-const ImportDocumentModal = () => {
+const ImportDocumentModal = ({ companyId }: { companyId: string }) => {
+  const company = useRecoilValue(companySelectorQuery(companyId))
   const toast = useToast()
-  const dispersedCredits = useRecoilValue(dispersedCreditsImportSelector)
+  const dispersedCredits = useRecoilValue(
+    dispersedCreditsImportSelector(companyId),
+  )
+  const refresh = useRecoilRefresher_UNSTABLE(
+    dispersedCreditsImportSelector(companyId),
+  )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [headers, setHeaders] = useState<string[]>([])
   const [csvRows, setCSVRows] = useState<CSVRow[]>([])
   const [isSaving, setIsSaving] = useState(false)
-  const [errors, setErrors] = useState<Map<string, string[]>>(
-    new Map<string, string[]>(),
-  )
+  const [errors, setErrors] = useState<Record<string, string[] | undefined>>({})
   const rowKey = headers.at(1)
 
-  const validRows = csvRows.filter(
-    (row) =>
-      dispersedCredits.find(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (credit: any) =>
-          credit.borrower.data.employeeNumber === row["Empleado"],
-      ) !== undefined,
-  )
-
-  const invalidRowsCount = csvRows.length - validRows.length
-
-  const nextPaymentNumber = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (credit: any) => {
-      const sortedPayments = credit.payments.data.toSorted(
-        (a: { number: number }, b: { number: number }) => a.number - b.number,
-      )
-      return ((sortedPayments.at(-1)?.number as number) ?? 0) + 1
-    },
-    [],
-  )
+  const invalidRowsCount = Object.keys(errors).length
 
   const handleSave = useRecoilCallback(({ snapshot }) => async () => {
     const api = await snapshot.getPromise(apiSelector)
-    const companies = await snapshot.getPromise(companiesSelectorQuery)
-    const companyList = Array.from(companies.values())
     setIsSaving(true)
     try {
       if (!dispersedCredits || !dispersedCredits.length) {
@@ -62,91 +51,159 @@ const ImportDocumentModal = () => {
         return
       }
 
-      for (const row of validRows) {
-        try {
-          const company = companyList.find(
-            (company) => company.name === row["Cliente"],
+      for (const row of csvRows) {
+        const employeeNumber = row["Empleado"]
+        const paymentNumber = Number(row["#"])
+
+        const credit = dispersedCredits.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (credit: any) =>
+            credit.borrower.data.employeeNumber === employeeNumber,
+        )
+        if (!credit) {
+          throw Error(
+            `No se encontró el crédito para el empleado ${employeeNumber}`,
           )
-          if (!company) {
-            throw Error(`No se encontró la empresa ${headers[0]}`)
-          }
-          const credit = dispersedCredits.find(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (credit: any) =>
-              credit.borrower.data.employeeNumber === row["Empleado"],
+        }
+
+        const payment = credit.payments.data.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (payment: any) => payment.number === paymentNumber,
+        )
+        if (!payment) {
+          throw Error(
+            `No se encontró el pago #${paymentNumber} para el crédito ${credit.id}`,
           )
-          if (!credit) {
-            throw Error(
-              `No se encontró el crédito para el empleado ${row["Empleado"]}`,
-            )
-          }
-          await api.create("payments", {
-            amount: row["Descuento"],
-            number: nextPaymentNumber(credit),
-            paidAt: new Date().toISOString(),
-            credit: {
-              data: {
-                id: credit.id,
-                type: "credits",
-              },
-            },
-          })
-        } catch {}
+        }
+
+        await api.update("payments", {
+          id: payment.id,
+          amount: row["Descuento"],
+          paidAt: new Date().toISOString(),
+        })
       }
       setIsSaving(false)
     } catch (error) {
       setIsSaving(false)
-      console.error(error)
+      throw error
     }
   })
 
   const onLoad = (loadedRows: CSVRow[], loadedHeaders: string[]) => {
-    const newMap = errors
+    const newErrorObject = errors
     for (const row of loadedRows) {
       const employeeNumber = row["Empleado"]
       const credit = dispersedCredits.find(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
       )
+
+      const payments = credit?.payments.data
+      if (!row["#"]) {
+        newErrorObject[employeeNumber] = [
+          ...(newErrorObject[employeeNumber] ?? []),
+          `No se encontró la columna '#'`,
+        ]
+      }
+      const paymentNumber = Number(row["#"])
+      if (!payments || payments.length === 0) {
+        newErrorObject[employeeNumber] = [
+          ...(newErrorObject[employeeNumber] ?? []),
+          `No se encontraron pagos para el empleado`,
+        ]
+      } else if (
+        !payments.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (payment: any) => payment.number === paymentNumber,
+        )
+      ) {
+        newErrorObject[employeeNumber] = [
+          ...(newErrorObject[employeeNumber] ?? []),
+          `No se encontró el pago #${paymentNumber} para el empleado`,
+        ]
+      } else if (
+        !!payments.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (payment: any) => payment.number === paymentNumber,
+        )?.paidAt
+      ) {
+        newErrorObject[employeeNumber] = [
+          ...(newErrorObject[employeeNumber] ?? []),
+          `El pago #${paymentNumber} ya fue realizado`,
+        ]
+      }
       if (!credit) {
-        if (newMap.has(employeeNumber)) {
-          newMap.set(employeeNumber, [
-            ...newMap.get(employeeNumber)!,
-            `No existe # Empleado: ${employeeNumber} en la base de datos`,
-          ])
-        } else {
-          newMap.set(employeeNumber, [
-            `No existe # Empleado: ${employeeNumber} en la base de datos`,
-          ])
-        }
+        newErrorObject[employeeNumber] = [
+          ...(newErrorObject[employeeNumber] ?? []),
+          `No se encontró el crédito para el empleado`,
+        ]
       }
       if (!row["Descuento"]) {
-        if (newMap.has(employeeNumber)) {
-          newMap.set(employeeNumber, [
-            ...newMap.get(employeeNumber)!,
-            `No se encontró la columna Descuento`,
-          ])
-        } else {
-          newMap.set(employeeNumber, [`No se encontró la columna Descuento`])
-        }
-      }
-      if (!row["Mes"]) {
-        if (newMap.has(employeeNumber)) {
-          newMap.set(employeeNumber, [
-            ...newMap.get(employeeNumber)!,
-            `No se encontró la columna mes`,
-          ])
-        } else {
-          newMap.set(employeeNumber, [`No se encontró la columna mes`])
-        }
+        newErrorObject[employeeNumber] = [
+          ...(newErrorObject[employeeNumber] ?? []),
+          `No se encontró la columna Descuento`,
+        ]
       }
     }
-    setErrors(newMap)
+
+    setErrors(newErrorObject)
     setIsModalOpen(true)
     setHeaders(loadedHeaders)
     setCSVRows(loadedRows)
-    console.log(loadedRows)
   }
+
+  const employeeName = useCallback(
+    (employeeNumber: string) => {
+      const credit = dispersedCredits.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
+      )
+      if (!credit) return ""
+      return `${credit.borrower.data.firstName} ${credit.borrower.data.lastName}`
+    },
+    [dispersedCredits],
+  )
+
+  const expectedAmount = useCallback(
+    (employeeNumber: string) => {
+      const credit = dispersedCredits.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
+      )
+      if (!credit) return 0
+      return credit.amortization
+    },
+    [dispersedCredits],
+  )
+
+  const loanTerm = useCallback(
+    (employeeNumber: string) => {
+      const credit = dispersedCredits.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
+      )
+      if (!credit) return 0
+      return credit.termOffering.data.term.data.duration
+    },
+    [dispersedCredits],
+  )
+
+  const expectedPaymentDate = useCallback(
+    (employeeNumber: string, paymentNumber: number) => {
+      const credit = dispersedCredits.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (credit: any) => credit.borrower.data.employeeNumber === employeeNumber,
+      )
+      if (!credit) return ""
+      const payment = credit.payments.data.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (payment: any) => payment.number === paymentNumber,
+      )
+      if (!payment) return ""
+      return dayjs(payment.expectedAt).locale("es").format("LL")
+    },
+    [dispersedCredits],
+  )
 
   return (
     <>
@@ -159,75 +216,87 @@ const ImportDocumentModal = () => {
       {isModalOpen && (
         <Modal>
           <Modal.Header
-            onClose={() => setIsModalOpen(false)}
-            title={`Importar (${validRows.length}) pagos. ${invalidRowsCount > 0 ? `(${invalidRowsCount} Inválidos)` : ""}`}
+            onClose={() => {
+              refresh()
+              setErrors({})
+              setIsModalOpen(false)
+            }}
+            title={`Importar pagos para ${company.name}`}
           >
             <Button
               size="sm"
               onClick={async () => {
                 await handleSave()
-                if (errors.size === 0) {
-                  setIsModalOpen(false)
+                if (Object.keys(errors).length === 0) {
+                  window.location.reload()
                 }
               }}
-              disabled={validRows.length === 0 || isSaving}
+              disabled={invalidRowsCount > 0 || isSaving}
             >
-              Guardar
+              Confirmar
             </Button>
           </Modal.Header>
           <Modal.Body>
-            <List>
-              <List.Header columns={headers.concat("Status")} />
-              <List.Body>
-                {rowKey &&
-                  csvRows.map((row) => (
-                    <List.Row
-                      key={`${row["Empleado"]}-${row["Año"]}-${row["Mes"]}-${row["Quincena"]}`}
-                    >
-                      {headers.map((header) => (
-                        <List.Cell key={header}>{row[header]}</List.Cell>
-                      ))}
-                      <MaybeErrorCell
-                        employeeNumber={row["Empleado"]}
-                        errorsMap={errors}
-                      />
-                    </List.Row>
-                  ))}
-              </List.Body>
-            </List>
+            {invalidRowsCount > 0 ? (
+              <div className="p-3">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                  <strong className="font-bold">Error:</strong>
+                  <ul>
+                    {Object.entries(errors).map(([key, value]) => (
+                      <li key={key}>
+                        Empleado <b>{key}</b>: {value?.join(", ")}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <List>
+                <List.Header
+                  columns={[
+                    "Empleado",
+                    "Nómina",
+                    "Descuento",
+                    "# Descuento",
+                    "Fecha Estimada",
+                  ]}
+                />
+                <List.Body>
+                  {rowKey &&
+                    csvRows.map((row, i) => (
+                      <List.Row key={`${row["Empleado"]}-${i}`}>
+                        <List.Cell key="name">
+                          {employeeName(row["Empleado"])}
+                        </List.Cell>
+                        <List.Cell key="empNumber">{row["Empleado"]}</List.Cell>
+                        <List.Cell key="expectedAmount">
+                          {Number(expectedAmount(row["Empleado"])) !==
+                          Number(row["Descuento"]) ? (
+                            <span className="text-red-500 font-bold">
+                              {MXNFormat.format(Number(row["Descuento"]))}
+                            </span>
+                          ) : (
+                            MXNFormat.format(Number(row["Descuento"]))
+                          )}
+                        </List.Cell>
+                        <List.Cell key="expectedPayment">
+                          {row["#"]} de {loanTerm(row["Empleado"])}
+                        </List.Cell>
+                        <List.Cell key="expectedPaymentDate">
+                          {expectedPaymentDate(
+                            row["Empleado"],
+                            Number(row["#"]),
+                          )}
+                        </List.Cell>
+                      </List.Row>
+                    ))}
+                </List.Body>
+              </List>
+            )}
           </Modal.Body>
         </Modal>
       )}
     </>
-  )
-}
-
-const MaybeErrorCell = ({
-  employeeNumber,
-  errorsMap,
-}: {
-  employeeNumber: string
-  errorsMap: Map<string, string[]>
-}) => {
-  const errors = errorsMap.get(employeeNumber)
-  return (
-    <List.Cell>
-      {errors ? (
-        <Tooltip
-          content={
-            <ul>
-              {errors.map((error, index) => (
-                <li style={{ width: "100px" }} key={index}>
-                  {error}
-                </li>
-              ))}
-            </ul>
-          }
-        >
-          <XMarkIcon className="w-5 h-5 text-red-500" />
-        </Tooltip>
-      ) : null}
-    </List.Cell>
   )
 }
 

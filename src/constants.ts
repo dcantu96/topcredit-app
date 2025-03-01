@@ -130,6 +130,8 @@ export const CREDIT_STATUS = new Map<CreditStatus, string>([
   ["authorized", "Autorizado"],
   ["denied", "Denegado"],
   ["dispersed", "Dispersado"],
+  ["settled", "Liquidado"],
+  ["defaulted", "Incumplido"],
 ])
 
 export const USER_STATUSES = new Map<UserStatus, string>([

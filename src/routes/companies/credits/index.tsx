@@ -28,7 +28,7 @@ const Screen = () => {
       const credit = credits.get(creditId)
       if (!credit?.payments) return 0
       const paid = credit.payments.reduce(
-        (acc, payment) => acc + payment.amount,
+        (acc, payment) => acc + (payment.amount ?? 0),
         0,
       )
       return paid

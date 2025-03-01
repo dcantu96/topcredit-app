@@ -8,7 +8,7 @@ import List from "components/atoms/list"
 
 import { companySelectorQuery } from "../companies/loader"
 import ListItem from "./credit-list-item"
-import { companyCreditsDetailedWithPaymentsState } from "../../services/companies/atoms"
+import { companyCreditsDetailedWithPaymentsSelector } from "../../services/companies/atoms"
 import BulkActions from "./bulk-actions"
 import { exportToCSV } from "../../utils"
 import { MXNFormat } from "../../constants"
@@ -17,9 +17,10 @@ import { DocumentArrowDownIcon } from "@heroicons/react/16/solid"
 
 const Screen = () => {
   const { companyId } = useParams()
-  const company = useRecoilValue(companySelectorQuery(companyId!))
+  if (!companyId) throw new Error("companyId is required")
+  const company = useRecoilValue(companySelectorQuery(companyId))
   const credits = useRecoilValue(
-    companyCreditsDetailedWithPaymentsState(companyId),
+    companyCreditsDetailedWithPaymentsSelector(companyId),
   )?.filter((credit) => {
     const isHRApproved = credit.hrStatus === "approved"
     const isMissingPayment = credit.payments.find((payment) => !payment.paidAt)
@@ -33,7 +34,7 @@ const Screen = () => {
       ["Empleado", "Cliente", "Nómina", "Crédito", "Descuento Total", "Status"],
       credits.map((credit) => {
         const totalPaid = credit.payments.reduce(
-          (acc, payment) => acc + payment.amount,
+          (acc, payment) => acc + (payment.amount ?? 0),
           0,
         )
         const firstName = credit.borrower.firstName

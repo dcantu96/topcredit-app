@@ -29,7 +29,7 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
   }
 
   const totalPaid = credit.payments.reduce(
-    (acc, payment) => acc + payment.amount,
+    (acc, payment) => acc + (payment.amount ?? 0),
     0,
   )
 

@@ -65,9 +65,9 @@ const ListItem = ({ payment }: ListItemProps) => {
               </p>
             )
           ) : isDelayed ? (
-            <p className="whitespace-nowrap">Pendiente</p>
-          ) : (
             <p className="text-red-600 whitespace-nowrap">Demorado</p>
+          ) : (
+            <p className="whitespace-nowrap">Pendiente</p>
           )}
         </div>
       </div>
@@ -82,7 +82,9 @@ const ListItem = ({ payment }: ListItemProps) => {
           </h2>
         </div>
         <p className="whitespace-nowrap mt-2 font-semibold">
-          {payment ? `${MXNFormat.format(payment.amount)} MXN` : "Sin pago"}
+          {payment
+            ? `${MXNFormat.format(payment.amount ?? 0)} MXN`
+            : "Sin pago"}
         </p>
       </div>
       {isAdmin && (
@@ -90,7 +92,7 @@ const ListItem = ({ payment }: ListItemProps) => {
           <UpdatePayment
             id={payment.id}
             number={payment.number}
-            amount={payment.amount}
+            amount={payment.amount ?? 0}
             expectedAmount={payment.expectedAmount}
           />
         </div>
@@ -140,11 +142,11 @@ const UpdatePayment = ({
             <div className="p-3">
               <Input
                 id="amount"
-                label="Cantidad"
-                placeholder={`Monto estimado: $${expectedAmount}`}
+                label={`Cantidad - Monto estimado: $${expectedAmount}`}
+                placeholder={`${expectedAmount}`}
                 type="number"
                 required
-                value={amount?.toString() ?? ""}
+                value={newAmount?.toString() ?? ""}
                 onChange={({ target }) =>
                   setNewAmount(
                     target.value === "" ? null : Number(target.value),
