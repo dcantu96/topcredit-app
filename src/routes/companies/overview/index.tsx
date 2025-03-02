@@ -10,6 +10,7 @@ import { MXNFormat, FREQUENCY_OPTIONS } from "../../../constants"
 import ButtonLink from "components/atoms/button-link"
 import DispersedByFrequencyChart from "./dispersedByFrequencyChart"
 import DeductedByFreqChart from "./deductedByFrequencyChart"
+import ByClientStatusPieChart from "./byClientStatusPieChart"
 
 const CompanyOverview = () => {
   const { id } = useParams()
@@ -41,11 +42,6 @@ const CompanyOverview = () => {
     [installedCredits],
   )
 
-  const outstandingBalance = useMemo(
-    () => totalCreditAmount - totalCollected,
-    [totalCreditAmount, totalCollected],
-  )
-
   const defaultedBalance = useMemo(() => {
     return installedCredits
       .filter(({ status }) => status === "defaulted")
@@ -59,6 +55,11 @@ const CompanyOverview = () => {
         0,
       )
   }, [installedCredits])
+
+  const outstandingBalance = useMemo(
+    () => totalCreditAmount - totalCollected - defaultedBalance,
+    [totalCreditAmount, totalCollected, defaultedBalance],
+  )
 
   return (
     <div className="flex w-full flex-col">
@@ -126,6 +127,7 @@ const CompanyOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-6">
         <DispersedByFrequencyChart />
         <DeductedByFreqChart />
+        <ByClientStatusPieChart />
       </div>
     </div>
   )

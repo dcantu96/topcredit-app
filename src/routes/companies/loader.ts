@@ -242,30 +242,3 @@ export const companyNewlyInstalledCreditsQuery = selectorFamily<
       return data
     },
 })
-
-export const companyInstalledCreditsQuery = selectorFamily<
-  Pick<Credit, "id" | "updatedAt" | "createdAt" | "amortization">[],
-  string
->({
-  key: "companyInstalledCreditsQuery",
-  get:
-    (id) =>
-    async ({ get }) => {
-      const api = get(apiSelector)
-      const {
-        data,
-      }: {
-        data: Pick<Credit, "id" | "updatedAt" | "createdAt" | "amortization">[]
-      } = await api.get(`company/${id}/credits`, {
-        params: {
-          fields: {
-            credits: "id,updatedAt,createdAt,amortization,firstDiscountDate",
-          },
-          filter: {
-            status: "dispersed",
-          },
-        },
-      })
-      return data
-    },
-})
