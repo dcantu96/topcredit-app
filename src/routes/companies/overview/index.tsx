@@ -46,6 +46,20 @@ const CompanyOverview = () => {
     [totalCreditAmount, totalCollected],
   )
 
+  const defaultedBalance = useMemo(() => {
+    return installedCredits
+      .filter(({ status }) => status === "defaulted")
+      .reduce(
+        (acc, { payments }) =>
+          acc +
+          payments.reduce((acc, { amount, expectedAmount }) => {
+            const notPaidAmount = (expectedAmount ?? 0) - (amount ?? 0)
+            return acc + (notPaidAmount > 0 ? notPaidAmount : 0)
+          }, 0),
+        0,
+      )
+  }, [installedCredits])
+
   return (
     <div className="flex w-full flex-col">
       <header className="pt-6 pb-4 sm:pb-6">
@@ -104,7 +118,7 @@ const CompanyOverview = () => {
             </dt>
             <dd className="text-xs font-medium text-gray-500">--.--%</dd>
             <dd className="w-full flex-none text-3xl font-medium leading-10 -tracking-tight text-red-600">
-              ---
+              {MXNFormat.format(defaultedBalance)}
             </dd>
           </div>
         </dl>

@@ -102,7 +102,7 @@ export const companyInstalledCreditsQuery = selectorFamily<
               },
               include: "borrower,termOffering.term,payments",
               filter: {
-                status: "dispersed",
+                status: "dispersed,settled,defaulted",
               },
             },
           },
