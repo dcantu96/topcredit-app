@@ -58,8 +58,6 @@ const Screen = () => {
           },
         )
 
-        console.log({ onlyThoseNotYetApprovedByHr })
-
         const areAllPressed = onlyThoseNotYetApprovedByHr.every(({ id }) =>
           snapshot.getLoadable(creditPressed(id)).getValue(),
         )

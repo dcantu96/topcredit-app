@@ -49,7 +49,6 @@ const FileField = ({
   const [file, setFile] = useState<File | undefined | null>(undefined)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragActive, setIsDragActive] = useState<boolean>(false)
-  console.log(file?.lastModified)
 
   const handleDragEnter = () => {
     setIsDragActive(true)

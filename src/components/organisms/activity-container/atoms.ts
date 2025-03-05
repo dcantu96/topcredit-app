@@ -43,9 +43,6 @@ export const notificationsSelector = selectorFamily<
           },
         },
       )
-
-      console.log(data)
-
       return data
     },
 })
