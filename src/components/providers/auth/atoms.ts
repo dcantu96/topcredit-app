@@ -182,7 +182,9 @@ export const showDashboardSidebarSelector = selector({
 
     return (
       profile?.roles &&
-      (profile?.roles.includes("admin") || profile.roles.length > 1)
+      (profile?.roles.includes("admin") ||
+        profile.roles.length > 1 ||
+        profile?.roles.includes("hr"))
     )
   },
 })

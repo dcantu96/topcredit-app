@@ -1,13 +1,12 @@
 import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { CheckBadgeIcon, DocumentArrowUpIcon } from "@heroicons/react/24/solid"
+import { DocumentArrowUpIcon } from "@heroicons/react/24/solid"
 
 import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 import ActivityContainer from "components/organisms/activity-container"
-import ButtonLink from "components/atoms/button-link"
 import EmptyList from "components/atoms/empty-list"
 import useIsRole from "hooks/useIsRole"
 import { myProfileState } from "components/providers/auth/atoms"
@@ -127,12 +126,8 @@ const Screen = () => {
     <>
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text={"Empleados Activos: " + company?.name} />
+          <ListHeader.Title text={`Cartera - ${company?.name}`} />
           <ListHeader.Actions>
-            <ButtonLink size="sm" status="secondary" to="requests">
-              Solicitudes
-              <CheckBadgeIcon className="w-4 h-4 ml-2" />
-            </ButtonLink>
             <Button onClick={handleExport} size="sm" status="secondary">
               Exportar
               <DocumentArrowUpIcon className="h-4 w-4 ml-1" />

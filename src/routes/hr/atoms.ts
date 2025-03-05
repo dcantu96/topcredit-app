@@ -15,6 +15,7 @@ export type HRCreditsResponse = Pick<
   | "loan"
   | "amortization"
   | "hrStatus"
+  | "firstDiscountDate"
 > & {
   borrower: {
     data: Credit["borrower"]
@@ -44,6 +45,7 @@ export type ActiveCredit = Pick<
   payments: NonNullable<Credit["payments"]>
   amortization: NonNullable<Credit["amortization"]>
   loan: NonNullable<Credit["loan"]>
+  firstDiscountDate: NonNullable<Credit["firstDiscountDate"]>
 }
 
 export type ActiveCreditsMap = Map<string, ActiveCredit>
@@ -62,7 +64,7 @@ export const activeCreditsSelectorQuery = selectorFamily<
         params: {
           fields: {
             credits:
-              "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus,payments",
+              "id,status,updatedAt,createdAt,loan,borrower,termOffering,amortization,hrStatus,payments,firstDiscountDate",
           },
           include: "borrower,termOffering.term,payments",
           filter: {
@@ -77,6 +79,7 @@ export const activeCreditsSelectorQuery = selectorFamily<
         const payments = credit.payments.data
         const amortization = credit.amortization
         const loan = credit.loan
+        const firstDiscountDate = credit.firstDiscountDate
         if (!payments) {
           throw new Error("Payments should not be null")
         }
@@ -86,10 +89,15 @@ export const activeCreditsSelectorQuery = selectorFamily<
         if (!loan) {
           throw new Error("Loan should not be null")
         }
+        if (!firstDiscountDate) {
+          throw new Error("First discount date should not be null")
+        }
+
         map.set(credit.id, {
           ...credit,
           loan,
           amortization,
+          firstDiscountDate,
           borrower: credit.borrower.data,
           termOffering: {
             ...(credit.termOffering.data || {}),
@@ -247,4 +255,85 @@ export const editableDispersionReceiptFieldState = atomFamily<
 >({
   key: "editableDispersionReceiptFieldState",
   default: null,
+})
+
+export const creditPressed = atomFamily<boolean, string>({
+  key: "creditPressed",
+  default: false,
+})
+
+export const creditSelectionState = selectorFamily({
+  key: "creditSelectionState",
+  get:
+    (companyId: string) =>
+    ({ get }) => {
+      const credits = get(activeCreditsSelectorQuery(companyId))
+      const ids = Array.from(credits.keys())
+
+      const selectedCredits = ids.filter((id) => get(creditPressed(id)))
+      const selectedCount = selectedCredits.length
+      const totalCount = ids.length
+
+      if (selectedCount === 0) {
+        return "none"
+      } else if (selectedCount === totalCount) {
+        return "fully"
+      } else {
+        return "partial"
+      }
+    },
+})
+
+export const totalToCollectState = selectorFamily({
+  key: "totalToCollectState",
+  get:
+    (companyId: string) =>
+    ({ get }) => {
+      const credits = get(activeCreditsSelectorQuery(companyId))
+      const ids = Array.from(credits.keys())
+
+      const selectedCredits = ids.filter((id) => get(creditPressed(id)))
+
+      let total = 0
+
+      for (const id of selectedCredits) {
+        const paymentNumbers = new Set<number>()
+        const credit = credits.get(id)
+        if (!credit) continue
+        for (const payment of credit.payments) {
+          // if payment is not paid and delayed add it to the set
+          if (
+            !payment.paidAt &&
+            !!payment.expectedAt &&
+            new Date(payment.expectedAt) < new Date()
+          ) {
+            paymentNumbers.add(payment.number)
+          }
+        }
+        // add next payment to the set
+        const nextPayment = credit.payments
+          .toSorted((a, b) => a.number - b.number)
+          .find((payment) => !payment.paidAt)
+        if (nextPayment) {
+          paymentNumbers.add(nextPayment.number)
+        }
+
+        // add the amount of payments
+        total += paymentNumbers.size * Number(credit.amortization)
+      }
+
+      return total
+    },
+})
+
+export const selectedCreditsSelector = selectorFamily({
+  key: "selectedCreditsSelector",
+  get:
+    (companyId: string) =>
+    ({ get }) => {
+      const credits = get(activeCreditsSelectorQuery(companyId))
+      const ids = Array.from(credits.keys())
+      const selectedIds = ids.filter((id) => get(creditPressed(id)))
+      return selectedIds.map((id) => credits.get(id)!)
+    },
 })

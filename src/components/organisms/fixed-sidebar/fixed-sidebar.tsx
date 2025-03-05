@@ -2,36 +2,24 @@ import { NavLink, useMatch } from "react-router-dom"
 import {
   CheckBadgeIcon,
   ClipboardDocumentListIcon,
-  HomeIcon,
 } from "@heroicons/react/24/solid"
 import { useRecoilValue } from "recoil"
-import { userRolesState } from "components/providers/auth/atoms"
+import { myProfileState, userRolesState } from "components/providers/auth/atoms"
 import { SidebarRoutes } from "src/schema.types"
+import useIsRole from "hooks/useIsRole"
 
 const FixedSidebar = () => {
   const roles = useRecoilValue(userRolesState)
-  const isHomeActive = useMatch("/dashboard")
-  const isAdmin = roles.some((role) => role.value === "admin")
+  const profile = useRecoilValue(myProfileState)
+  const hrCompanyId = profile?.hrCompanyId
+  const isAdmin = useIsRole("admin")
+  const isHR = useIsRole("hr")
   const isPathActive = useMatch(`/dashboard/companies`)
+
   return (
     <div className="w-16 fixed bg-slate-50 border-gray-900/10 border-r overflow-y-auto inline-block top-16 bottom-0">
       <nav className="lg:text-sm lg:leading-6 relative py-4 overflow-hidden">
         <ul>
-          <li>
-            <NavLink
-              className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
-              to="/dashboard/requests"
-            >
-              <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
-                <HomeIcon
-                  className={`h-5 w-5 group-hover:text-sky-500 ${
-                    isHomeActive ? "text-sky-500" : "text-sky-300"
-                  }`}
-                />
-              </div>
-              Inicio
-            </NavLink>
-          </li>
           {roles
             .filter((r) => r.value !== "admin")
             .map(({ label, value, path }) => (
@@ -77,6 +65,55 @@ const FixedSidebar = () => {
                     />
                   </div>
                   <span className="max-w-10 truncate">Staff</span>
+                </NavLink>
+              </li>
+            </>
+          )}
+          {isHR && hrCompanyId && (
+            <>
+              <li>
+                <NavLink
+                  className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
+                  to={`hr/${hrCompanyId}/requests`}
+                >
+                  <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
+                    <ClipboardDocumentListIcon
+                      className={`h-5 w-5 group-hover:text-sky-500 ${
+                        isPathActive ? "text-sky-500" : "text-sky-300"
+                      }`}
+                    />
+                  </div>
+                  <span className="max-w-10 truncate">Solicitudes</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
+                  to={"hr/" + hrCompanyId}
+                >
+                  <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
+                    <ClipboardDocumentListIcon
+                      className={`h-5 w-5 group-hover:text-sky-500 ${
+                        isPathActive ? "text-sky-500" : "text-sky-300"
+                      }`}
+                    />
+                  </div>
+                  <span className="max-w-10 truncate">Cartera</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  className="group flex flex-col justify-center items-center lg:text-sm lg:leading-6 mb-4 font-medium text-sky-500"
+                  to={`hr/${hrCompanyId}/payments`}
+                >
+                  <div className="p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 group-hover:shadow-sky-200">
+                    <ClipboardDocumentListIcon
+                      className={`h-5 w-5 group-hover:text-sky-500 ${
+                        isPathActive ? "text-sky-500" : "text-sky-300"
+                      }`}
+                    />
+                  </div>
+                  <span className="max-w-10 truncate">Cobranza</span>
                 </NavLink>
               </li>
             </>

@@ -108,7 +108,13 @@ export type CompanyCreditDetailedResponse = Pick<
   payments: {
     data: Pick<
       Payment,
-      "id" | "paidAt" | "amount" | "number" | "expectedAt" | "expectedAmount"
+      | "id"
+      | "paidAt"
+      | "amount"
+      | "number"
+      | "expectedAt"
+      | "expectedAmount"
+      | "hrConfirmedAt"
     >[]
   }
   termOffering: {
@@ -141,7 +147,13 @@ export type CompanyCreditDetailed = Pick<
   >
   payments: Pick<
     Payment,
-    "id" | "paidAt" | "amount" | "number" | "expectedAt" | "expectedAmount"
+    | "id"
+    | "paidAt"
+    | "amount"
+    | "number"
+    | "expectedAt"
+    | "expectedAmount"
+    | "hrConfirmedAt"
   >[]
   termOffering: Pick<TermOffering, "id"> & {
     term: Pick<Term, "id" | "durationType" | "duration">

@@ -221,6 +221,7 @@ export interface Payment extends ObjectWithId, Timestamps {
   number: number
   expectedAt: string
   expectedAmount: number
+  hrConfirmedAt: string | null
 }
 
 export interface Notification extends ObjectWithId, Timestamps {

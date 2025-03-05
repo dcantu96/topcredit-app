@@ -20,6 +20,7 @@ import { firstExpectedPaymentDate } from "../../utils"
 import type { DurationType } from "../../schema.types"
 import { companySelectorQuery } from "../companies/loader"
 import { es } from "date-fns/locale/es"
+import dayjs from "dayjs"
 
 const ShowScreen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -221,20 +222,18 @@ const ConfirmationModal = ({
     () => firstExpectedPaymentDate(durationType),
     [durationType],
   )
-  const [date, setDate] = useState<Date | undefined>(firstExpectedPayment)
   const { updateHRStatus } = useCreditActions()
   const navigate = useNavigate()
 
   const handleApproveCredit = () => {
-    if (!date) return
     // set date to noon utc
-    const firstDiscountDate = new Date(date)
+    const firstDiscountDate = new Date(firstExpectedPayment)
     firstDiscountDate.setUTCHours(12)
     updateHRStatus(
       creditId,
       companyId,
       "approved",
-      firstDiscountDate.toISOString(),
+      firstExpectedPayment.toISOString(),
     )
     navigate("..")
   }
@@ -245,18 +244,13 @@ const ConfirmationModal = ({
       <Modal.Body>
         <div className="p-3">
           <p className="mb-2">
-            Selecciona la fecha en la que se realizará el primer descuento.
+            La fecha en la que se realizará el primer descuento.
           </p>
           <p className="text-sm text-gray-500 mb-1">
             Plazo de descuento:{" "}
             {durationType === "bi-monthly" ? "Quincenal" : "Mensual"}
           </p>
-          <ExpectedPaymentPicker
-            firstExpectedPayment={firstExpectedPayment}
-            date={date}
-            setDate={setDate}
-            durationType={durationType}
-          />
+          {dayjs(firstExpectedPayment).locale("es").format("LL")}
         </div>
         <div className="flex gap-2 p-3">
           <Button onClick={handleApproveCredit}>Confirmar</Button>
@@ -270,7 +264,7 @@ const ConfirmationModal = ({
   )
 }
 
-function ExpectedPaymentPicker({
+export function ExpectedPaymentPicker({
   firstExpectedPayment,
   durationType,
   date,

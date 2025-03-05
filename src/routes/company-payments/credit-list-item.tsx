@@ -32,9 +32,8 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
     return "pending"
   }, [delayedPayments])
 
-  const lastPayment = credit.payments.findLast(
-    (payment) => !!payment.paidAt,
-  )?.paidAt
+  const lastPayment = credit.payments.findLast((payment) => !!payment.paidAt)
+  const nextPayment = credit.payments.find((payment) => !payment.paidAt)
 
   return (
     <List.Item>
@@ -45,6 +44,7 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
               <input
                 tabIndex={0}
                 id={credit.id}
+                disabled={!nextPayment?.hrConfirmedAt}
                 type="checkbox"
                 checked={pressed}
                 onChange={() => setPressed(!pressed)}
@@ -53,14 +53,14 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
                     setPressed(!pressed)
                   }
                 }}
-                className="rounded h-4 w-4 cursor-pointer bg-white border-indigo-300 text-indigo-600 focus:ring-indigo-200"
+                className="rounded h-4 w-4 cursor-pointer bg-white border-indigo-300 text-indigo-600 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-400"
               />
             </div>
           </label>
-          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0 inline-flex">
+          <h2 className="text-gray-900 leading-6 font-semibold text-sm min-w-0 inline-flex gap-x-2">
             <label
               htmlFor={credit.id}
-              className="cursor-pointer hover:text-gray-700 mr-2"
+              className="cursor-pointer hover:text-gray-700"
             >
               <a className="flex text-inherit decoration-inherit gap-x-2">
                 <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
@@ -72,16 +72,19 @@ const ListItem = ({ credit }: { credit: CompanyCreditDetailed }) => {
             <Chip status={status === "delayed" ? "error" : "info"}>
               {status === "delayed" ? "Demorado" : "Al Corriente"}
             </Chip>
+            {!nextPayment?.hrConfirmedAt && (
+              <Chip status="warning">Pendiente de RH</Chip>
+            )}
           </h2>
         </div>
         <div className="mt-3 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-400">
           <p
             className={`whitespace-nowrap ${status === "pending" ? "" : "text-red-600"}`}
           >
-            {lastPayment ? (
+            {lastPayment?.paidAt ? (
               <>
                 Último descuento{" "}
-                <b>{dayjs(lastPayment).locale("es").format("LL")}</b>
+                <b>{dayjs(lastPayment.paidAt).locale("es").format("LL")}</b>
               </>
             ) : (
               "Sin pagos"

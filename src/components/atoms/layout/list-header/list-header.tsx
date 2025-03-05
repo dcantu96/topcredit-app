@@ -17,19 +17,21 @@ const Title = ({
   children,
   to,
 }: {
-  text: string
+  text?: string
   children?: React.ReactNode
   to?: To
 }) => {
   const navigate = useNavigate()
   return (
     <div className="flex gap-2 group group-last:text-gray-500 text-gray-900">
-      <h2
-        className={`leading-7 font-semibold text-base ${to ? "cursor-pointer hover:text-gray-700" : ""}`}
-        onClick={() => (to ? navigate(to) : null)}
-      >
-        {text}
-      </h2>
+      {text && (
+        <h2
+          className={`leading-7 font-semibold text-base ${to ? "cursor-pointer hover:text-gray-700" : ""}`}
+          onClick={() => (to ? navigate(to) : null)}
+        >
+          {text}
+        </h2>
+      )}
       {children}
     </div>
   )

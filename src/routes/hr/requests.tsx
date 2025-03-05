@@ -1,13 +1,11 @@
 import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { UsersIcon } from "@heroicons/react/24/solid"
 
 import ListSortOrderHandler from "components/organisms/list-sort-order-handler"
 import ListContainer from "components/atoms/layout/list-container"
 import ListHeader from "components/atoms/layout/list-header"
 import List from "components/atoms/list"
 import ActivityContainer from "components/organisms/activity-container"
-import ButtonLink from "components/atoms/button-link"
 import EmptyList from "components/atoms/empty-list"
 import useIsRole from "hooks/useIsRole"
 import { myProfileState } from "components/providers/auth/atoms"
@@ -30,12 +28,8 @@ const Screen = () => {
     <>
       <ListContainer>
         <ListHeader>
-          <ListHeader.Title text={"Empleados Pendientes: " + company?.name} />
+          <ListHeader.Title text={`Solicitudes - ${company?.name}`} />
           <ListHeader.Actions>
-            <ButtonLink size="sm" status="secondary" to="..">
-              Activos
-              <UsersIcon className="w-4 h-4 ml-2" />
-            </ButtonLink>
             <ListSortOrderHandler listName="pre-authorizations" />
           </ListHeader.Actions>
         </ListHeader>
