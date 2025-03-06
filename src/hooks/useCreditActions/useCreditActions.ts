@@ -1,7 +1,7 @@
 import { useRecoilCallback } from "recoil"
 
 import { apiSelector } from "components/providers/api/atoms"
-import { CreditStatus, HRStatus } from "src/schema.types"
+import { Credit, CreditStatus, HRStatus } from "src/schema.types"
 import useToast from "components/providers/toaster/useToast"
 import {
   authorizationRejectionReasonCreditState,
@@ -82,6 +82,29 @@ const useCreditActions = () => {
           })
         } catch (error) {
           console.error(error)
+        }
+      },
+  )
+
+  const updateCredit = useRecoilCallback(
+    ({ snapshot }) =>
+      async (creditId: string, data: Partial<Credit>) => {
+        const api = await snapshot.getPromise(apiSelector)
+        try {
+          await api.update(`credits`, {
+            id: creditId,
+            ...data,
+          })
+        } catch {
+          const defaultMessage = "Ocurrió un error al actualizar el crédito"
+
+          const message = data.status
+            ? ERROR_MESSAGES.get(data.status)
+            : undefined
+          toast.error({
+            title: "Error al actualizar",
+            message: message ?? defaultMessage,
+          })
         }
       },
   )
@@ -214,6 +237,7 @@ const useCreditActions = () => {
 
   return {
     createCredit,
+    updateCredit,
     updateCreditStatus,
     approveDocument,
     denyDocument,

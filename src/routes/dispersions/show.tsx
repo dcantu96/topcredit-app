@@ -13,12 +13,13 @@ import {
 } from "./atoms"
 import { useDispersionsActions } from "./actions"
 import { DURATION_TYPES, HR_STATUS, MXNFormat } from "../../constants"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Modal from "components/molecules/modal"
 import FileField from "components/atoms/file-field"
 import dayjs from "dayjs"
 import "dayjs/locale/es"
 import LocalizedFormat from "dayjs/plugin/localizedFormat"
+import { firstExpectedPaymentDate } from "../../utils"
 
 dayjs.extend(LocalizedFormat)
 
@@ -30,7 +31,7 @@ const ShowScreen = () => {
   if (!credit) throw new Error("Credit not found")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { removeCredit } = useDispersionsActions()
-  const { updateCreditStatus } = useCreditActions()
+  const { updateCredit } = useCreditActions()
   const companiesMap = useCompanies()
   const [dispersionReceiptId, setDispersionReceiptId] = useRecoilState(
     editableDispersionReceiptFieldState(id),
@@ -39,18 +40,46 @@ const ShowScreen = () => {
   const userDomain = credit?.borrower.email.split("@")[1]
   const company = userDomain ? companiesMap.get(userDomain) : undefined
 
-  if (!credit) return null
+  if (!company) {
+    throw new Error("Company not found")
+  }
+  if (!credit) {
+    throw new Error("Credit not found")
+  }
 
-  const handleApproveCredit = () => {
-    updateCreditStatus(credit.id, "dispersed")
+  const durationType = company.employeeSalaryFrequency
+
+  const firstExpectedPayment = useMemo(
+    () => firstExpectedPaymentDate(durationType),
+    [durationType],
+  )
+
+  const firstDiscountDate = useMemo(() => {
+    if (!credit.firstDiscountDate) {
+      throw new Error("First discount date is missing")
+    }
+    if (dayjs(credit.firstDiscountDate).isBefore(dayjs(firstExpectedPayment))) {
+      return firstExpectedPayment.toISOString()
+    }
+    return credit.firstDiscountDate
+  }, [credit.firstDiscountDate, firstExpectedPayment])
+
+  const handleApproveCredit = async () => {
+    await updateCredit(credit.id, {
+      status: "dispersed",
+      dispersedAt: new Date().toISOString(),
+      firstDiscountDate: firstDiscountDate,
+    })
     removeCredit(credit.id)
     navigate("/dashboard/dispersions")
   }
 
   const openDisperseModal = () => setIsModalOpen(true)
 
-  const handleDenyCredit = () => {
-    updateCreditStatus(credit.id, "denied")
+  const handleDenyCredit = async () => {
+    await updateCredit(credit.id, {
+      status: "denied",
+    })
     removeCredit(credit.id)
     navigate("/dashboard/dispersions")
   }
@@ -127,7 +156,7 @@ const ShowScreen = () => {
               Fecha aprobada de primer descuento
             </label>
             <p className="text-gray-900 font-bold">
-              {dayjs(credit.firstDiscountDate).locale("es").format("LL")}
+              {dayjs(firstDiscountDate).locale("es").format("LL")}
             </p>
           </div>
           <div className="col-span-1">
@@ -261,9 +290,7 @@ const ShowScreen = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 mb-2">
                 <p className="text-gray-500 text-sm">
                   Primer descuento:{" "}
-                  <b>
-                    {dayjs(credit.firstDiscountDate).locale("es").format("LL")}
-                  </b>
+                  <b>{dayjs(firstDiscountDate).locale("es").format("LL")}</b>
                 </p>
                 <p className="text-gray-900 text-sm sm:text-right">
                   Monto:{" "}
