@@ -15,14 +15,14 @@ import ListItem from "./list-item"
 import { activeCreditsSelectorQuery } from "./atoms"
 import { companySelectorQuery } from "../companies/loader"
 import { DURATION_TYPES, MXNFormat } from "../../constants"
-import { exportToCSV } from "../../utils"
+import { exportToCSV, nextExpectedPaymentDate } from "../../utils"
 import dayjs from "dayjs"
 import LocalizedFormat from "dayjs/plugin/localizedFormat"
 import "dayjs/locale/es"
 
 dayjs.extend(LocalizedFormat)
 
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import Button from "components/atoms/button"
 
 const Screen = () => {
@@ -34,6 +34,10 @@ const Screen = () => {
   if (!isAdmin && Number(id) !== companyId) throw new Error("No autorizado")
   const company = useRecoilValue(companySelectorQuery(id))
   const credits = useRecoilValue(activeCreditsSelectorQuery(id))
+  const nextExpectedPayment = useMemo(
+    () => nextExpectedPaymentDate(company.employeeSalaryFrequency),
+    [company.employeeSalaryFrequency],
+  )
 
   const totalPaid = useCallback(
     (creditId: string) => {
@@ -73,6 +77,28 @@ const Screen = () => {
   )
 
   const handleExport = () => {
+    const filteredCredits = Array.from(credits).filter(([, credit]) => {
+      // only those credits that have delayed payments or next payment is due
+      const delayedPayments = getDelayedPayments(credit.id)
+      const nextPayment = credit.payments
+        .toSorted((a, b) => a.number - b.number)
+        .find(
+          (payment) =>
+            !!payment.expectedAt && !payment.amount && !payment.paidAt,
+        )
+      if (!nextPayment) {
+        throw new Error("Next payment not found")
+      }
+      // make sure next payment is not after the next expected payment use the `nextExpectedPayment` variable
+      // use dayjs and leave a time frame spread of one hour
+      return (
+        delayedPayments > 0 ||
+        dayjs(nextPayment.expectedAt).isBefore(
+          dayjs(nextExpectedPayment),
+          "hour",
+        )
+      )
+    })
     exportToCSV(
       [
         "Empleado",
@@ -87,8 +113,9 @@ const Screen = () => {
         "Dctos. Realizados",
         "Dctos. Atrasados",
         "Último Descuento",
+        "Total a descontar",
       ],
-      Array.from(credits).map(([, credit]) => {
+      filteredCredits.map(([, credit]) => {
         if (!credit.loan || !credit.amortization || !credit.termOffering)
           return []
         const lastPayment = getLastPayment(credit.id)
@@ -116,6 +143,9 @@ const Screen = () => {
           lastPaidAt
             ? dayjs(lastPaidAt).locale("es").format("LL")
             : "Esperando primer descuento",
+          MXNFormat.format(
+            Number(credit.amortization) * paymentsDone + totalPaid(credit.id),
+          ),
         ]
       }),
       `${company.name.toLowerCase()}-rh.csv`,
@@ -128,6 +158,8 @@ const Screen = () => {
         <ListHeader>
           <ListHeader.Title text={`Cartera - ${company?.name}`} />
           <ListHeader.Actions>
+            Próximo descuento{" "}
+            {dayjs(nextExpectedPayment).locale("es").format("LL")}
             <Button onClick={handleExport} size="sm" status="secondary">
               Exportar
               <DocumentArrowUpIcon className="h-4 w-4 ml-1" />

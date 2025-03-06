@@ -11,11 +11,16 @@ import { useMemo } from "react"
 import LocalizedFormat from "dayjs/plugin/localizedFormat"
 import { ActiveCredit } from "./atoms"
 import "dayjs/locale/es"
+import { nextExpectedPaymentDate } from "../../utils"
 
 dayjs.extend(LocalizedFormat)
 
 const ListItem = ({ credit }: { credit: ActiveCredit }) => {
   const navigate = useNavigate()
+  const nextExpectedPayment = useMemo(
+    () => nextExpectedPaymentDate(credit.termOffering!.term.durationType),
+    [credit.termOffering],
+  )
 
   const lastMissingPaymentIndex = useMemo(
     () => credit.payments.findIndex((payment) => !payment.paidAt),
@@ -40,14 +45,35 @@ const ListItem = ({ credit }: { credit: ActiveCredit }) => {
           !!payment.expectedAt &&
           new Date(payment.expectedAt) < new Date() &&
           !payment.paidAt,
-      ).length,
+      ),
     [credit.payments],
   )
 
+  const nextPayment = useMemo(() => {
+    const next = credit.payments
+      .toSorted((a, b) => a.number - b.number)
+      .find(
+        (payment) => !!payment.expectedAt && !payment.amount && !payment.paidAt,
+      )
+    if (!next) throw new Error("Next payment not found")
+    return next
+  }, [credit.payments])
+
+  const incomingPayments = useMemo(() => {
+    const paymentNumbers = new Set<number>()
+    for (const payment of delayedPayments) {
+      paymentNumbers.add(payment.number)
+    }
+    paymentNumbers.add(nextPayment.number)
+    return paymentNumbers
+  }, [delayedPayments, nextPayment])
+
   // set last paid at or a text saying waiting for first payment
-  const lastPaidAtText = lastPaidAt
-    ? `Último descuento ${dayjs(lastPaidAt).locale("es").format("LL")}`
-    : "Esperando primer descuento"
+  const lastPaidAtText = delayedPayments.length
+    ? lastPaidAt
+      ? `Último descuento ${dayjs(lastPaidAt).locale("es").format("LL")}`
+      : "Esperando primer descuento"
+    : `Proximo descuento ${dayjs(nextPayment.expectedAt).locale("es").format("LL")}`
 
   return (
     <List.Item>
@@ -60,18 +86,28 @@ const ListItem = ({ credit }: { credit: ActiveCredit }) => {
             <Chip
               status={
                 credit.status === "dispersed"
-                  ? delayedPayments > 0
+                  ? delayedPayments.length > 0
                     ? "error"
-                    : "success"
+                    : dayjs(nextPayment.expectedAt).isAfter(
+                          dayjs(nextExpectedPayment),
+                          "hour",
+                        )
+                      ? "success"
+                      : "warning"
                   : credit.hrStatus
                     ? "info"
                     : "error"
               }
             >
               {credit.status === "dispersed"
-                ? delayedPayments > 0
+                ? delayedPayments.length > 0
                   ? "Tarde"
-                  : "Activo"
+                  : dayjs(nextPayment.expectedAt).isAfter(
+                        dayjs(nextExpectedPayment),
+                        "hour",
+                      )
+                    ? "Al corriente"
+                    : "Esperando próximo pago"
                 : credit.hrStatus
                   ? "Aprobado por RH"
                   : "Pendiente"}
@@ -83,27 +119,34 @@ const ListItem = ({ credit }: { credit: ActiveCredit }) => {
         </div>
         <div className="mt-2 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-500">
           <p className="whitespace-nowrap">{lastPaidAtText}</p>
-          <span className="hidden md:block">
-            <SmallDot />
-          </span>
-          <p className="whitespace-nowrap font-semibold hidden md:block">
-            Préstamo {credit.loan ? MXNFormat.format(credit.loan) : 0}
-          </p>
+          {delayedPayments.length ? (
+            <>
+              <span className="hidden md:block">
+                <SmallDot />
+              </span>
+              <p className="whitespace-nowrap font-semibold hidden md:block">
+                {`${delayedPayments.length} descuentos pendientes`}
+              </p>
+            </>
+          ) : null}
         </div>
       </div>
       <div className="min-w-32 self-end">
         <div className="flex items-center gap-x-3">
           <h2 className="text-gray-900 items-center leading-6 font-medium text-sm min-w-0 flex text-inherit decoration-inherit gap-x-2">
             <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-              {delayedPayments
-                ? `${delayedPayments} descuentos pendientes`
-                : "Al corriente"}
+              Préstamo {credit.loan ? MXNFormat.format(credit.loan) : 0}
             </span>
           </h2>
         </div>
         <div className="mt-2 flex items-center gap-x-[0.625rem] text-xs leading-5 text-gray-500">
           <span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
-            Descuento <b>{MXNFormat.format(credit.amortization!)}</b>
+            Descuento #{Array.from(incomingPayments).join(", ")}{" "}
+            <b>
+              {MXNFormat.format(
+                Number(credit.amortization) * (delayedPayments.length + 1),
+              )}
+            </b>
           </span>
         </div>
       </div>
