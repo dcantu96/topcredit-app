@@ -71,15 +71,50 @@ const Screen = () => {
           !!payment.expectedAt &&
           new Date(payment.expectedAt) < new Date() &&
           !payment.paidAt,
-      ).length
+      )
     },
     [credits],
+  )
+
+  const getNextPayment = useCallback(
+    (creditId: string) => {
+      const credit = credits.get(creditId)
+      if (!credit) throw new Error("Credit not found")
+      const next = credit.payments
+        .toSorted((a, b) => a.number - b.number)
+        .find(
+          (payment) =>
+            new Date(payment.expectedAt) > new Date() && !payment.paidAt,
+        )
+      if (!next) throw new Error("Next payment not found")
+      return next
+    },
+    [credits],
+  )
+
+  const getIncomingPayments = useCallback(
+    (creditId: string) => {
+      const paymentNumbers = new Set<number>()
+      const delayedPayments = getDelayedPayments(creditId)
+      const nextPayment = getNextPayment(creditId)
+      for (const payment of delayedPayments) {
+        paymentNumbers.add(payment.number)
+      }
+      paymentNumbers.add(nextPayment.number)
+      const credit = credits.get(creditId)
+      if (!credit) throw new Error("Credit not found")
+
+      return credit.payments.filter((payment) =>
+        paymentNumbers.has(payment.number),
+      )
+    },
+    [credits, getDelayedPayments, getNextPayment],
   )
 
   const handleExport = () => {
     const filteredCredits = Array.from(credits).filter(([, credit]) => {
       // only those credits that have delayed payments or next payment is due
-      const delayedPayments = getDelayedPayments(credit.id)
+      const delayedPayments = getDelayedPayments(credit.id).length
       const nextPayment = credit.payments
         .toSorted((a, b) => a.number - b.number)
         .find(
@@ -99,6 +134,14 @@ const Screen = () => {
         )
       )
     })
+
+    const totalToPay = filteredCredits.reduce(
+      (acc, [, credit]) =>
+        acc +
+        Number(credit.amortization) * getIncomingPayments(credit.id).length,
+      0,
+    )
+
     exportToCSV(
       [
         "Empleado",
@@ -113,13 +156,13 @@ const Screen = () => {
         "Dctos. Realizados",
         "Dctos. Atrasados",
         "Último Descuento",
-        "Total a descontar",
+        `Total a descontar ${MXNFormat.format(totalToPay)}`,
       ],
       filteredCredits.map(([, credit]) => {
         if (!credit.loan || !credit.amortization || !credit.termOffering)
           return []
         const lastPayment = getLastPayment(credit.id)
-        const delayedPayments = getDelayedPayments(credit.id)
+        const delayedPayments = getDelayedPayments(credit.id).length
         const lastPaidAt = lastPayment?.paidAt
         const paymentsDone = lastPayment?.number ?? 0
         const firstName = credit.borrower.firstName
@@ -143,9 +186,9 @@ const Screen = () => {
           lastPaidAt
             ? dayjs(lastPaidAt).locale("es").format("LL")
             : "Esperando primer descuento",
-          MXNFormat.format(
-            Number(credit.amortization) * paymentsDone + totalPaid(credit.id),
-          ),
+          `${getIncomingPayments(credit.id).length} - ${MXNFormat.format(
+            Number(credit.amortization) * getIncomingPayments(credit.id).length,
+          )}`,
         ]
       }),
       `${company.name.toLowerCase()}-rh.csv`,

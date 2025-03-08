@@ -53,7 +53,8 @@ const ListItem = ({ credit }: { credit: ActiveCredit }) => {
     const next = credit.payments
       .toSorted((a, b) => a.number - b.number)
       .find(
-        (payment) => !!payment.expectedAt && !payment.amount && !payment.paidAt,
+        (payment) =>
+          new Date(payment.expectedAt) > new Date() && !payment.paidAt,
       )
     if (!next) throw new Error("Next payment not found")
     return next
@@ -125,7 +126,7 @@ const ListItem = ({ credit }: { credit: ActiveCredit }) => {
                 <SmallDot />
               </span>
               <p className="whitespace-nowrap font-semibold hidden md:block">
-                {`${delayedPayments.length} descuentos pendientes`}
+                {`${delayedPayments.length} descuentos retrasados`}
               </p>
             </>
           ) : null}
